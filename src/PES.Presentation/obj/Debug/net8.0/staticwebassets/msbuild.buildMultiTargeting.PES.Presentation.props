@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\PES.Presentation.props" />
+</Project>
