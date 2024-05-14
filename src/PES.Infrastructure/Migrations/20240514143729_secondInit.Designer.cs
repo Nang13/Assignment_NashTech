@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PES.Infrastructure.Data;
@@ -11,9 +12,11 @@ using PES.Infrastructure.Data;
 namespace PES.Infrastructure.Migrations
 {
     [DbContext(typeof(PlantManagementContext))]
-    partial class PlantManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20240514143729_secondInit")]
+    partial class secondInit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

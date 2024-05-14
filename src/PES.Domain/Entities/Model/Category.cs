@@ -13,7 +13,7 @@ namespace PES.Domain.Entities.Model
 
         public int CategoryLeft { get; set; }
         public int CategoryRight { get; set; }
-        public int CategoryMain { get; set; }
+        public string? CategoryMain { get; set; }
 
         public Guid CategoryParentId { get; set; }
 

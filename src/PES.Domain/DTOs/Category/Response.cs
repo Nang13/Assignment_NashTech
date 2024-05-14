@@ -5,10 +5,14 @@ using System.Threading.Tasks;
 
 namespace PES.Domain.DTOs.Category
 {
-    public record CategoryDetailResponse(Guid CategoryId ,string CategoryName ,string CategoryMain,int Left , int Right);
+    public record CategoryDetailResponse(Guid CategoryId, string CategoryName, string CategoryMain, int Left, int Right);
 
-    public record CategoryResponse(Guid CategoryId, string CategoryName);
+    public class CategoryResponse
+    {
+        public Guid CategoryId { get; set; }
+        public string CategoryName { get; set; }
+    }
 
 
-  
+
 }

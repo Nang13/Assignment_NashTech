@@ -9,6 +9,11 @@ dotnet ef database update "firstInit" -s .\PES.Presentation\  -p .\PES.Infrastru
 ## Task To
 ### API
 #### Category
+- [x] Add Category
+- [x] Get All Parent Category
+- [x] Get Sub Category
+- [ ] Delete Category
+- [ ] Update Category
 #### Product
 #### Authorize
 #### Order
