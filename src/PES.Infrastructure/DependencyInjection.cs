@@ -21,12 +21,16 @@ namespace PES.Infrastructure
         {
 
             //? Add UnitOfWork
-           // services.AddScoped<IGenericRepository, GenericRepository>();
+            // services.AddScoped<IGenericRepository, GenericRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IProductImageRepository ,ProductImageRepository>();
+            services.AddScoped<IProductInCategoryRepository, ProductInCategoryRepository>();
+            services.AddScoped<IProductRatingRepository, ProductRatingRepository>();
+            services.AddScoped<IProductRepository , ProductRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
-           
-           
-           
-           
+
             //? ADD DI with Database Set up
             services.AddDbContextPool<PlantManagementContext>(options =>
                 options.UseNpgsql(connectionString));
