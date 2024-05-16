@@ -7,6 +7,6 @@ namespace PES.Infrastructure.IRepository
 {
     public interface IProductRepository : IGenericRepository<Product>
     {
-        
+        Task ExcuteUpdate(Guid id ,Dictionary<string, object?> updateObject);
     }
 }

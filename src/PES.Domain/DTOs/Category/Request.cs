@@ -54,7 +54,7 @@ namespace PES.Domain.DTOs.Category
       public string? CategoryDescription { get; set; } = null!;
 
       [JsonIgnore]
-      public Dictionary<string, object?>? ObjectUpdate { get; set; } = new Dictionary<string, object?>();
+      public Dictionary<string, object?>? ObjectUpdate { get; set; } = [];
 
       public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
       {

@@ -5,16 +5,17 @@ using System.Threading.Tasks;
 
 namespace PES.Domain.Entities.Model
 {
-    public class OrderDetail  : BaseAuditableEntity
+    public class OrderDetail : BaseAuditableEntity
     {
-        public int Price { get; set; }  
-        
-        public Product? Product  { get; set; }
-        
-        public Guid ProductId  { get; set; }
+        public decimal Price { get; set; } = 0;
 
-        public  Order? Order{ get; set; } = null;
-        
+        public Product? Product { get; set; }
+
+        public decimal? TotalPrice { get; set; } = 0;
+        public Guid ProductId { get; set; }
+
+        public Order? Order { get; set; } = null;
+
         public Guid OrderId { get; set; }
     }
 }

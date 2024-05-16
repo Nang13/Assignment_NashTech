@@ -14,6 +14,7 @@ namespace PES.Domain.Entities.Model
 
         //? 1-5
         public int Rating { get; set; } 
+        public string Comment { get; set; } = string.Empty;
 
         public int UsefulComment {get; set; }
         public Product? Product{ get; set; }

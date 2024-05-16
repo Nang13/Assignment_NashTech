@@ -1,5 +1,6 @@
 using PES.Application;
 using PES.Infrastructure;
+using PES.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.Services.AddControllers();
 var conn = builder.Configuration.GetConnectionString("DefaultConnection");
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
+builder.Services.AddInfrastructureService(builder); 
 builder.Services.AddApplicationService();
 builder.Services.AddInfrastructureServices(conn);
 builder.Services.AddEndpointsApiExplorer();

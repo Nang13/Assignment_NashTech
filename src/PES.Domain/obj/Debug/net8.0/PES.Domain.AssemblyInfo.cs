@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PES.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9fe84fbe0615948c455cbe6bab3a42071719a18f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ea286adf6afecdc87f88a6798c9129eb56bdbc02")]
 [assembly: System.Reflection.AssemblyProductAttribute("PES.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PES.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
