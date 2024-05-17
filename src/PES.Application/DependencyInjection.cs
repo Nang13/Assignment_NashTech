@@ -16,6 +16,7 @@ namespace PES.Application
             services.AddScoped<IProductService,  ProductService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ICartService, CartService>();
             
             
             return services;

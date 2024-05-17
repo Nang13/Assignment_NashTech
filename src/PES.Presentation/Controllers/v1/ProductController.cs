@@ -8,7 +8,7 @@ using PES.Application.IService;
 using PES.Domain.DTOs.Order;
 using PES.Domain.DTOs.Product;
 
-namespace PES.Presentation.Controllers.v1
+namespace PES.Presentation.Controllers.V1
 {
     [ApiController]
     public class ProductController : DefaultController

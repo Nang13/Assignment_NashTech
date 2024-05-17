@@ -31,6 +31,7 @@ namespace PES.Application.Service
         public async Task<CategoryDetailResponse> AddNewCategory(AddNewCategoryRequest request)
         {
             int rightValue = 0;
+            Guid parentId = Guid.Parse("00000000-0000-0000-0000-000000000000");
             if (request.AddType == (int)AddCategoryType.AddChildCategory)
             {
 
@@ -44,6 +45,8 @@ namespace PES.Application.Service
             {
 
                 rightValue = 1;
+                parentId = (Guid)request.CategoryParentId;
+
             }
             //? 1.Check CategoryMain is in system before
             var parentCategory = new Category()
@@ -53,6 +56,7 @@ namespace PES.Application.Service
                 CategoryMain = request.CategoryMain,
                 CategoryName = request.CategoryName,
                 CategoryDescription = request.CategoryDescription,
+                CategoryParentId = parentId,
             };
             await _unitOfWork.CategoryRepository.AddAsync(parentCategory);
             await _unitOfWork.SaveChangeAsync();

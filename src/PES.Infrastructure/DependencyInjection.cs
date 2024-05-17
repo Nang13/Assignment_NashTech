@@ -19,6 +19,7 @@ namespace PES.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, string connectionString)
         {
+            services.AddOutputCache();
 
             //? Add UnitOfWork
             // services.AddScoped<IGenericRepository, GenericRepository>();

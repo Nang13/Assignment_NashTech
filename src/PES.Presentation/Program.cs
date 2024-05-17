@@ -10,11 +10,11 @@ builder.Services.AddControllers();
 var conn = builder.Configuration.GetConnectionString("DefaultConnection");
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-builder.Services.AddInfrastructureService(builder); 
 builder.Services.AddApplicationService();
 builder.Services.AddInfrastructureServices(conn);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddInfrastructureService(builder); 
 
 var app = builder.Build();
 
@@ -24,7 +24,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseOutputCache();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

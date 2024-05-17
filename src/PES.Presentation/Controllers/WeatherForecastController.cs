@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PES.Application.IService;
 
 namespace PES.Presentation.Controllers
 {
 
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
@@ -16,9 +17,11 @@ namespace PES.Presentation.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        private readonly ICartService _cartService;
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, ICartService cartService)
         {
             _logger = logger;
+            _cartService = cartService;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -32,5 +35,12 @@ namespace PES.Presentation.Controllers
             })
             .ToArray();
         }
+
+
+        // [HttpGet(Name = "GetRedis")]
+        // public async Task<IActionResult> GetCart()
+        // {
+        //     return Ok(await _cartService.TestRedis());
+        // }
     }
 }

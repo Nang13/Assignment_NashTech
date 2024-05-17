@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using PES.Application.IService;
 using PES.Domain.DTOs.Order;
 
-namespace PES.Presentation.Controllers.v1
+namespace PES.Presentation.Controllers.V1
 {
     public class OrderController : DefaultController
     {
