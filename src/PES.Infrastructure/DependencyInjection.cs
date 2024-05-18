@@ -27,7 +27,6 @@ namespace PES.Infrastructure
             services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IProductImageRepository ,ProductImageRepository>();
-            services.AddScoped<IProductInCategoryRepository, ProductInCategoryRepository>();
             services.AddScoped<IProductRatingRepository, ProductRatingRepository>();
             services.AddScoped<IProductRepository , ProductRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();

@@ -17,7 +17,7 @@ namespace PES.Domain.Entities.Model
 
         public Guid CategoryParentId { get; set; }
 
-        public virtual ICollection<ProductInCategory>? ProductInCategories { get; set; } = [];
+        public virtual ICollection<Product>? Products { get; set; } = [];
 
 
 

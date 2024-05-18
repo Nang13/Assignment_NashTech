@@ -14,7 +14,7 @@ namespace PES.Infrastructure.Data.FluentAPI
         {
            builder.HasMany(x => x.OrderDetails).WithOne(x => x.Product).HasForeignKey(x => x.ProductId);
            builder.HasMany(x => x.ProductImages).WithOne(x => x.Product).HasForeignKey(x => x.ProductId);
-           builder.HasMany(x => x.ProductInCategories).WithOne(x => x.Product).HasForeignKey(x => x.ProductId);
+        
         }
     }
 }

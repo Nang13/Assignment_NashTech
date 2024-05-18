@@ -15,7 +15,6 @@ namespace PES.Infrastructure.UnitOfWork
 
         public IProductRatingRepository ProductRatingRepository { get; }
 
-        public IProductInCategoryRepository ProductInCategoryRepository { get; }
 
         public IProductImageRepository ProductImageRepository { get; }
 

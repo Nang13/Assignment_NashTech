@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Firebase.Auth;
 using Firebase.Storage;
-namespace PES.Presentation.Helper
+using Microsoft.AspNetCore.Http;
+namespace PES.Application.Helper
 {
 
     public record FireBaseFile
@@ -14,8 +15,8 @@ namespace PES.Presentation.Helper
     }
     public static class StorageHandler
     {
-        private static string API_KEY = "AIzaSyBwKZniXvzvFC_emxVZaPR4FVJFI2AfFfo";
-        private static string Bucket = "final-capstone-project-f8bdd.appspot.com";
+        private static string API_KEY = "AIzaSyB-cdgxQD1Gwpl_vKSMGCaenYeFPMdFKM4";
+        private static string Bucket = "ntassignment-518e1.appspot.com";
         private static string AuthEmail = "mandayngu@gmail.com";
         private static string AuthPassword = "0902388458Tr";
         private static FirebaseStorage _storage;

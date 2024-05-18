@@ -14,7 +14,7 @@ namespace PES.Infrastructure.Data.FluentAPI
         public void Configure(EntityTypeBuilder<Category> builder)
         {
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.HasMany(x => x.ProductInCategories).WithOne(x => x.Category).HasForeignKey(x => x.CategoryId);
+            builder.HasMany(x => x.Products).WithOne(x => x.Category).HasForeignKey(x => x.CategoryId);
         }
     }
 }

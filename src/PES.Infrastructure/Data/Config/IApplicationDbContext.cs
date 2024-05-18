@@ -10,7 +10,6 @@ namespace PES.Infrastructure.Data.Config
       public interface IApplicationDbContext
     {
         DbSet<ProductRating> ProductRatings { get; }
-        DbSet<ProductInCategory> ProductInCategories { get; }
 
         DbSet<ProductImage> ProductImages { get; }
 

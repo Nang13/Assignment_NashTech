@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PES.Infrastructure.Data;
@@ -11,9 +12,11 @@ using PES.Infrastructure.Data;
 namespace PES.Infrastructure.Migrations
 {
     [DbContext(typeof(PlantManagementContext))]
-    partial class PlantManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20240518024210_Re-Design")]
+    partial class ReDesign
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -259,88 +262,6 @@ namespace PES.Infrastructure.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("PES.Domain.Entities.Model.ImportantInformation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Directions")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Ingredients")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LegalDisclaimer")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId")
-                        .IsUnique();
-
-                    b.ToTable("ImportantInformation");
-                });
-
-            modelBuilder.Entity("PES.Domain.Entities.Model.NutritionInformation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Calories")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("Fiber")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Protein")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Sodium")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Sugars")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId")
-                        .IsUnique();
-
-                    b.ToTable("NutritionInformation");
-                });
-
             modelBuilder.Entity("PES.Domain.Entities.Model.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -581,28 +502,6 @@ namespace PES.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PES.Domain.Entities.Model.ImportantInformation", b =>
-                {
-                    b.HasOne("PES.Domain.Entities.Model.Product", "Product")
-                        .WithOne("ImportantInformation")
-                        .HasForeignKey("PES.Domain.Entities.Model.ImportantInformation", "ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("PES.Domain.Entities.Model.NutritionInformation", b =>
-                {
-                    b.HasOne("PES.Domain.Entities.Model.Product", "Product")
-                        .WithOne("NutritionInformation")
-                        .HasForeignKey("PES.Domain.Entities.Model.NutritionInformation", "ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("PES.Domain.Entities.Model.Order", b =>
                 {
                     b.HasOne("PES.Domain.Entities.Model.ApplicationUser", "User")
@@ -689,10 +588,6 @@ namespace PES.Infrastructure.Migrations
 
             modelBuilder.Entity("PES.Domain.Entities.Model.Product", b =>
                 {
-                    b.Navigation("ImportantInformation");
-
-                    b.Navigation("NutritionInformation");
-
                     b.Navigation("OrderDetails");
 
                     b.Navigation("ProductImages");

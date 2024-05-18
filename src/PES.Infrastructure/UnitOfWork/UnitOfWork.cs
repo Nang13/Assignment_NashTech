@@ -14,7 +14,6 @@ namespace PES.Infrastructure.UnitOfWork
         private readonly IProductRepository _productRepository;
         private readonly IProductRatingRepository _productRatingRepository;
 
-        private readonly IProductInCategoryRepository _productInCategoryRepository;
 
         private readonly IProductImageRepository _productImageRepository;
 
@@ -25,7 +24,6 @@ namespace PES.Infrastructure.UnitOfWork
         ICategoryRepository categoryRepository,
         IProductRepository productRepository,
         IProductRatingRepository productRatingRepository,
-        IProductInCategoryRepository productInCategoryRepository,
         IProductImageRepository productImageRepository,
         IOrderRepository orderRepository,
         IOrderDetailRepository orderDetailRepository)
@@ -35,7 +33,6 @@ namespace PES.Infrastructure.UnitOfWork
             _productRepository = productRepository;
             _productImageRepository =productImageRepository;
             _productRatingRepository = productRatingRepository;
-            _productInCategoryRepository = productInCategoryRepository;
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
         }
@@ -45,7 +42,6 @@ namespace PES.Infrastructure.UnitOfWork
 
         public IProductRatingRepository ProductRatingRepository => _productRatingRepository;
 
-        public IProductInCategoryRepository ProductInCategoryRepository => _productInCategoryRepository ;
 
         public IProductImageRepository ProductImageRepository => _productImageRepository;
 

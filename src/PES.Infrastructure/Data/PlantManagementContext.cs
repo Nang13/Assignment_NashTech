@@ -17,7 +17,6 @@ namespace PES.Infrastructure.Data
 
         public DbSet<ProductRating> ProductRatings => Set<ProductRating>();
 
-        public DbSet<ProductInCategory> ProductInCategories => Set<ProductInCategory>();
         public DbSet<ProductImage> ProductImages => Set<ProductImage>();
 
         public DbSet<Product> Products => Set<Product>();
