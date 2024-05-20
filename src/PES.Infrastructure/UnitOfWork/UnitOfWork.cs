@@ -13,7 +13,8 @@ namespace PES.Infrastructure.UnitOfWork
         private readonly ICategoryRepository _categoryRepository;
         private readonly IProductRepository _productRepository;
         private readonly IProductRatingRepository _productRatingRepository;
-
+        private readonly INutrionInfoRepository _nutrionInfoRepository;
+        private readonly IImportantInfoRepository _importantInfoRepository;
 
         private readonly IProductImageRepository _productImageRepository;
 
@@ -26,15 +27,19 @@ namespace PES.Infrastructure.UnitOfWork
         IProductRatingRepository productRatingRepository,
         IProductImageRepository productImageRepository,
         IOrderRepository orderRepository,
-        IOrderDetailRepository orderDetailRepository)
+        IOrderDetailRepository orderDetailRepository,
+        INutrionInfoRepository nutrionInfoRepository,
+        IImportantInfoRepository importantInfoRepository)
         {
             _context = context;
             _categoryRepository = categoryRepository;
             _productRepository = productRepository;
-            _productImageRepository =productImageRepository;
+            _productImageRepository = productImageRepository;
             _productRatingRepository = productRatingRepository;
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
+            _nutrionInfoRepository = nutrionInfoRepository;
+            _importantInfoRepository = importantInfoRepository;
         }
         public ICategoryRepository CategoryRepository => _categoryRepository;
 
@@ -48,6 +53,10 @@ namespace PES.Infrastructure.UnitOfWork
         public IOrderRepository OrderRepository => _orderRepository;
 
         public IOrderDetailRepository OrderDetailRepository => _orderDetailRepository;
+
+        public INutrionInfoRepository NutrionInfoRepository => _nutrionInfoRepository;
+
+        public IImportantInfoRepository ImportantInfoRepository => _importantInfoRepository;
 
         public async Task<int> SaveChangeAsync()
         {

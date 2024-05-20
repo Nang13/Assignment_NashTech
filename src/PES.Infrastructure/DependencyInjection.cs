@@ -29,6 +29,8 @@ namespace PES.Infrastructure
             services.AddScoped<IProductImageRepository ,ProductImageRepository>();
             services.AddScoped<IProductRatingRepository, ProductRatingRepository>();
             services.AddScoped<IProductRepository , ProductRepository>();
+            services.AddScoped<INutrionInfoRepository, NutrionRepository>();
+            services.AddScoped<IImportantInfoRepository, ImportantRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
             //? ADD DI with Database Set up

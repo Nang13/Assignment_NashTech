@@ -21,6 +21,8 @@ namespace PES.Infrastructure.UnitOfWork
         public IOrderRepository OrderRepository { get; }
 
         public IOrderDetailRepository OrderDetailRepository { get; }
+        public INutrionInfoRepository NutrionInfoRepository { get; }
+        public IImportantInfoRepository ImportantInfoRepository { get; }
 
 
         public Task<int> SaveChangeAsync();

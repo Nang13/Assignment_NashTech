@@ -37,6 +37,7 @@ namespace PES.Application.Service
 
                 //? checkParentId is exist
                 var parentCategory1 = await _unitOfWork.CategoryRepository.GetByIdAsync((Guid)request.CategoryParentId) ?? throw new Exception("Not found Parent Category");
+                parentId = (Guid)request.CategoryParentId;
                 rightValue = parentCategory1.CategoryRight;
                 request.CategoryMain = parentCategory1.CategoryMain;
                 await _unitOfWork.CategoryRepository.UpdateCategoryParent((Guid)request.CategoryParentId, rightValue);
@@ -45,7 +46,6 @@ namespace PES.Application.Service
             {
 
                 rightValue = 1;
-                parentId = (Guid)request.CategoryParentId;
 
             }
             //? 1.Check CategoryMain is in system before

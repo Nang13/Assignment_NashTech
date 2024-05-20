@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PES.Application.IService;
 using PES.Application.Utilities;
 using PES.Domain.Constant;
 using PES.Domain.DTOs.Order;
 using PES.Domain.DTOs.Product;
 using PES.Domain.Entities.Model;
+using PES.Infrastructure.Common;
 using PES.Infrastructure.UnitOfWork;
 
 namespace PES.Application.Service
@@ -24,11 +28,13 @@ namespace PES.Application.Service
         */
         private readonly IUnitOfWork _unitOfWork;
         private readonly IClaimsService _claimsService;
+        private readonly ICategoryService _categoryService;
 
-        public ProductService(IUnitOfWork unitOfWork, IClaimsService claimsService)
+        public ProductService(IUnitOfWork unitOfWork, IClaimsService claimsService, ICategoryService categoryService)
         {
             _unitOfWork = unitOfWork;
             _claimsService = claimsService;
+            _categoryService = categoryService;
         }
         public async Task<ProductResponse> AddNewProduct(AddNewProductRequest request)
         {
@@ -39,13 +45,20 @@ namespace PES.Application.Service
                 Price = request.Price,
                 Id = productId,
                 Created = CurrentTime.RecentTime
+                ,
+                CategoryId = request.CategoryId,
+                Quantity = request.Quantity,
+                Description = request.Description
             };
             await _unitOfWork.ProductRepository.AddAsync(product);
             await _unitOfWork.SaveChangeAsync();
 
-            var Task1 = AddInconsequentialImage(request.ListImages.Select(x => x.FileName).ToList(), productId);
+            var Task1 = AddInconsequentialImage(request.ListImages, productId);
 
-            var Task2 = AddMainImage(request.MainImage.FileName, productId);
+            var Task2 = AddMainImage(request.MainImage, productId);
+
+            if (request.NutrionInforrmationRequest is not null) await AddNutrionInformation(request.NutrionInforrmationRequest, productId);
+            if (request.ImformationRequest is not null) await AddImportantInformation(request.ImformationRequest, productId);
 
             await Task.WhenAll(Task1, Task2);
             await _unitOfWork.SaveChangeAsync();
@@ -65,6 +78,37 @@ namespace PES.Application.Service
         }
 
 
+        public async Task AddNutrionInformation(NutrionInforrmationRequest request, Guid ProductId)
+        {
+            NutritionInformation nutrition = new()
+            {
+                Calories = request.Calories,
+                Fiber = request.Fiber,
+                Protein = request.Protein,
+                Sodium = request.Sodium,
+                Sugars = request.Sugars,
+                ProductId = ProductId,
+                Created = DateTime.UtcNow.AddHours(7),
+
+            };
+            await _unitOfWork.NutrionInfoRepository.AddAsync(nutrition);
+            await _unitOfWork.SaveChangeAsync();
+        }
+        public async Task AddImportantInformation(ImportantImformationRequest request, Guid ProductId)
+        {
+            ImportantInformation information = new()
+            {
+                Ingredients = request.Ingredients,
+                LegalDisclaimer = request.LegalDisclaimer,
+                Directions = request.Directions,
+                ProductId = ProductId
+            };
+
+            await _unitOfWork.ImportantInfoRepository.AddAsync(information);
+            await _unitOfWork.SaveChangeAsync();
+        }
+
+
         public async Task AddMainImage(string Images, Guid productId)
         {
             await _unitOfWork.ProductImageRepository.AddAsync(new ProductImage
@@ -78,26 +122,84 @@ namespace PES.Application.Service
 
         public async Task<ProductResponseDetail> GetProductDetail(Guid productId)
         {
-            var product = await _unitOfWork.ProductRepository.FirstOrDefaultAsync(x => x.Id == productId);
-            return new ProductResponseDetail(productId, product.ProductName, product.Price);
+            var product = await _unitOfWork.ProductRepository.FirstOrDefaultAsync(x => x.Id == productId, x => x.ImportantInformation, x => x.NutritionInformation, x => x.ProductImages, x => x.Category);
+
+
+            var nutritionInfo = product.NutritionInformation != null
+                ? new NutrionInfo(product.NutritionInformation.Calories, product.NutritionInformation.Fiber, product.NutritionInformation.Protein, product.NutritionInformation.Sodium, product.NutritionInformation.Sugars)
+                : null;
+
+            var importantInfo = product.ImportantInformation != null
+            ? new ImportantInfo(product.ImportantInformation.Ingredients, product.ImportantInformation.Directions, product.ImportantInformation.LegalDisclaimer)
+            : null;
+
+
+            // return new ProductResponseDetail(productId, product.ProductName, product.Price,
+            //     new NutrionInfo(product.NutritionInformation.Calories, product.NutritionInformation.Fiber, product.NutritionInformation.Protein, product.NutritionInformation.Sodium, product.NutritionInformation.Sugars),
+            //     new ProductCategory(product.Category.Id, product.Category.CategoryName, product.Category.CategoryMain),
+            //     new ImportantInfo(product.ImportantInformation.Ingredients, product.ImportantInformation.Directions, product.ImportantInformation.LegalDisclaimer));
+            return new ProductResponseDetail(productId, product.ProductName, product.Price,
+              nutritionInfo,
+             new ProductCategory(product.Category.Id, product.Category.CategoryName, product.Category.CategoryMain),
+             importantInfo);
         }
 
-        public async Task<List<Product>> GetProducts(GetProductRequest request)
+        public async Task<Pagination<ProductsResponse>> GetProducts(GetProductRequest request)
         {
-            var filterResult = request.Filter.Count > 0 ? [] : _unitOfWork.ProductRepository.GetAllAsync().Result.AsEnumerable();
+            List<Guid> subCategories = [];
+            request.Filter!.Remove("pageSize");
+            request.Filter!.Remove("pageNumber");
+            if (request.Filter.ContainsKey("CategoryId"))
+            {
+
+                subCategories = _categoryService.GetSubCategories(Guid.Parse(request.Filter.GetValueOrDefault("CategoryId"))).Result.Select(x => x.CategoryId).ToList();
+
+            }
+            //  var filterResult = request.Filter.Count > 0 ? [] : _unitOfWork.ProductRepository.GetAllAsync().Result.AsEnumerable();
+            var filterResult = _unitOfWork.ProductRepository.GetAllAsync(x => x.Category, x => x.ProductImages).Result.AsEnumerable();
+            if (!subCategories.IsNullOrEmpty())
+            {
+                foreach (var category in subCategories)
+                {
+                    filterResult = filterResult.Union(FilterUtilities.SelectItems(filterResult, "CategoryId", category.ToString()));
+                }
+            }
             if (request.Filter!.Count > 0)
             {
                 foreach (var filter in request.Filter)
                 {
-                    filterResult = filterResult.Union(FilterUtilities.SelectItems(filterResult, filter.Key, filter.Value));
+                    var checker = FilterUtilities.SelectId(filterResult, filter.Key, filter.Value).Select(x => x.Id).ToList();
+                    filterResult = filterResult.Where(x => checker.Contains(x.Id));
+                    Console.WriteLine(filterResult);
                 }
             }
 
-            return PaginatedList<Product>.Create(
-                source: filterResult.AsQueryable(),
-                pageIndex: request.PageNumber,
-                pageSize: request.PageSize
-            );
+            //return PaginatedList<Product>.Create(
+            //    source: filterResult.AsQueryable(),
+            //    pageIndex: request.PageNumber,
+            //    pageSize: request.PageSize
+            //);
+            //var paginatedProducts = Pagination<ProductResponse>.Create(
+            //source: filterResult.Select(x => new ProductResponse(x.Id, x.ProductName, x.Created)).AsQueryable(),
+            //pageIndex: request.PageNumber,
+            //pageSize: request.PageSize
+            //);
+            var dataCheck = new Pagination<ProductsResponse>
+            {
+                PageIndex = request.PageNumber,
+                PageSize = request.PageSize,
+                TotalItemsCount = filterResult.Count(),
+                Items = PaginatedList<ProductsResponse>.Create(
+                       source: filterResult.Select(x => new ProductsResponse(x.Id, x.ProductName, x.Created, x.ProductImages.FirstOrDefault().ImageUrl, x.Category.CategoryMain, x.Category.CategoryName, x.Price, x.Description)).AsQueryable(),
+                       pageIndex: request.PageNumber,
+                       pageSize: request.PageSize)
+
+
+            };
+            // Serialize the result with reference handling
+
+
+            return dataCheck;
         }
 
         public async Task<ProductResponse> UpdateProduct(Guid id, Dictionary<string, object?> request)

@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PES.Infrastructure", "PES.I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PES.Domain", "PES.Domain\PES.Domain.csproj", "{86DFEF31-928B-4AD6-80C4-5FA355861461}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PES.UI", "PES.UI\PES.UI.csproj", "{CBA7B1A3-EEA2-4BD2-ADEC-1D471B12BC4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PES.UI", "PES.UI\PES.UI.csproj", "{CBA7B1A3-EEA2-4BD2-ADEC-1D471B12BC4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

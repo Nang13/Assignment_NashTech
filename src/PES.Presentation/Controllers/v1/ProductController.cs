@@ -29,7 +29,7 @@ namespace PES.Presentation.Controllers.V1
         ! add firebase to up real picture
         */
         [HttpPost]
-        public async Task<IActionResult> Add([FromForm] AddNewProductRequest request)
+        public async Task<IActionResult> Add( AddNewProductRequest request)
         {
 
             await _productService.AddNewProduct(request);
@@ -56,8 +56,7 @@ namespace PES.Presentation.Controllers.V1
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] Dictionary<string, string> filter, [FromQuery] int pageNumber = 0, [FromQuery] int pageSize = 10)
         {
-            await _productService.GetProducts(new GetProductRequest { Filter = filter, PageNumber = pageNumber, PageSize = pageSize });
-            return Ok("hihi");
+            return Ok(await _productService.GetProducts(new GetProductRequest { Filter = filter, PageNumber = pageNumber, PageSize = pageSize }));
         }
 
 
@@ -67,8 +66,8 @@ namespace PES.Presentation.Controllers.V1
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetailById(Guid id)
         {
-            await _productService.GetProductDetail(id);
-            return Ok("hihi");
+            
+            return Ok(await _productService.GetProductDetail(id));
         }
 
         [HttpDelete("{id}")]

@@ -20,23 +20,31 @@ namespace PES.Presentation.Controllers.v1
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCart(List<CartItem> cartItems)
+        public async Task<IActionResult> AddCart(AddProductToCartRequest cartItems)
         {
             await _cartService.AddProductToCart(cartItems);
             return Ok("Add Cart Successfully");
         }
 
 
-        [HttpPost("uploadImage")]
-        public async Task<IActionResult> UpImage([FromForm]AddIamge request )
+        [HttpGet]
+        public async Task<IActionResult> GetCart()
         {
-            await StorageHandler.UploadFileAsync(request.file, request.file.Name);
-            return Ok("com suon mon hoc");
+            //await _cartService.GetCart();
+            return Ok(await _cartService.GetCart());
         }
 
-        public class AddIamge
-        {
-            public IFormFile file { get; set; }
-        }
+
+        // [HttpPost("uploadImage")]
+        // public async Task<IActionResult> UpImage([FromForm]AddIamge request )
+        // {
+        //     await StorageHandler.UploadFileAsync(request.file, request.file.Name);
+        //     return Ok("com suon mon hoc");
+        // }
+
+        // public class AddIamge
+        // {
+        //     public IFormFile file { get; set; }
+        // }
     }
 }

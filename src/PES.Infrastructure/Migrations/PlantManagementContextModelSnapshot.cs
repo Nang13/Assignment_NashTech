@@ -426,6 +426,9 @@ namespace PES.Infrastructure.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("timestamp with time zone");
 

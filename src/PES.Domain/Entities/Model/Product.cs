@@ -12,6 +12,7 @@ namespace PES.Domain.Entities.Model
         public decimal Price { get; set; } = 0;
         public string Status {get; set; } = "Active";
         public Category Category { get; set; } = null;
+        public string? Description { get; set; }
         public Guid CategoryId { get; set; }
 
         public virtual ICollection<ProductImage> ProductImages{ get; set; } = new List<ProductImage>();

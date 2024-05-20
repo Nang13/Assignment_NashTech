@@ -20,18 +20,39 @@ namespace PES.Domain.DTOs.Product
         [Range(0, int.MaxValue)]
         public decimal Price { get; set; }
 
+        [Required]
+        [Range(0, int.MaxValue)]
+        public int Quantity { get; set; } = 0;
 
-        public List<IFormFile> ListImages { get; set; } = [];
+        public string? Description { get; set; } = null;
+        public ImportantImformationRequest? ImformationRequest { get; set; } = null;
+        public NutrionInforrmationRequest? NutrionInforrmationRequest { get; set; } = null;
 
-        public IFormFile? MainImage { get; set; }
+        public List<string> ListImages { get; set; } = [];
+
+        public string? MainImage { get; set; }
 
 
         //? make the list be unique
-        //public List<Guid> CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
 
     }
+    public class ImportantImformationRequest
+    {
+        public string? Ingredients { get; set; } = null;
+        public string? Directions { get; set; } = null!;
+        public string? LegalDisclaimer { get; set; } = null!;
+    }
 
+    public class NutrionInforrmationRequest
+    {
+        public decimal Calories { get; set; } = 0;
+        public decimal Protein { get; set; } = 0;
+        public decimal Sodium { get; set; } = 0;
 
+        public decimal Fiber { get; set; } = 0;
+        public decimal Sugars { get; set; } = 0;
+    }
     public class UpdateProductRequest : IValidatableObject
     {
         public string? ProductName { get; set; } = null!;

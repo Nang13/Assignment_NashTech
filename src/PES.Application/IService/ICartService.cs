@@ -8,7 +8,7 @@ namespace PES.Application.IService
 {
     public interface ICartService
     {
-        public Task AddProductToCart(List<CartItem> cartItems);
+        public Task AddProductToCart(AddProductToCartRequest cartItems);
         public Task IncreaseQuantity(Guid ProductId);
         public Task DecreaseQuantity(Guid ProductId);
         public Task<Cart> GetCart();

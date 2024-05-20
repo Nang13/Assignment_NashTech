@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using PES.Application.IService;
+using PES.Application.Utilities;
 using PES.Domain.DTOs.Cart;
+using PES.Domain.Entities.Model;
+using PES.Infrastructure.UnitOfWork;
 using StackExchange.Redis;
 
 namespace PES.Application.Service
@@ -16,23 +19,34 @@ namespace PES.Application.Service
         private readonly IDistributedCache _distributedCache;
         private readonly IDatabase _database;
         private readonly IClaimsService _claimsService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CartService(IDistributedCache distributedCache, IDatabase database, IClaimsService claimsService)
+        public CartService(IDistributedCache distributedCache, IDatabase database, IClaimsService claimsService, IUnitOfWork unitOfWork)
         {
             _distributedCache = distributedCache;
             _database = database;
             _claimsService = claimsService;
+            _unitOfWork = unitOfWork;
         }
-        public async Task AddProductToCart(List<CartItem> cartItems)
+        public async Task AddProductToCart(AddProductToCartRequest cartItems)
         {
             //string items = JsonConvert.SerializeObject(cartItems);
-           // _database.HashSet(_claimsService.GetCurrentUserId, "Name", cartItems[0].Name);
+            // _database.HashSet(_claimsService.GetCurrentUserId, "Name", cartItems[0].Name);
             //_database.HashSet(_claimsService.GetCurrentUserId,"Price",cartItems[0].Price.ToString());
+            string user = "a3cf5c94-b866-4b80-982a-243daa7edf87";
+            if (cartItems.CartActionType == 0)
+            {
+                _database.HashSet(user, cartItems.ProductId.ToString(), cartItems.Quantity);
+            }
+            else if (cartItems.CartActionType == 1)
+            {
+                await _database.HashIncrementAsync(user, cartItems.ProductId.ToString(), cartItems.Quantity);
+            }
+            else if (cartItems.CartActionType == 2)
+            {
 
-            string cartKey = $"cart:{1}";
-            string productKey = $"product:{1}";
-
-            _database.HashSet(cartKey, productKey, 2);
+                await _database.HashDecrementAsync(user, cartItems.ProductId.ToString(), cartItems.Quantity);
+            }
         }
 
         public Task DecreaseQuantity(Guid ProductId)
@@ -40,9 +54,35 @@ namespace PES.Application.Service
             throw new NotImplementedException();
         }
 
-        public Task<Cart> GetCart()
+        public async Task<Cart> GetCart()
         {
-            throw new NotImplementedException();
+            string userId = "a3cf5c94-b866-4b80-982a-243daa7edf87";
+            decimal TotalPrice = 0;
+            List<CartItem> carts = [];
+            HashEntry[] dataChecker = _database.HashGetAll(userId);
+            foreach (HashEntry dataCheckerItem in dataChecker)
+            {
+                Product product = await _unitOfWork.ProductRepository.GetByIdAsync(Guid.Parse(dataCheckerItem.Name));
+                CartItem cartItem = new()
+                {
+                    Id = Guid.Parse(dataCheckerItem.Name),
+                    Price = product.Price,
+                    Quantity = int.Parse(dataCheckerItem.Value),
+                    Name = product.ProductName,
+                    TotalPrice = product.Price * int.Parse(dataCheckerItem.Value),
+                    ProductImage = "banana.jpg",
+                };
+                TotalPrice += cartItem.Quantity * cartItem.Price;
+                carts.Add(cartItem);
+
+            }
+
+            return new Cart
+            {
+                TotalPrice = TotalPrice,
+                Items = carts
+
+            };
         }
 
         public Task IncreaseQuantity(Guid ProductId)
