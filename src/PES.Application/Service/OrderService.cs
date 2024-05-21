@@ -28,12 +28,13 @@ namespace PES.Application.Service
         }
         public async Task<OrderResponse> AddOrder(OrderRequest request)
         {
+            string userId  = "a3cf5c94-b866-4b80-982a-243daa7edf87";
             Guid orderId = Guid.NewGuid();
             Order order = new()
             {
                 Id = orderId,
-                CreatedBy = _claimsService.GetCurrentUserId,
-                UserId = _claimsService.GetCurrentUserId,
+                CreatedBy = userId,
+                UserId = userId,
                 TotalPrice = request.Total,
 
             };
@@ -58,7 +59,7 @@ namespace PES.Application.Service
 
         public async Task<OrderSingleResponse> GetOrderDetail(Guid id)
         {
-            string userId = _claimsService.GetCurrentUserId;
+            string userId = "a3cf5c94-b866-4b80-982a-243daa7edf87";
             Order order = await _unitOfWork.OrderRepository.GetByIdAsync(id) ?? throw new Exception("hihi");
             var orderDetail = _unitOfWork.OrderDetailRepository.WhereAsync(x => x.OrderId == id).Result.Select(x => new OrdererDetailResponse(OrderDetailId: x.Id, Price: x.Price)).ToList();
             return new OrderSingleResponse(OrderId: order.Id, TotalPrice: order.TotalPrice, OrdererDetails: orderDetail);
@@ -67,7 +68,7 @@ namespace PES.Application.Service
 
         public async Task<IReadOnlyList<OrderResponse>> GetOrder()
         {
-            string userId = _claimsService.GetCurrentUserId;
+            string userId = "a3cf5c94-b866-4b80-982a-243daa7edf87";
             var order = _unitOfWork.OrderRepository.WhereAsync(x => x.UserId == userId).Result.Select(x => new OrderResponse(OrderId: x.Id, TotalPrice: x.TotalPrice)).ToList();
             return order;
         }

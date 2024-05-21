@@ -44,6 +44,7 @@ namespace PES.Domain.DTOs.Cart
         public int Quantity { get; set; }
         public decimal Price { get; set; }
         public string ProductImage { get; set; }
+        public bool IsSelected { get; set; }
         public decimal TotalPrice {get ;set;}
     }
 }

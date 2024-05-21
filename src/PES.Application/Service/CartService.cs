@@ -71,6 +71,7 @@ namespace PES.Application.Service
                     Name = product.ProductName,
                     TotalPrice = product.Price * int.Parse(dataCheckerItem.Value),
                     ProductImage = "banana.jpg",
+                    IsSelected = false
                 };
                 TotalPrice += cartItem.Quantity * cartItem.Price;
                 carts.Add(cartItem);
