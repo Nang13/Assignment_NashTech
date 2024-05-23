@@ -91,8 +91,20 @@ namespace PES.Application.Service
                 .Select(x => new CategoryResponse
                 {
                     CategoryId = x.Id,
+                    Left = x.CategoryLeft,
+                    Right = x.CategoryRight,
                     CategoryName = x.CategoryName,
+                    ParentId = x.CategoryParentId
                 }).ToList();
+                var parentCategort = _unitOfWork.CategoryRepository.FirstOrDefaultAsync(x => x.Id == categoryParentId).Result;
+                subCategory.Add(new CategoryResponse
+                {
+                    CategoryId = parentCategort.Id,
+                    CategoryName = parentCategort.CategoryName,
+                    Left = parentCategort.CategoryLeft,
+                    Right = parentCategort.CategoryRight,
+                    ParentId = parentCategort.CategoryParentId
+                });
                 return subCategory;
 
             }

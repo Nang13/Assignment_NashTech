@@ -24,6 +24,7 @@ namespace PES.Infrastructure.Repository
 
             // Group by CategoryMain and select the first item from each group
             var groupedCategories = categories
+                .Where(x => x.CategoryLeft == 1)
                 .GroupBy(c => c.CategoryMain)
                 .Select(g => g.First())
                 .Select(c => new CategoryResponse

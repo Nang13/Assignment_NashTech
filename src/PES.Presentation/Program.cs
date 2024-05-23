@@ -29,6 +29,16 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+
+app.Use((context, next) =>
+{
+    context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
+    context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    return next.Invoke();
+});
+
+app.UseCors();
 app.MapControllers();
 
 app.Run();

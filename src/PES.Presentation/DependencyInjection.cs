@@ -114,6 +114,10 @@ namespace PES.Presentation
             });
 
 
+            //? 
+           services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+
+
             return services;
         }
 
