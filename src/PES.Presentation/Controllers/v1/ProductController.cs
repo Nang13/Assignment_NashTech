@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using PES.Application.Helper;
 using PES.Application.IService;
 using PES.Domain.DTOs.Order;
 using PES.Domain.DTOs.Product;
@@ -29,7 +31,7 @@ namespace PES.Presentation.Controllers.V1
         ! add firebase to up real picture
         */
         [HttpPost]
-        public async Task<IActionResult> Add( AddNewProductRequest request)
+        public async Task<IActionResult> Add(AddNewProductRequest request)
         {
 
             await _productService.AddNewProduct(request);
@@ -45,7 +47,7 @@ namespace PES.Presentation.Controllers.V1
         [HttpPatch("{id}")]
         public async Task<IActionResult> Patch(Guid id, UpdateProductRequest request)
         {
-            await _productService.UpdateProduct(id, request.ObjectUpdate);
+            await _productService.UpdateProduct(id, request);
 
             return Ok("Update Product Successfully");
         }
@@ -84,6 +86,14 @@ namespace PES.Presentation.Controllers.V1
             await _productService.AddRatingProduct(productId, request);
             return Ok("Rating Successfully");
         }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> Upload(IFormFile name,string productName)
+        {
+            string imageName = name.FileName + Regex.Replace(productName, @"\s", "");
+            await StorageHandler.UploadFileAsync(name,imageName);
+            return Ok(imageName);
+        } 
 
     }
 }

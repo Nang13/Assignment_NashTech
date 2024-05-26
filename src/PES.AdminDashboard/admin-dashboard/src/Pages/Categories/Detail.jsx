@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getCategoryDetail } from '../../API/index';
 import { useParams } from 'react-router-dom';
 import { Button, Modal } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 function CategoryDetail() {
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
@@ -42,6 +42,9 @@ function CategoryDetail() {
                         <div className="mb-5">
                             <div className="flex items-center text-base">
                                 <div className="ml-2 text-gray-700">{subcategory.categoryName}</div>
+                                <PlusOutlined onClick={() => showModal()} style={{ color: 'green' }} className='pl-3' />
+                                <DeleteOutlined onClick={() => showModal()} style={{ color: 'red' }} className='pl-3' />
+                                <EditOutlined onClick={() => showModal()} style={{ color: 'black' }} className='pl-3' />
                             </div>
 
                             <div className="pl-5 border-t border-gray-300">
@@ -62,13 +65,9 @@ function CategoryDetail() {
                     <li key={category.categoryId} className="mb-5">
                         <div className="flex items-center text-base">
                             <div className="ml-2 text-gray-700">{category.categoryName}</div>
-                            <Button
-                                type="primary"
-                                onClick={() => showModal()}
-                                className="ml-2"
-                            >
-                                <PlusOutlined />
-                            </Button>
+                            <PlusOutlined onClick={() => showModal()} style={{ color: 'green' }} className='pl-3' />
+                            <DeleteOutlined onClick={() => showModal()} style={{ color: 'red' }} className='pl-3' />
+                            <EditOutlined onClick={() => showModal()} style={{ color: 'black' }} className='pl-3' />
                         </div>
                         <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                             <p>Some contents...</p>

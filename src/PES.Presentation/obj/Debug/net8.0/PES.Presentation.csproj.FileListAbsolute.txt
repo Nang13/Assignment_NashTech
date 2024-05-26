@@ -1,3 +1,11 @@
+C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.csproj.AssemblyReference.cache
+C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.GeneratedMSBuildEditorConfig.editorconfig
+C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.AssemblyInfoInputs.cache
+C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.AssemblyInfo.cs
+C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.csproj.CoreCompileInputs.cache
+C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.MvcApplicationPartsAssemblyInfo.cs
+C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.MvcApplicationPartsAssemblyInfo.cache
+C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.sourcelink.json
 C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\appsettings.Development.json
 C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\appsettings.json
 C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\PES.Presentation.exe
@@ -149,14 +157,6 @@ C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\PES.Infrastruc
 C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\PES.Application.pdb
 C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\PES.Domain.pdb
 C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\PES.Infrastructure.pdb
-C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.csproj.AssemblyReference.cache
-C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.GeneratedMSBuildEditorConfig.editorconfig
-C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.AssemblyInfoInputs.cache
-C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.AssemblyInfo.cs
-C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.csproj.CoreCompileInputs.cache
-C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.MvcApplicationPartsAssemblyInfo.cs
-C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.MvcApplicationPartsAssemblyInfo.cache
-C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.sourcelink.json
 C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\staticwebassets.build.json
 C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\staticwebassets.development.json
 C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\staticwebassets\msbuild.PES.Presentation.Microsoft.AspNetCore.StaticWebAssets.props

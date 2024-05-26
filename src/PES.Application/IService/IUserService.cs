@@ -17,7 +17,7 @@ namespace PES.Application.IService
         public Task<string> ForgetPassword(string Email);
 
         public Task<ApplicationUser> UpdateUser(string userid, UpdateUseRequest request);
-        public Task<IQueryable<ApplicationUser>> GetUsers();
+        public Task<IQueryable<UserDTO>> GetUsers();
         public Task<ApplicationUser> GetUser(string UserId);
 
         public Task<ApplicationUser> DisableUser(string UserId);

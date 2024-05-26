@@ -8,6 +8,7 @@ using PES.Domain.DTOs.User;
 
 namespace PES.Presentation.Controllers.V1
 {
+    [ApiController]
     public class UserController : DefaultController
     {
         private readonly IUserService _userService;
@@ -20,7 +21,7 @@ namespace PES.Presentation.Controllers.V1
         public async Task<IActionResult> Get()
         {
 
-            return Ok(_userService.GetUsers());
+            return Ok( await _userService.GetUsers());
         }
 
 

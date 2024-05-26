@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Form, Checkbox, Input, Button, Upload } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 
 function AddProductForm() {
     const [productData, setProductData] = useState({
@@ -22,8 +24,10 @@ function AddProductForm() {
         mainImage: '',
         categoryId: ''
     });
+
+    const [form] = Form.useForm();
     const [showOptionalFields, setShowOptionalFields] = useState(false);
-    const [showImage,setShowImage ] = useState(false);
+    const [showImage, setShowImage] = useState(false);
     const [showNutrionAdd, setshowNutrionAdd] = useState(false);
 
     const handleChange = (e) => {
@@ -32,6 +36,67 @@ function AddProductForm() {
             ...productData,
             [name]: value
         });
+    };
+    const onFinish = async (values) => {
+        console.log('Received values:', values);
+        console.log(values.listImages)
+         values.listImages.fileList.forEach(element => {
+            uploadImage(values.productName, element);
+        });
+        console.log(values["productName"])
+
+        try {
+            // Construct the data payload
+            const data = {
+                productName: values.productName,
+                price: values.price,
+                quantity: values.quantity,
+                description: values.description,
+                imformationRequest: showOptionalFields ? {
+                    ingredients: values.ingredients_optional,
+                    directions: values.directions_optional,
+                    legalDisclaimer: values.legalDisclaimer_optional
+                } : null,
+                nutrionInforrmationRequest: showNutrionAdd ? {
+                    calories: values.calories,
+                    protein: values.protein,
+                    sodium: values.sodium,
+                    fiber: values.fiber,
+                    sugars: values.sugars
+                } : null,
+                listImages: values.listImages.fileList.map(file => file.name), // Assuming listImages is an array of files
+                categoryId: '78afaccf-33f3-4010-a362-812affb31876' // Replace with actual category ID
+            };
+
+            // Make API request to add product with image data
+            const response = await fetch('http://localhost:5046/api/v1/Product', {
+                method: 'Post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                console.log(response)
+                throw new Error('Failed to add product');
+            }
+
+            const responseData = await response.json();
+            console.log('Product added successfully:', responseData);
+            // Optionally, do something with the response data
+
+            // Reset form after submission
+            form.resetFields();
+        } catch (error) {
+            console.error('Error adding product:', error);
+            // Handle error here
+        }
+      // form.resetFields();
+    };
+
+    const onFinishFailed = (errorInfo) => {
+        console.log('Failed:', errorInfo);
     };
 
     const handleCheckboxChange = () => {
@@ -44,279 +109,133 @@ function AddProductForm() {
         setshowNutrionAdd(!showNutrionAdd);
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Send productData to your API endpoint for adding a new product
-        console.log('Product data:', productData);
-        // Clear the form after submission
-        setProductData({
-            productName: '',
-            price: '',
-            quantity: '',
-            description: '',
-            informationRequest: {
-                ingredients: '',
-                directions: '',
-                legalDisclaimer: ''
-            },
-            nutritionInformationRequest: {
-                calories: '',
-                protein: '',
-                sodium: '',
-                fiber: '',
-                sugars: ''
-            },
-            listImages: [],
-            mainImage: '',
-            categoryId: ''
-        });
-        setShowOptionalFields(false);
+    //? upload Image 
+    const uploadImage = async (productName, file) => {
+            const formData = new FormData();
+            formData.append( file, file.name);
+    
+            const response = await fetch(`http://localhost:5046/api/v1/Product/upload?productName=${encodeURIComponent(productName)}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'multipart/form-data' // Correctly set the Content-Type header
+                },
+                body: formData
+            });
     };
+  
 
     return (
         <div className="max-w-md mx-auto bg-white p-6 rounded-md shadow-md">
             <h2 className="text-lg font-semibold mb-4">Add New Product</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label className="block">
-                        Product Name:
-                        <input
-                            type="text"
-                            name="productName"
-                            value={productData.productName}
-                            onChange={handleChange}
-                            className="form-input mt-1 block w-full"
-                            required
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label className="block">
-                        Price:
-                        <input
-                            type="number"
-                            name="price"
-                            value={productData.price}
-                            onChange={handleChange}
-                            className="form-input mt-1 block w-full"
-                            required
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label className="block">
-                        Quantity:
-                        <input
-                            type="number"
-                            name="quantity"
-                            value={productData.quantity}
-                            onChange={handleChange}
-                            className="form-input mt-1 block w-full"
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label className="block">
-                        Description:
-                        <textarea
-                            name="description"
-                            value={productData.description}
-                            onChange={handleChange}
-                            className="form-textarea mt-1 block w-full"
-                            required
-                        ></textarea>
-                    </label>
-                </div>
-                <div className="mb-4">
-                    <label className="flex items-center">
-                        <input
-                            type="checkbox"
-                            className="form-checkbox"
-                            checked={showImage}
-                            onChange={handleCheckboxChangeShowImage}
-                        />
-                        <span className="ml-2">Add Image Options</span>
-                    </label>
-                </div>
+            <Form
+                form={form}
+                name="basic"
+                initialValues={{ remember: true }}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+                layout="vertical"
+            >
+                <Form.Item
+                    label="Product Name"
+                    name="productName"
+                    rules={[{ required: true, message: 'Please input the product name!' }]}
+                >
+                    <Input onChange={handleChange} />
+                </Form.Item>
+
+                <Form.Item
+                    label="Price"
+                    name="price"
+                    rules={[{ required: true, message: 'Please input the price!' }]}
+                >
+                    <Input type="number" onChange={handleChange} />
+                </Form.Item>
+
+                <Form.Item label="Quantity" name="quantity">
+                    <Input type="number" onChange={handleChange} />
+                </Form.Item>
+
+                <Form.Item
+                    label="Description"
+                    name="description"
+                    rules={[{ required: true, message: 'Please input the description!' }]}
+                >
+                    <Input.TextArea onChange={handleChange} />
+                </Form.Item>
+
+                <Form.Item>
+                    <Checkbox checked={showImage} onChange={handleCheckboxChangeShowImage}>
+                        Add Image Options
+                    </Checkbox>
+                </Form.Item>
+
                 {showImage && (
                     <div>
-                        {/* Optional fields */}
-                        <div>
-                            <label className="block">
-                                Ingredients:
-                                <input
-                                    type="text"
-                                    name="ingredients"
-                                    value={productData.informationRequest.ingredients}
-                                    onChange={(e) => handleChange({ target: { name: 'ingredients', value: e.target.value } })}
-                                    className="form-input mt-1 block w-full"
-                                />
-                            </label>
-                        </div>
-                        <div>
-                            <label className="block">
-                                Directions:
-                                <input
-                                    type="text"
-                                    name="directions"
-                                    value={productData.informationRequest.directions}
-                                    onChange={(e) => handleChange({ target: { name: 'directions', value: e.target.value } })}
-                                    className="form-input mt-1 block w-full"
-                                />
-                            </label>
-                        </div>
-                        <div>
-                            <label className="block">
-                                Legal Disclaimer:
-                                <input
-                                    type="text"
-                                    name="legalDisclaimer"
-                                    value={productData.informationRequest.legalDisclaimer}
-                                    onChange={(e) => handleChange({ target: { name: 'legalDisclaimer', value: e.target.value } })}
-                                    className="form-input mt-1 block w-full"
-                                />
-                            </label>
-                        </div>
+                        <Form.Item label="Images" name="listImages">
+                            <Upload
+                                beforeUpload={() => false}
+                                listType="picture"
+                                maxCount={10} // Maximum number of images user can upload
+                                accept="image/*"
+                            >
+                                <Button icon={<UploadOutlined />}>Upload</Button>
+                            </Upload>
+                        </Form.Item>
                     </div>
                 )}
-                <div className="mb-4">
-                    <label className="flex items-center">
-                        <input
-                            type="checkbox"
-                            className="form-checkbox"
-                            checked={showOptionalFields}
-                            onChange={handleCheckboxChange}
-                        />
-                        <span className="ml-2">Show Optional 1</span>
-                    </label>
-                </div>
+
+                <Form.Item>
+                    <Checkbox checked={showOptionalFields} onChange={handleCheckboxChange}>
+                        Add Important Information
+                    </Checkbox>
+                </Form.Item>
 
                 {showOptionalFields && (
                     <div>
-                        {/* Optional fields */}
-                        <div>
-                            <label className="block">
-                                Ingredients:
-                                <input
-                                    type="text"
-                                    name="ingredients"
-                                    value={productData.informationRequest.ingredients}
-                                    onChange={(e) => handleChange({ target: { name: 'ingredients', value: e.target.value } })}
-                                    className="form-input mt-1 block w-full"
-                                />
-                            </label>
-                        </div>
-                        <div>
-                            <label className="block">
-                                Directions:
-                                <input
-                                    type="text"
-                                    name="directions"
-                                    value={productData.informationRequest.directions}
-                                    onChange={(e) => handleChange({ target: { name: 'directions', value: e.target.value } })}
-                                    className="form-input mt-1 block w-full"
-                                />
-                            </label>
-                        </div>
-                        <div>
-                            <label className="block">
-                                Legal Disclaimer:
-                                <input
-                                    type="text"
-                                    name="legalDisclaimer"
-                                    value={productData.informationRequest.legalDisclaimer}
-                                    onChange={(e) => handleChange({ target: { name: 'legalDisclaimer', value: e.target.value } })}
-                                    className="form-input mt-1 block w-full"
-                                />
-                            </label>
-                        </div>
+                        <Form.Item label="Ingredients" name="ingredients_optional">
+                            <Input onChange={handleChange} />
+                        </Form.Item>
+                        <Form.Item label="Directions" name="directions_optional">
+                            <Input onChange={handleChange} />
+                        </Form.Item>
+                        <Form.Item label="Legal Disclaimer" name="legalDisclaimer_optional">
+                            <Input onChange={handleChange} />
+                        </Form.Item>
                     </div>
                 )}
-                <div className="mb-4">
-                    <label className="flex items-center">
-                        <input
-                            type="checkbox"
-                            className="form-checkbox"
-                            checked={showNutrionAdd}
-                            onChange={handleCheckboxChangeNutrionInformation}
-                        />
-                        <span className="ml-2">Show Optional 2</span>
-                    </label>
-                </div>
+
+                <Form.Item>
+                    <Checkbox checked={showNutrionAdd} onChange={handleCheckboxChangeNutrionInformation}>
+                        Add Nutrion Information
+                    </Checkbox>
+                </Form.Item>
+
                 {showNutrionAdd && (
                     <div>
-                        {/* Optional fields */}
-                        <div>
-                            <label className="block">
-                                Calories:
-                                <input
-                                    type="number"
-                                    name="calories"
-                                    value={productData.nutritionInformationRequest.calories}
-                                    onChange={(e) => handleChange({ target: { name: 'calories', value: e.target.value } })}
-                                    className="form-input mt-1 block w-full"
-                                />
-                            </label>
-                        </div>
-                        <div>
-                            <label className="block">
-                                Protein:
-                                <input
-                                    type="number"
-                                    name="protein"
-                                    value={productData.nutritionInformationRequest.protein}
-                                    onChange={(e) => handleChange({ target: { name: 'protein', value: e.target.value } })}
-                                    className="form-input mt-1 block w-full"
-                                />
-                            </label>
-                        </div>
-                        <div>
-                            <label className="block">
-                                Sodium:
-                                <input
-                                    type="number"
-                                    name="sodium"
-                                    value={productData.nutritionInformationRequest.sodium}
-                                    onChange={(e) => handleChange({ target: { name: 'sodium', value: e.target.value } })}
-                                    className="form-input mt-1 block w-full"
-                                />
-                            </label>
-                        </div>
-                        <div>
-                            <label className="block">
-                                Fiber:
-                                <input
-                                    type="number"
-                                    name="fiber"
-                                    value={productData.nutritionInformationRequest.fiber}
-                                    onChange={(e) => handleChange({ target: { name: 'fiber', value: e.target.value } })}
-                                    className="form-input mt-1 block w-full"
-                                />
-                            </label>
-                        </div>
-                        <div>
-                            <label className="block">
-                                Sugars:
-                                <input
-                                    type="number"
-                                    name="sugars"
-                                    value={productData.nutritionInformationRequest.sugars}
-                                    onChange={(e) => handleChange({ target: { name: 'sugars', value: e.target.value } })}
-                                    className="form-input mt-1 block w-full"
-                                />
-                            </label>
-                        </div>
+                        <Form.Item label="Calories" name="calories">
+                            <Input type="number" onChange={handleChange} />
+                        </Form.Item>
+                        <Form.Item label="Protein" name="protein">
+                            <Input type="number" onChange={handleChange} />
+                        </Form.Item>
+                        <Form.Item label="Sodium" name="sodium">
+                            <Input type="number" onChange={handleChange} />
+                        </Form.Item>
+                        <Form.Item label="Fiber" name="fiber">
+                            <Input type="number" onChange={handleChange} />
+                        </Form.Item>
+                        <Form.Item label="Sugars" name="sugars">
+                            <Input type="number" onChange={handleChange} />
+                        </Form.Item>
                     </div>
                 )}
 
-
-                <button
-                    type="submit"
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-                >
-                    Add Product
-                </button>
-            </form>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Add Product
+                    </Button>
+                </Form.Item>
+            </Form>
         </div>
     );
 }

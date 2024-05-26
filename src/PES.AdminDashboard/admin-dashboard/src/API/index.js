@@ -38,4 +38,9 @@ export const getCategoryDetail = async ({ id }) => {
     return await res.json();
   };
 
+  export const getUsers = async () => {
+    const res = await fetch("http://localhost:5046/api/v1/User");
+    return await res.json();
+};
+
 

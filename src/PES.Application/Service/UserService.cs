@@ -43,9 +43,9 @@ namespace PES.Application.Service
             return user;
         }
 
-        public async Task<IQueryable<ApplicationUser>> GetUsers()
+        public async Task<IQueryable<UserDTO>> GetUsers()
         {
-            return _userManager.Users.AsQueryable();
+            return _userManager.Users.AsQueryable().Select(x => new UserDTO(x.Id, x.UserName,x.Email,x.LockoutEnabled));
         }
 
         public async Task<string> Login(LoginRequest loginRequest)

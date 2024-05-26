@@ -38,6 +38,7 @@ namespace PES.Application.Service
         }
         public async Task<ProductResponse> AddNewProduct(AddNewProductRequest request)
         {
+            request.MainImage = request.ListImages.FirstOrDefault();
             Guid productId = Guid.NewGuid();
             Product product = new()
             {
@@ -133,6 +134,9 @@ namespace PES.Application.Service
             ? new ImportantInfo(product.ImportantInformation.Ingredients, product.ImportantInformation.Directions, product.ImportantInformation.LegalDisclaimer)
             : null;
 
+            var productImage = product.ProductImages != null
+                ? product.ProductImages.Select(x => new ProductImageResponse(x.ImageUrl, x.IsMain)).ToList() : null;
+
 
             // return new ProductResponseDetail(productId, product.ProductName, product.Price,
             //     new NutrionInfo(product.NutritionInformation.Calories, product.NutritionInformation.Fiber, product.NutritionInformation.Protein, product.NutritionInformation.Sodium, product.NutritionInformation.Sugars),
@@ -141,7 +145,7 @@ namespace PES.Application.Service
             return new ProductResponseDetail(productId, product.ProductName, product.Price,
               nutritionInfo,
              new ProductCategory(product.Category.Id, product.Category.CategoryName, product.Category.CategoryMain),
-             importantInfo);
+             importantInfo, productImage);
         }
 
         public async Task<Pagination<ProductsResponse>> GetProducts(GetProductRequest request)
@@ -202,9 +206,29 @@ namespace PES.Application.Service
             return dataCheck;
         }
 
-        public async Task<ProductResponse> UpdateProduct(Guid id, Dictionary<string, object?> request)
+        public async Task<ProductResponse> UpdateProduct(Guid id, UpdateProductRequest request)
         {
-            await _unitOfWork.ProductRepository.ExcuteUpdate(id, request);
+            if(request.ImportantImformationRequest is not null)
+            {
+                var Imrequest = await _unitOfWork.ImportantInfoRepository.FirstOrDefaultAsync(x => x.ProductId == id);
+                Imrequest.Ingredients = request.ImportantImformationRequest.Ingredients;
+                Imrequest.Directions = request.ImportantImformationRequest.Directions;
+                Imrequest.LegalDisclaimer = request.ImportantImformationRequest.LegalDisclaimer;
+                 _unitOfWork.ImportantInfoRepository.Update(Imrequest);
+            }
+            if(request.NutrionInforrmationRequest is not null)
+            {
+                var NuRequest = await _unitOfWork.NutrionInfoRepository.FirstOrDefaultAsync(x => x.ProductId == id);
+                NuRequest.Fiber = request.NutrionInforrmationRequest.Fiber;
+                NuRequest.Sodium = request.NutrionInforrmationRequest.Sodium;
+                NuRequest.Sugars = request.NutrionInforrmationRequest.Sugars;
+                NuRequest.Protein = request.NutrionInforrmationRequest.Protein;
+                NuRequest.Calories = request.NutrionInforrmationRequest.Calories;
+                NuRequest.Fiber = request.NutrionInforrmationRequest.Fiber;
+                _unitOfWork.NutrionInfoRepository.Update(NuRequest);
+            }
+            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.ProductRepository.ExcuteUpdate(id, request.ObjectUpdate);
             return new ProductResponse(Guid.NewGuid(), "com suon hoc mon", DateTime.UtcNow);
         }
 

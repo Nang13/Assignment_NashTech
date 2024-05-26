@@ -30,7 +30,8 @@ namespace PES.Domain.DTOs.Product
 
         public List<string> ListImages { get; set; } = [];
 
-        public string? MainImage { get; set; }
+        [JsonIgnore]
+        public string? MainImage { get; set; } 
 
 
         //? make the list be unique
@@ -56,29 +57,42 @@ namespace PES.Domain.DTOs.Product
     public class UpdateProductRequest : IValidatableObject
     {
         public string? ProductName { get; set; } = null!;
-
         public decimal? Price { get; set; } = null!;
+        public string? Description { get; set; } = null!;
+        public int? Quantity { get; set; } = null!;
+        public Guid? CategoryId { get; set; } = null!;
+        public NutrionInforrmationRequest? NutrionInforrmationRequest { get; set; } = null!;
+
+        public ImportantImformationRequest? ImportantImformationRequest { get; set; } = null!;
+        public List<string> ListImages { get; set; } = [];
 
         [JsonIgnore]
         public Dictionary<string, object?>? ObjectUpdate { get; set; } = [];
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (ProductName is not null)
+            var propertiesToUpdate = new Dictionary<string, object>
+{
+    { nameof(ProductName), ProductName },
+    { nameof(Price), Price },
+    { nameof(Description), Description },
+    { nameof(Quantity), Quantity },
+    { nameof(CategoryId), CategoryId }
+};
+
+            foreach (var property in propertiesToUpdate)
             {
-                ObjectUpdate.Add(nameof(ProductName), ProductName);
+                if (property.Value != null)
+                {
+                    ObjectUpdate.Add(property.Key, property.Value);
+                }
             }
-            if (Price is not null)
+
+            if (ObjectUpdate.Count == 0)
             {
-                ObjectUpdate.Add(nameof(Price), Price);
-            }
-
-
-            if (ProductName is null && Price is null)
-            {
-
                 yield return new ValidationResult("Nothing to update");
             }
+
 
         }
     }

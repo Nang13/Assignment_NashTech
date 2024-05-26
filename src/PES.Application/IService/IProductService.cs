@@ -12,7 +12,7 @@ namespace PES.Application.IService
     public interface IProductService
     {
         Task<ProductResponse> AddNewProduct(AddNewProductRequest request);
-        Task<ProductResponse> UpdateProduct(Guid id,Dictionary<string,object?> request);
+        Task<ProductResponse> UpdateProduct(Guid id, UpdateProductRequest request);
         Task<Pagination<ProductsResponse>> GetProducts(GetProductRequest request);
         Task<ProductResponseDetail> GetProductDetail(Guid productId);
 
