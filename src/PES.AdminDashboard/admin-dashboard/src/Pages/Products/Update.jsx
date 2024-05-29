@@ -7,10 +7,12 @@ import { useParams } from 'react-router';
 const UpdateProduct = () => {
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
+    const [changedFields, setChangedFields] = useState({});
     const [newImage, setNewImage] = useState(null);
     const [showOptionalFields, setShowOptionalFields] = useState(false);
     const [showNutrionAdd, setshowNutrionAdd] = useState(false);
     const [updatedProduct, setUpdatedProduct] = useState({
+        id: '',
         productName: '',
         price: 0,
         description: '',
@@ -31,7 +33,6 @@ const UpdateProduct = () => {
         productImages: []
     });
 
-    const [changedFields, setChangedFields] = useState([]);
 
     useEffect(() => {
         setLoading(true);
@@ -72,8 +73,13 @@ const UpdateProduct = () => {
                 ...prevState,
                 productImages: [...prevState.productImages, { url: newImage, isLocal: true }] // Set isLocal to true for local images
             }));
+            setChangedFields(prev => ({
+                ...prev,
+                productImages: true
+            }));
             setNewImage(null);
         }
+
     };
 
     const handleDeleteImage = (index) => {
@@ -81,61 +87,127 @@ const UpdateProduct = () => {
             ...prevState,
             productImages: prevState.productImages.filter((_, i) => i !== index)
         }));
-    };
-    const handleChange = (fieldName, value) => {
-        setUpdatedProduct({
-            ...updatedProduct,
-            [fieldName]: value
-        });
-        if (!changedFields.includes(fieldName)) {
-            setChangedFields([...changedFields, fieldName]);
-        }
+        setChangedFields(prev => ({
+            ...prev,
+            productImages: true
+        }));
+
     };
 
-    const handleNutritionalInfoChange = (fieldName, value) => {
-        setUpdatedProduct({
-            ...updatedProduct,
-            nutrionInforrmationRequest: {
-                ...updatedProduct.nutrionInforrmationRequest,
-                [fieldName]: value
-            }
-        });
-        if (!changedFields.includes(fieldName)) {
-            setChangedFields([...changedFields, fieldName]);
-        }
-    };
     const handleInputChange = (field, value) => {
-        setUpdatedProduct({
-            ...updatedProduct,
-            [field]: value,
+        const keys = field.split('.');
+        setUpdatedProduct(prevState => {
+            let updated = { ...prevState };
+            let current = updated;
+
+            // Iterate through keys to reach the target field
+            for (let i = 0; i < keys.length - 1; i++) {
+                if (!current[keys[i]]) {
+                    current[keys[i]] = {};
+                }
+                current = current[keys[i]];
+            }
+
+            // Update the value of the target field
+            current[keys[keys.length - 1]] = value;
+
+            // Mark the field as changed
+            setChangedFields(prev => ({
+                ...prev,
+                [field]: true
+            }));
+
+            return updated;
         });
     };
 
-    const handleImportantInfoChange = (fieldName, value) => {
-        setUpdatedProduct({
-            ...updatedProduct,
-            importantImformationRequest: {
-                ...updatedProduct.importantImformationRequest,
-                [fieldName]: value
+
+    const handleUpdate = async () => {
+        const payload = {};
+        Object.keys(changedFields).forEach(field => {
+            const keys = field.split('.');
+            let current = payload;
+            let productCurrent = updatedProduct;
+
+            // Iterate through keys to construct the payload
+            for (let i = 0; i < keys.length; i++) {
+                if (i === keys.length - 1) {
+                    current[keys[i]] = productCurrent[keys[i]];
+                } else {
+                    if (!current[keys[i]]) {
+                        current[keys[i]] = {};
+                    }
+                    current = current[keys[i]];
+                    productCurrent = productCurrent[keys[i]];
+                }
             }
         });
-        if (!changedFields.includes(fieldName)) {
-            setChangedFields([...changedFields, fieldName]);
+
+
+
+
+        console.log(payload);
+        const imageUploadPromises = updatedProduct.productImages.map(async (image) => {
+            console.log(image)
+            if (image.isLocal) {
+                const uploadedUrl = await uploadImage(updatedProduct.productName, image.url);
+                return { ...image, url: uploadedUrl, isLocal: false };
+            }
+            return image;
+        });
+
+        await Promise.all(imageUploadPromises);
+        if (payload.productImages) {
+
+            const transformedArray = payload.productImages.map((item, index) => {
+                const isMain = item.isMain !== undefined ? item.isMain : false; // Default value if isMain is not provided
+                const fileName = item.url instanceof File ? item.url.name : item.url; // Get the fileName from url if it's a File object
+                return fileName; // Return the transformed object
+            });
+            payload.productImages = transformedArray;
+        }
+
+
+        // fetch(`http://localhost:5046/api/v1/Product/${updatedProduct.id}`, {
+        //     method: 'PATCH',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(payload)
+        // })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         console.log('Success:', data);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //     });
+
+    };
+
+    const uploadImage = async (productName, file) => {
+        try {
+            console.log(productName);
+            const formData = new FormData();
+            formData.append("imageFile", file);
+            
+            const response = await fetch(`http://localhost:5046/api/v1/Product/upload?productName=${encodeURIComponent(productName)}`, {
+                method: 'POST',
+                body: formData
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to upload image');
+            }
+    
+            const data = await response.json();
+            console.log('Image uploaded successfully:', data);
+            return data; // Return any response data if needed
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            throw error;
         }
     };
 
-    const  handleUpdate = () => {
-        // Prepare data to be sent in the patch request
-        const dataToSend = {};
-        changedFields.forEach(fieldName => {
-            dataToSend[fieldName] = updatedProduct[fieldName];
-        });
-
-        // Send patch request to API with dataToSend
-        console.log('Fields changed:', changedFields);
-        console.log('Data to send:', dataToSend);
-    };
-    const handleImageChange = (e) => {
+    const handleImageChange = (e) => {  
         setNewImage(e.target.files[0]);
     };
 
@@ -155,14 +227,13 @@ const UpdateProduct = () => {
                                                 alt={`${updatedProduct.productName} image ${index + 1}`}
                                                 className="object-cover w-full h-64"
                                             />
-                                            {image.isLocal && (
-                                                <Button
-                                                    type="text"
-                                                    icon={<CloseOutlined />}
-                                                    onClick={() => handleDeleteImage(index)}
-                                                    className="absolute top-2 right-2 bg-white rounded-full"
-                                                />
-                                            )}
+                                            <Button
+                                                type="text"
+                                                icon={<CloseOutlined />}
+                                                onClick={() => handleDeleteImage(index)}
+                                                className="absolute top-2 right-2 bg-white rounded-full"
+                                            />
+
                                         </div>
                                     ))}
                                 </Carousel>
@@ -258,6 +329,7 @@ const UpdateProduct = () => {
                                         value={updatedProduct.nutrionInfo?.protein || ''}
                                         onChange={e => handleInputChange('nutrionInfo.protein', e.target.value)}
                                         className="w-full mb-2"
+                                        placeholder='Nutrion Info'
                                     />
                                 </li>
                                 <li>

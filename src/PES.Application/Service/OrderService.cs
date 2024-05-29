@@ -59,7 +59,7 @@ namespace PES.Application.Service
 
         public async Task<OrderSingleResponse> GetOrderDetail(Guid id)
         {
-            string userId = "a3cf5c94-b866-4b80-982a-243daa7edf87";
+            string userId = "a3cf5c94-b866-4b80-982a-243daa7edf87f";
             Order order = await _unitOfWork.OrderRepository.GetByIdAsync(id) ?? throw new Exception("hihi");
             var orderDetail = _unitOfWork.OrderDetailRepository.WhereAsync(x => x.OrderId == id).Result.Select(x => new OrdererDetailResponse(OrderDetailId: x.Id, Price: x.Price)).ToList();
             return new OrderSingleResponse(OrderId: order.Id, TotalPrice: order.TotalPrice, OrdererDetails: orderDetail);

@@ -31,7 +31,7 @@ namespace PES.Domain.DTOs.Product
         public List<string> ListImages { get; set; } = [];
 
         [JsonIgnore]
-        public string? MainImage { get; set; } 
+        public string? MainImage { get; set; }
 
 
         //? make the list be unique
@@ -61,10 +61,10 @@ namespace PES.Domain.DTOs.Product
         public string? Description { get; set; } = null!;
         public int? Quantity { get; set; } = null!;
         public Guid? CategoryId { get; set; } = null!;
-        public NutrionInforrmationRequest? NutrionInforrmationRequest { get; set; } = null!;
+        public NutrionInforrmationRequest? nutrionInfo { get; set; } = null!;
 
-        public ImportantImformationRequest? ImportantImformationRequest { get; set; } = null!;
-        public List<string> ListImages { get; set; } = [];
+        public ImportantImformationRequest? importantInfo { get; set; } = null!;
+        public List<string> productImages { get; set; } = [];
 
         [JsonIgnore]
         public Dictionary<string, object?>? ObjectUpdate { get; set; } = [];
@@ -90,7 +90,10 @@ namespace PES.Domain.DTOs.Product
 
             if (ObjectUpdate.Count == 0)
             {
-                yield return new ValidationResult("Nothing to update");
+                if (nutrionInfo is null && importantInfo is null && productImages is null)
+                {
+                    yield return new ValidationResult("Nothing to update");
+                }
             }
 
 

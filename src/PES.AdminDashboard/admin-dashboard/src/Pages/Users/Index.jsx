@@ -3,26 +3,32 @@ import { Avatar, Rate, Space, Table, Typography, Button, Select, Input } from "a
 import { getUsers } from '../../API';
 import { Link } from 'react-router-dom';
 import { CheckOutlined, UserOutlined } from "@ant-design/icons";
-import Search from 'antd/es/transfer/search';
 
 
 function User() {
   const { Option } = Select;
+  const {Search } = Input;
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const [searchType, setSearchType] = useState('UserName');
+  const [searchType, setSearchType] = useState('Name');
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  const fetchUsers = async (query = '', type = 'name') => {
+  const fetchUsers = async (query = '', type = 'Name') => {
+    console.log(query)
+    console.log(type)
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5046/api/v1/User?${type}=${query}`);
+      var response = await fetch(`http://localhost:5046/api/v1/User?pageNumber=0&pageSize=10`);
+      if (query != '') {
+        response = await fetch(`http://localhost:5046/api/v1/User?${type}=${query}&pageNumber=0&pageSize=10`);
+      }
       const data = await response.json();
-      setUsers(data);
+
+      setUsers(data["items"]);
     } catch (error) {
       console.error('Error fetching users:', error);
     } finally {
@@ -68,11 +74,13 @@ function User() {
     }
   };
 
-  const handleSearch = (e) => {
-    const searchText = e.target.value.toLowerCase();
-    setSearchText(searchText);
-    fetchUsers(searchText, searchType); // Call the API with the search query
+
+
+  const handleSearch = (value) => {
+    setSearchText(value);
+    fetchUsers(value, searchType);
   };
+
 
   const handleSearchTypeChange = (value) => {
     setSearchType(value);
@@ -88,19 +96,18 @@ function User() {
       <Typography.Title level={4}>User</Typography.Title>
       <div className="flex space-x-4 mb-6">
         <Select
-          defaultValue="UserName"
+          defaultValue="Name"
           onChange={handleSearchTypeChange}
           className="w-1/4"
         >
-          <Option value="UserName">Name</Option>
+          <Option value="Name">Name</Option>
           <Option value="Email">Email</Option>
         </Select>
         <Search
           placeholder={`Search by ${searchType}`}
-          value={searchText}
-          onChange={handleSearchInputChange}
-          onPressEnter={handleSearch}
-          className="w-3/4"
+          onSearch={handleSearch}
+          enterButton
+          style={{ width: 250 }}
         />
       </div>
       <Table

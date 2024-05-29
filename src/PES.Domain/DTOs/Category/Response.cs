@@ -10,11 +10,13 @@ namespace PES.Domain.DTOs.Category
     public class CategoryResponse
     {
         public Guid CategoryId { get; set; }
+        
         public string? CategoryName { get; set; }
         public int? Left { get; set; }
 
         public int? Right { get; set; }
         public Guid ParentId { get; set; }
+        public string? CategoryDescription { get; set; }
     }
 
 

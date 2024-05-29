@@ -28,7 +28,7 @@ namespace PES.Infrastructure.Repository
         public async Task<List<ProductsResponse>> GetProductByCategoryId(List<Guid> categoryId)
         {
             var result = await _context.Products.Where(x => categoryId.Contains(x.CategoryId)).Include(x => x.Category).Include(x => x.ProductImages)
-                .Select(x => new ProductsResponse(x.Id, x.ProductName, x.Created, x.ProductImages.FirstOrDefault().ImageUrl, x.Category.CategoryMain, x.Category.CategoryName, x.Price, x.Description))
+                .Select(x => new ProductsResponse(x.Id, x.ProductName, x.Created, x.ProductImages.FirstOrDefault().ImageUrl, x.Category.CategoryMain, x.Category.CategoryName, x.Price, x.Description,x.CategoryId))
                 .ToListAsync();
             return result;
 

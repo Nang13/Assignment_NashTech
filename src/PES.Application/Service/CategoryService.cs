@@ -94,7 +94,9 @@ namespace PES.Application.Service
                     Left = x.CategoryLeft,
                     Right = x.CategoryRight,
                     CategoryName = x.CategoryName,
-                    ParentId = x.CategoryParentId
+                    ParentId = x.CategoryParentId,
+                    CategoryDescription = x.CategoryDescription
+                    
                 }).ToList();
                 var parentCategort = _unitOfWork.CategoryRepository.FirstOrDefaultAsync(x => x.Id == categoryParentId).Result;
                 subCategory.Add(new CategoryResponse
@@ -103,7 +105,9 @@ namespace PES.Application.Service
                     CategoryName = parentCategort.CategoryName,
                     Left = parentCategort.CategoryLeft,
                     Right = parentCategort.CategoryRight,
-                    ParentId = parentCategort.CategoryParentId
+                    ParentId = parentCategort.CategoryParentId,
+                    CategoryDescription  = parentCategort.CategoryDescription,
+                    
                 });
                 return subCategory;
 
@@ -114,9 +118,29 @@ namespace PES.Application.Service
             }
         }
 
-        public Task<CategoryResponse> UpdateCategory(Guid CategoryId, UpdateCategoryRequest request)
+        public async Task<CategoryResponse> UpdateCategory(Guid CategoryId, UpdateCategoryRequest request)
         {
-            throw new NotImplementedException();
+            var categoryUpdate = await _unitOfWork.CategoryRepository.FirstOrDefaultAsync(x => x.Id == CategoryId);
+            if (categoryUpdate != null)
+            {
+                categoryUpdate.CategoryName = request.CategoryName;
+                categoryUpdate.CategoryDescription = request.CategoryDescription;
+                 _unitOfWork.CategoryRepository.Update(categoryUpdate);
+                await _unitOfWork.SaveChangeAsync();
+
+
+                return new CategoryResponse
+                {
+                    CategoryId = categoryUpdate.Id,
+                    CategoryName = request.CategoryName,
+                    CategoryDescription = request.CategoryDescription,
+                    Left = categoryUpdate.CategoryLeft,
+                    Right = categoryUpdate.CategoryRight,
+                    ParentId = categoryUpdate.CategoryParentId,
+                };
+            }
+
+            return null;
         }
 
 

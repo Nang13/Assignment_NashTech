@@ -1,6 +1,6 @@
 import React from 'react'
 import { getProduct } from "../../API/index";
-import { Avatar, Button, Rate, Space, Table, Typography , Select , Input } from "antd";
+import { Avatar, Button, Rate, Space, Table, Typography, Select, Input } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -12,21 +12,29 @@ function Product() {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [searchText, setSearchText] = useState('');
-  const [searchType, setSearchType] = useState('productName'); 
+  const [searchType, setSearchType] = useState('ProductName');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  const fetchProducts = async (query = '', type = 'productName') => {
+  const fetchProducts = async (query = '', type = 'ProductName') => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5046/api/v1/Product?pageNumber=0&pageSize=10`);
-    //  const response = await fetch(`http://localhost:5046/api/v1/Product?${type}=${query}`);
+      var response = "";
+      if (query == '') {
+        response = await fetch('http://localhost:5046/api/v1/Product?pageNumber=0&pageSize=10');
+      } else {
+        response = await fetch(`http://localhost:5046/api/v1/Product?${type}=${query}&pageNumber=0&pageSize=10`);
+      }
+
       const data = await response.json();
-      setDataSource(data["items"]);
+      console.log(data); // Logging data after it has been assigned
+      setDataSource(data.items); // Assuming data has an "items" array
     } catch (error) {
       console.error('Error fetching products:', error);
+      setError(error);
     } finally {
       setLoading(false);
     }
@@ -35,6 +43,8 @@ function Product() {
   const handleSearch = (value) => {
     setSearchText(value);
     fetchProducts(value, searchType);
+    console.log(value)
+    console.log(searchType)
   };
 
   const handleSearchTypeChange = (value) => {
@@ -44,9 +54,9 @@ function Product() {
     <Space size={20} direction="vertical" className="p-4">
       <Title level={4}>Product</Title>
       <Space>
-        <Select defaultValue={searchType} onChange={handleSearchTypeChange} style={{ width: 120 }}>
-          <Option value="productName">Product Name</Option>
-          <Option value="categoryMain">Category Main</Option>
+        <Select defaultValue={searchType} onChange={handleSearchTypeChange} style={{ width: 150 }}>
+          <Option value="ProductName">Product Name</Option>
+          <Option value="CategoryMain">Category Main</Option>
           <Option value="CategoryName">Category Name</Option>
           {/* Add more options as needed */}
         </Select>
@@ -54,7 +64,7 @@ function Product() {
           placeholder={`Search by ${searchType}`}
           onSearch={handleSearch}
           enterButton
-          style={{ width: 200 }}
+          style={{ width: 250 }}
         />
       </Space>
       <Link to="/add_product" className="mb-4">

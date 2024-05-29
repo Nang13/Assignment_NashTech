@@ -88,10 +88,21 @@ namespace PES.Presentation.Controllers.V1
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> Upload(IFormFile name,string productName)
+        public async Task<IActionResult> Upload(IFormFile imageFile,string productName)
         {
-            string imageName = name.FileName + Regex.Replace(productName, @"\s", "");
-            await StorageHandler.UploadFileAsync(name,imageName);
+            string imageName = imageFile.FileName + Regex.Replace(productName, @"\s", "");
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await imageFile.CopyToAsync(memoryStream);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                var newFile = new FormFile(memoryStream, 0, memoryStream.Length, null, imageName)
+                {
+                    Headers = imageFile.Headers,
+                    ContentType =   imageFile.ContentType
+                };
+                await StorageHandler.UploadFileAsync(newFile, "Product");
+            }
             return Ok(imageName);
         } 
 

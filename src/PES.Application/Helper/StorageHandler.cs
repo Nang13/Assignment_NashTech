@@ -37,6 +37,8 @@ namespace PES.Application.Helper
                     }
                     ).Child(folderName).Child(fileUpload.FileName)
                     .PutAsync(fs, CancellationToken.None);
+
+                    
                 try
                 {
                     var result = await cancellation;

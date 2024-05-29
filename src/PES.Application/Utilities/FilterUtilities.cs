@@ -62,7 +62,6 @@ namespace PES.Application.Utilities
 
         private static Expression GetPropertyExpression(PropertyInfo prop, ParameterExpression paramExpr, ConstantExpression valueExpr)
         {
-
             var memberAcc = Expression.MakeMemberAccess(paramExpr, prop);
             var containsMember = typeof(string).GetMethods().Where(x => x.Name == "Contains").FirstOrDefault();
             return Expression.Call(memberAcc, containsMember!, valueExpr);

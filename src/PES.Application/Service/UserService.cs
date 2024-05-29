@@ -7,12 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PES.Application.IService;
+using PES.Application.Utilities;
+using PES.Domain.DTOs.Product;
 using PES.Domain.DTOs.User;
 using PES.Domain.Entities.Model;
+using PES.Infrastructure.Common;
 
 
 namespace PES.Application.Service
@@ -43,9 +47,31 @@ namespace PES.Application.Service
             return user;
         }
 
-        public async Task<IQueryable<UserDTO>> GetUsers()
+        public async Task<Pagination<UserDTO>> GetUsers(GetProductRequest request)
         {
-            return _userManager.Users.AsQueryable().Select(x => new UserDTO(x.Id, x.UserName,x.Email,x.LockoutEnabled));
+            var users = _userManager.Users.Select(x => new UserDTO(x.Id, x.UserName, x.Email, x.LockoutEnabled)).ToList();
+            request.Filter!.Remove("pageSize");
+            request.Filter!.Remove("pageNumber");
+            var result = request.Filter.Count > 0 ? [] :users;
+            if (request.Filter?.Count > 0)
+            {
+                foreach (var filter in request.Filter)
+                {
+                   result = result.Union(FilterUtilities.SelectItems(users,filter.Key,filter.Value)).ToList();
+                }
+            }
+            return new Pagination<UserDTO>
+            {
+                PageIndex = request.PageNumber,
+                PageSize = request.PageSize,
+                TotalItemsCount = users.Count(),
+                Items = PaginatedList<UserDTO>.Create(
+                       source: result.AsQueryable(),
+                       pageIndex: request.PageNumber,
+                       pageSize: request.PageSize)
+
+
+            };
         }
 
         public async Task<string> Login(LoginRequest loginRequest)

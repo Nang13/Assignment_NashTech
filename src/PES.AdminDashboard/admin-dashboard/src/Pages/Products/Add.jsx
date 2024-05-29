@@ -39,11 +39,13 @@ function AddProductForm() {
     };
     const onFinish = async (values) => {
         console.log('Received values:', values);
-        console.log(values.listImages)
-         values.listImages.fileList.forEach(element => {
-            uploadImage(values.productName, element);
+        console.log(values.productName)
+
+        await values.listImages.fileList.forEach(element => {
+            console.log(element);
+            uploadImage(values.productName, element.originFileObj);
         });
-        console.log(values["productName"])
+
 
         try {
             // Construct the data payload
@@ -92,7 +94,7 @@ function AddProductForm() {
             console.error('Error adding product:', error);
             // Handle error here
         }
-      // form.resetFields();
+        // form.resetFields();
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -111,18 +113,28 @@ function AddProductForm() {
 
     //? upload Image 
     const uploadImage = async (productName, file) => {
+        try {
             const formData = new FormData();
-            formData.append( file, file.name);
-    
+            formData.append("imageFile", file);
+
             const response = await fetch(`http://localhost:5046/api/v1/Product/upload?productName=${encodeURIComponent(productName)}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'multipart/form-data' // Correctly set the Content-Type header
-                },
                 body: formData
             });
+
+            if (!response.ok) {
+                throw new Error('Failed to upload image');
+            }
+
+            const data = await response.json();
+            console.log('Image uploaded successfully:', data);
+            return data; // Return any response data if needed
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            throw error;
+        }
     };
-  
+
 
     return (
         <div className="max-w-md mx-auto bg-white p-6 rounded-md shadow-md">

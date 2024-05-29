@@ -1,7 +1,6 @@
 using PES.Application;
 using PES.Infrastructure;
 using PES.Presentation;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

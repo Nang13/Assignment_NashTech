@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PES.Application.IService;
+using PES.Domain.DTOs.Product;
 using PES.Domain.DTOs.User;
 
 namespace PES.Presentation.Controllers.V1
@@ -18,10 +19,10 @@ namespace PES.Presentation.Controllers.V1
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] Dictionary<string, string> filter, [FromQuery] int pageNumber = 0, [FromQuery] int pageSize = 10)
         {
 
-            return Ok( await _userService.GetUsers());
+            return Ok( await _userService.GetUsers(new GetProductRequest { Filter = filter, PageNumber = pageNumber, PageSize = pageSize }));
         }
 
 

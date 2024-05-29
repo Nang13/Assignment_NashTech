@@ -23,10 +23,13 @@ namespace PES.UI.Pages
         public ProductCategory ProductCategory { get; set; }
         [BindProperty]
         public ImportantInfo importantInfo { get; set; }
+
+        
         static HttpClient httpClient = new HttpClient();
         public async Task<IActionResult> OnGet(string id)
         {
             string url = $"http://localhost:5046/api/v1/Product/{id}";
+            
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             try
             {
@@ -39,10 +42,6 @@ namespace PES.UI.Pages
                 JToken  nutrionObject = responseObject["nutrionInfo"];
                 JToken imporatantObject = responseObject["importantInfo"];
                 JToken categoryObject = responseObject["productCategory"];
-                //"": 
-                //"importantInfo": 
-                //NutrionInfo = nutrionObject;
-                //ProductResponseDetail = responseObject;
 
                 ProductName = responseObject["productName"].ToString();
                 id = responseObject["id"];

@@ -7,6 +7,7 @@ namespace PES.Infrastructure.IRepository
 {
     public interface IProductImageRepository : IGenericRepository<ProductImage>
     {
-        
+     
+        public ValueTask DeleteRange(List<ProductImage> images);
     }
 }
