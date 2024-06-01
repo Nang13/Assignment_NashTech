@@ -3,60 +3,124 @@
 @{
 }
 <style>
-        body {
-            background-color: #f0f8e2;
-            font-family: 'Arial', sans-serif;
-        }
-        .login-container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .login-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .login-header h2 {
+    body {
+        background-color: #f0f8e2;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .auth-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+        .auth-header h2 {
             font-size: 24px;
             font-weight: bold;
             color: #4caf50;
         }
-        .login-header img {
+
+        .auth-header img {
             width: 100px;
             margin-bottom: 20px;
         }
-        .form-label {
-            font-weight: bold;
-            color: #555;
-        }
-        .btn-primary {
-            background-color: #4caf50;
-            border-color: #4caf50;
-        }
+
+    .form-label {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .btn-primary {
+        background-color: #4caf50;
+        border-color: #4caf50;
+    }
+
         .btn-primary:hover {
             background-color: #45a049;
             border-color: #45a049;
         }
-    </style>
-<div class="container">
-    <div class="login-container">
-        <div class="login-header">
-            <img src="~/image/organic-logo.png" alt="Organic Store Logo">
-            <h2>Login to Organic Store</h2>
-        </div>
-        <form id="loginForm" method="post">
+
+    .auth-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+        .auth-link a {
+            color: #4caf50;
+            text-decoration: none;
+        }
+
+            .auth-link a:hover {
+                text-decoration: underline;
+            }
+
+    .auth-container {
+        max-width: 400px;
+        margin: auto;
+        margin-top: 50px;
+    }
+
+   #registerForm {
+        display: none;
+    }
+ /*    
+    #loginForm {
+        display: none;
+    }  */
+
+    .toggle-link {
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+    }
+</style>
+<div class="auth-container">
+    <h2 id="auth-title">Login to Organic Store</h2>
+
+    <div id="loginForm">
+        <form asp-page="/SignIn" asp-page-handler="login" method="post">
             <div class="mb-3">
                 <label for="loginEmail" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="loginEmail" name="Email" required>
+                <input type="email" class="form-control" id="loginEmail" aria-describedby="emailHelp" name="email">
             </div>
             <div class="mb-3">
                 <label for="loginPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="loginPassword" name="Password" required>
+                <input type="password" name="password" class="form-control" id="loginPassword">
             </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
+            <button type="submit" class="btn btn-primary">Login</button>
         </form>
     </div>
+
+    <div id="registerForm">
+        <form asp-page="/SignIn" asp-page-handler="register" method="post">
+            <div class="mb-3">
+                <label for="registerEmail" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="registerEmail" aria-describedby="emailHelp" name="email">
+            </div>
+            <div class="mb-3">
+                <label for="registerEmail" class="form-label">Name</label>
+                <input  name="name" type="text" class="form-control" id="registerEmail" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="registerPassword" class="form-label">Password</label>
+                <input type="password" class="form-control" id="registerPassword" name="password">
+            </div>
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+
+    <p id="toggle-link" class="mt-3">Don't have an account? <span class="toggle-link" onclick="toggleForms()">Register here</span></p>
 </div>
+

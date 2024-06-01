@@ -1,4 +1,4 @@
-using PES.Domain.DTOs.Product;
+using PES.Domain.DTOs.ProductDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;

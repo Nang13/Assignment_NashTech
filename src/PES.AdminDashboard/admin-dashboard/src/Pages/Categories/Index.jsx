@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Avatar, Rate, Space, Table, Typography, Modal, Form, Input, message } from "antd";
 
-
+const { Title } = Typography;
 function Category() {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -74,21 +74,26 @@ function Category() {
   }
   return (
 
-    <Space size={20} direction="vertical" >
-      <Typography.Title level={4}>Category</Typography.Title>
+    <div className="container mx-auto p-6  rounded-lg shadow-lg">
+    <Space size={20} direction="vertical" className="w-full">
+      <Title level={4} className="text-gray-800">Category</Title>
       <Link className="mb-4">
-        <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded" onClick={() => showModalAdding()}>
+        <button
+          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-md"
+          onClick={showModalAdding}
+        >
           Add New Category
         </button>
       </Link>
       <Table
+        className="bg-white rounded-lg shadow-md"
         loading={loading}
         columns={[
           {
             title: "Image",
-            render: () => {
-              return <Avatar src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/OIP%20(4).jpg?alt=media&token=d30f5a2d-3598-430e-a7ad-28708271a927" />;
-            },
+            render: () => (
+              <Avatar src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/OIP%20(4).jpg?alt=media&token=d30f5a2d-3598-430e-a7ad-28708271a927" />
+            ),
           },
           {
             title: "Title",
@@ -96,65 +101,56 @@ function Category() {
           },
           {
             title: "Action",
-            render: (text, record) => {
-              return (
-                <Link to={`/category_detail/${record.categoryId}`} style={{ color: 'green' }}>
-                  View Detail
-                </Link>
-              );
-            },
+            render: (text, record) => (
+              <Link to={`/category_detail/${record.categoryId}`} style={{ color: 'green' }}>
+                View Detail
+              </Link>
+            ),
           },
         ]}
         dataSource={dataSource}
         pagination={{
           pageSize: 5,
         }}
-      ></Table>
-      <Modal title="Add Parent Category" open={isModalAdding} onOk={handleOk} onCancel={handleCancel}>
+      />
+      <Modal
+        title="Add Parent Category"
+        visible={isModalAdding}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        className="rounded-lg"
+      >
         <Form
           form={form}
           layout="vertical"
           name="add_category_form"
+          className="space-y-4"
         >
           <Form.Item
             name="categoryName"
             label="Category Name"
-            rules={[
-              {
-                required: true,
-                message: 'Please input the category name!',
-              },
-            ]}
+            rules={[{ required: true, message: 'Please input the category name!' }]}
           >
-            <Input placeholder="Enter category name" />
+            <Input placeholder="Enter category name" className="p-2 border rounded-lg" />
           </Form.Item>
           <Form.Item
             name="categoryDescription"
             label="Category Description"
-            rules={[
-              {
-                required: true,
-                message: 'Please input the category description!',
-              },
-            ]}
+            rules={[{ required: true, message: 'Please input the category description!' }]}
           >
-            <Input.TextArea placeholder="Enter category description" />
+            <Input.TextArea placeholder="Enter category description" className="p-2 border rounded-lg" />
           </Form.Item>
           <Form.Item
             name="categoryMain"
             label="Category Main Name"
-            rules={[
-              {
-                required: true,
-                message: 'Please input the category main!',
-              },
-            ]}
+            rules={[{ required: true, message: 'Please input the category main!' }]}
           >
-            <Input placeholder="Enter category main" />
+            <Input placeholder="Enter category main" className="p-2 border rounded-lg" />
           </Form.Item>
         </Form>
       </Modal>
     </Space>
+  </div>
   )
 }
 

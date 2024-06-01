@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace PES.Domain.DTOs.Product
+namespace PES.Domain.DTOs.ProductDTO
 {
     public class AddNewProductRequest
     {

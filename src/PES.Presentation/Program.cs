@@ -1,4 +1,5 @@
 using PES.Application;
+using PES.Application.Helper.ErrorHandler;
 using PES.Infrastructure;
 using PES.Presentation;
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +38,7 @@ app.Use((context, next) =>
     return next.Invoke();
 });
 
+app.UseMiddleware<CustomExceptionMiddleware>();
 app.UseCors();
 app.MapControllers();
 

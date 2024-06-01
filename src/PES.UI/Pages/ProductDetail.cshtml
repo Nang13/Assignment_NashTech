@@ -2,81 +2,18 @@
 @model PES.UI.Pages.ProductDetailModel
 @{
 }
-<!-- Spinner Start -->
-<div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
-    <div class="spinner-grow text-primary" role="status"></div>
-</div>
-<!-- Spinner End -->
-<!-- Navbar start -->
-<div class="container-fluid fixed-top">
-    <div class="container topbar bg-primary d-none d-lg-block">
-        <div class="d-flex justify-content-between">
-            <div class="top-info ps-2">
-                <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white">123 Street, New York</a></small>
-                <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">Email@Example.com</a></small>
-            </div>
-            <div class="top-link pe-2">
-                <a href="#" class="text-white"><small class="text-white mx-2">Privacy Policy</small>/</a>
-                <a href="#" class="text-white"><small class="text-white mx-2">Terms of Use</small>/</a>
-                <a href="#" class="text-white"><small class="text-white ms-2">Sales and Refunds</small></a>
-            </div>
-        </div>
-    </div>
-    <div class="container px-0">
-        <nav class="navbar navbar-light bg-white navbar-expand-xl">
-            <a href="index.html" class="navbar-brand"><h1 class="text-primary display-6">Fruitables</h1></a>
-            <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                <span class="fa fa-bars text-primary"></span>
-            </button>
-            <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
-                <div class="navbar-nav mx-auto">
-                    <a href="index.html" class="nav-item nav-link">Home</a>
-                    <a href="shop.html" class="nav-item nav-link">Shop</a>
-                    <a href="shop-detail.html" class="nav-item nav-link active">Shop Detail</a>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                        <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                            <a href="cart.html" class="dropdown-item">Cart</a>
-                            <a href="chackout.html" class="dropdown-item">Chackout</a>
-                            <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                            <a href="404.html" class="dropdown-item">404 Page</a>
-                        </div>
-                    </div>
-                    <a href="contact.html" class="nav-item nav-link">Contact</a>
-                </div>
-                <div class="d-flex m-3 me-0">
-                    <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
-                    <a href="#" class="position-relative me-4 my-auto">
-                        <i class="fa fa-shopping-bag fa-2x"></i>
-                        <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">3</span>
-                    </a>
-                    <a href="#" class="my-auto">
-                        <i class="fas fa-user fa-2x"></i>
-                    </a>
-                </div>
-            </div>
-        </nav>
-    </div>
-</div>
-<!-- Navbar End -->
-<!-- Modal Search Start -->
-<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen">
-        <div class="modal-content rounded-0">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body d-flex align-items-center">
-                <div class="input-group w-75 mx-auto d-flex">
-                    <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal Search End -->
+
+<style>
+    .star-rating i {
+        cursor: pointer;
+        color: #ddd;
+        font-size: 20px;
+    }
+
+        .star-rating i.selected {
+            color: #f39c12;
+        }
+</style>
 <!-- Single Page Header start -->
 <div class="container-fluid page-header py-5">
     <h1 class="text-center text-white display-6">Shop Detail</h1>
@@ -94,10 +31,15 @@
             <div class="col-lg-8 col-xl-9">
                 <div class="row g-4">
                     <div class="col-lg-6">
-                        <div class="border rounded">
-                            <a href="#">
-                                <img src="~/image/single-item.jpg" class="img-fluid rounded" alt="Image">
-                            </a>
+                        <div id="imageCarousel" class="carousel slide" data-ride="carousel" data-interval="3000">
+                            <div class="carousel-inner">
+                                @for (int i = 0; i < Model.productImages.Count; i++)
+                                {
+                                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                                        <img src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F@(Model.productImages[i].url)?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074" class="d-block w-100" alt="Image @i">
+                                    </div>
+                                }
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -146,61 +88,63 @@
                         <div class="tab-content mb-5">
                             <div class="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
                                 <p>
-                                    Ingredients : @Model.importantInfo.Ingredients
+                                    Ingredients: @Model.importantInfo?.Ingredients  No information available
                                 </p>
                                 <p>
-                                    Directions:  @Model.importantInfo.Directions
+                                    Directions: @Model.importantInfo?.Directions No information available
                                 </p>
                                 <p>
-                                    Legal Disclaimer:  @Model.importantInfo.LegalDisclaimer
+                                    Legal Disclaimer: @Model.importantInfo?.LegalDisclaimer  No information available
                                 </p>
-                                @if(@Model.NutrionInfo is not null){
-                                <div class="px-2">
-                                    <div class="row g-4">
-                                        <div class="col-6">
-                                            <div class="row bg-light align-items-center text-center justify-content-center py-2">
-                                                <div class="col-6">
-                                                    <p class="mb-0">Calories</p>
+                                @if (Model.NutrionInfo != null)
+                                {
+                                    <div class="px-2">
+                                        <div class="row g-4">
+                                            <div class="col-6">
+                                                <div class="row bg-light align-items-center text-center justify-content-center py-2">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Calories</p>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">@Model.NutrionInfo?.Calories N/A</p>
+                                                    </div>
                                                 </div>
-                                                <div class="col-6">
-                                                    <p class="mb-0">@Model.NutrionInfo.Calories</p>
+                                                <div class="row text-center align-items-center justify-content-center py-2">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Protein</p>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">@Model.NutrionInfo?.Protein N/A</p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="row text-center align-items-center justify-content-center py-2">
-                                                <div class="col-6">
-                                                    <p class="mb-0">Protein</p>
+                                                <div class="row bg-light text-center align-items-center justify-content-center py-2">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Sodium</p>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">@Model.NutrionInfo?.Sodium  N/A</p>
+                                                    </div>
                                                 </div>
-                                                <div class="col-6">
-                                                    <p class="mb-0">@Model.NutrionInfo.Protein</p>
+                                                <div class="row text-center align-items-center justify-content-center py-2">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Fiber</p>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">@Model.NutrionInfo?.Fiber N/A</p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="row bg-light text-center align-items-center justify-content-center py-2">
-                                                <div class="col-6">
-                                                    <p class="mb-0">Sodium</p>
-                                                </div>
-                                                <div class="col-6">
-                                                    <p class="mb-0">@Model.NutrionInfo.Sodium</p>
-                                                </div>
-                                            </div>
-                                            <div class="row text-center align-items-center justify-content-center py-2">
-                                                <div class="col-6">
-                                                    <p class="mb-0">Fiber</p>
-                                                </div>
-                                                <div class="col-6">
-                                                    <p class="mb-0">@Model.NutrionInfo.Fiber</p>
-                                                </div>
-                                            </div>
-                                            <div class="row bg-light text-center align-items-center justify-content-center py-2">
-                                                <div class="col-6">
-                                                    <p class="mb-0">Sugars</p>
-                                                </div>
-                                                <div class="col-6">
-                                                    <p class="mb-0">@Model.NutrionInfo.Sugars</p>
+                                                <div class="row bg-light text-center align-items-center justify-content-center py-2">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Sugars</p>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">@Model.NutrionInfo?.Sugars N/A</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>}
+                                }
                             </div>
                             <div class="tab-pane" id="nav-mission" role="tabpanel" aria-labelledby="nav-mission-tab">
                                 <div class="d-flex">
@@ -256,40 +200,32 @@
                             </div>
                         </div>
                     </div>
-                    <form action="#">
+                    <form asp-page="ProductDetail" asp-page-handler="Rating">
                         <h4 class="mb-5 fw-bold">Leave a Reply</h4>
                         <div class="row g-4">
-                            <div class="col-lg-6">
-                                <div class="border-bottom rounded">
-                                    <input type="text" class="form-control border-0 me-4" placeholder="Yur Name *">
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="border-bottom rounded">
-                                    <input type="email" class="form-control border-0" placeholder="Your Email *">
-                                </div>
-                            </div>
                             <div class="col-lg-12">
                                 <div class="border-bottom rounded my-4">
-                                    <textarea name="" id="" class="form-control border-0" cols="30" rows="8" placeholder="Your Review *" spellcheck="false"></textarea>
+                                    <textarea id="reviewText" class="form-control border-0" cols="30" rows="8" placeholder="Your Review *" spellcheck="false" required name="description"></textarea>
                                 </div>
                             </div>
                             <div class="col-lg-12">
                                 <div class="d-flex justify-content-between py-3 mb-5">
                                     <div class="d-flex align-items-center">
                                         <p class="mb-0 me-3">Please rate:</p>
-                                        <div class="d-flex align-items-center" style="font-size: 12px;">
-                                            <i class="fa fa-star text-muted"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
+                                        <div class="d-flex align-items-center star-rating">
+                                            <i class="fa fa-star" data-value="1"></i>
+                                            <i class="fa fa-star" data-value="2"></i>
+                                            <i class="fa fa-star" data-value="3"></i>
+                                            <i class="fa fa-star" data-value="4"></i>
+                                            <i class="fa fa-star" data-value="5"></i>
                                         </div>
                                     </div>
-                                    <a href="#" class="btn border border-secondary text-primary rounded-pill px-4 py-3"> Post Comment</a>
+                                    <button type="submit" class="btn border border-secondary text-primary rounded-pill px-4 py-3">Post Comment</button>
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" id="rating" name="rating" value="0">
+                        <input type="hidden"  name="productId" value="@Model.ProductId">
                     </form>
                 </div>
             </div>
@@ -336,6 +272,7 @@
                             </ul>
                         </div>
                     </div>
+                    Feature
                     <div class="col-lg-12">
                         <h4 class="mb-4">Featured products</h4>
                         <div class="d-flex align-items-center justify-content-start">
@@ -458,7 +395,7 @@
                     </div>
                     <div class="col-lg-12">
                         <div class="position-relative">
-                            <img src="img/banner-fruits.jpg" class="img-fluid w-100 rounded" alt="">
+                            <img src="~/image/banner-fruits.jpg" class="img-fluid w-100 rounded" alt="">
                             <div class="position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%);">
                                 <h3 class="text-secondary fw-bold">Fresh <br> Fruits <br> Banner</h3>
                             </div>
@@ -679,4 +616,7 @@
 </div>
 <!-- Copyright End -->
 <!-- Back to Top -->
-<a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
+<a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
+<script>
+
+</script>

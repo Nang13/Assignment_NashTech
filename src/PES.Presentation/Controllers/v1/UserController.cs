@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PES.Application.IService;
-using PES.Domain.DTOs.Product;
+using PES.Domain.DTOs.ProductDTO;
 using PES.Domain.DTOs.User;
 
 namespace PES.Presentation.Controllers.V1

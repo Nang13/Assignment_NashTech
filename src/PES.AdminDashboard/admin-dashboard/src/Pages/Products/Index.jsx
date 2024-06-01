@@ -3,6 +3,7 @@ import { getProduct } from "../../API/index";
 import { Avatar, Button, Rate, Space, Table, Typography, Select, Input } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { PlusOutlined } from '@ant-design/icons';
 
 
 const { Title } = Typography;
@@ -51,26 +52,26 @@ function Product() {
     setSearchType(value);
   };
   return (
-    <Space size={20} direction="vertical" className="p-4">
+    <div className="container mx-auto p-4">
       <Title level={4}>Product</Title>
-      <Space>
-        <Select defaultValue={searchType} onChange={handleSearchTypeChange} style={{ width: 150 }}>
+      <div className="flex space-x-4 mb-4">
+        <Select defaultValue={searchType} onChange={handleSearchTypeChange} style={{ width: 150 }} className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none">
           <Option value="ProductName">Product Name</Option>
           <Option value="CategoryMain">Category Main</Option>
           <Option value="CategoryName">Category Name</Option>
-          {/* Add more options as needed */}
         </Select>
         <Search
           placeholder={`Search by ${searchType}`}
           onSearch={handleSearch}
           enterButton
           style={{ width: 250 }}
+          className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none"
         />
-      </Space>
+      </div>
       <Link to="/add_product" className="mb-4">
-        <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-          Add New
-        </button>
+        <Button type="primary" className="rounded-md">
+          <PlusOutlined /> Add New
+        </Button>
       </Link>
       <Table
         loading={loading}
@@ -114,7 +115,7 @@ function Product() {
             title: "Action",
             render: (text, record) => {
               return (
-                <Link to={`/product_detail/${record.id}`} style={{ color: 'green' }}>
+                <Link to={`/product_detail/${record.id}`} className="text-green-500 hover:underline">
                   View Detail
                 </Link>
               );
@@ -124,7 +125,7 @@ function Product() {
             title: "Update",
             render: (text, record) => {
               return (
-                <Link to={`/product_update/${record.id}`} style={{ color: 'green' }}>
+                <Link to={`/product_update/${record.id}`} className="text-green-500 hover:underline">
                   Update
                 </Link>
               );
@@ -135,8 +136,9 @@ function Product() {
         pagination={{
           pageSize: 5,
         }}
+        className="w-full"
       />
-    </Space>
+    </div>
   );
 }
 

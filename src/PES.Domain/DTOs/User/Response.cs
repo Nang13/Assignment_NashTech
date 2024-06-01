@@ -10,6 +10,7 @@ namespace PES.Domain.DTOs.User
         
     }
 
-
     public record UserDTO(string UserId, string Name, string Email,bool IsInactive);
+    public record AuthDTO(string UserId, string Name, string Email, bool IsInactive,UserToken Token);
+    public record UserToken(string AccessToken, string RefreshToken);
 }

@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using PES.Domain.DTOs.Cart;
 using System.Net.Http;
 using PES.Domain.DTOs.Order;
+using PES.UI.Pages.Shared;
+using System.Net.Http.Headers;
 
 namespace PES.UI.Pages
 {
@@ -17,13 +19,15 @@ namespace PES.UI.Pages
         
         public async Task<IActionResult> OnGet()
         {
-            string testCase = "http://localhost:5046/api/v1/Order";
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
+            var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5046/api/v1/Order");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
             try
             {
-                HttpResponseMessage responseMessage = await httpClient.GetAsync(testCase);
-                HttpContent content = responseMessage.Content;
-                string message = await content.ReadAsStringAsync();
+                var response = await httpClient.SendAsync(request);
+               // HttpContent content = responseMessage.Content;
+                string message = await response.Content.ReadAsStringAsync();
                 dynamic responseObject = JsonConvert.DeserializeObject(message);
                 JArray items = responseObject;
                 orders = items.Select(item => item.ToObject<OrderResponse>()).ToList();

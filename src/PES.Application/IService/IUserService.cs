@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using PES.Domain.DTOs.Product;
+using PES.Domain.DTOs.ProductDTO;
 using PES.Domain.DTOs.User;
 using PES.Domain.Entities.Model;
 using PES.Infrastructure.Common;
@@ -12,9 +12,9 @@ namespace PES.Application.IService
 {
     public interface IUserService
     {
-        public Task<bool> Register(RegisterRequest request);
+        public Task<AuthDTO> Register(RegisterRequest request);
 
-        public Task<string> Login(LoginRequest loginRequest);
+        public Task<AuthDTO> Login(LoginRequest loginRequest);
 
         public Task<string> ForgetPassword(string Email);
 
@@ -24,5 +24,6 @@ namespace PES.Application.IService
 
         public Task<ApplicationUser> DisableUser(string UserId);
         public Task<ApplicationUser> EnableUser(string UserId);
+        public Task<bool> ChangePassword(ChangePasswordRequest request, string email);
     }
 }

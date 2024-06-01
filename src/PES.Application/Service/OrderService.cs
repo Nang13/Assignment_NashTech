@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace PES.Application.Service
         }
         public async Task<OrderResponse> AddOrder(OrderRequest request)
         {
-            string userId  = "a3cf5c94-b866-4b80-982a-243daa7edf87";
+            string userId = _claimsService.GetCurrentUserId;
             Guid orderId = Guid.NewGuid();
             Order order = new()
             {
@@ -42,7 +43,7 @@ namespace PES.Application.Service
             await _unitOfWork.SaveChangeAsync();
             await AddOrderDetail(request.orderDetails, orderId);
 
-            return new OrderResponse(OrderId: orderId, TotalPrice: request.Total);
+            return new OrderResponse(OrderId: orderId, TotalPrice: request.Total, ProductCount: 1);
         }
         private async Task AddOrderDetail(List<OrderDetailRequest> request, Guid OrderId)
         {
@@ -59,7 +60,7 @@ namespace PES.Application.Service
 
         public async Task<OrderSingleResponse> GetOrderDetail(Guid id)
         {
-            string userId = "a3cf5c94-b866-4b80-982a-243daa7edf87f";
+            string userId = _claimsService.GetCurrentUserId;
             Order order = await _unitOfWork.OrderRepository.GetByIdAsync(id) ?? throw new Exception("hihi");
             var orderDetail = _unitOfWork.OrderDetailRepository.WhereAsync(x => x.OrderId == id).Result.Select(x => new OrdererDetailResponse(OrderDetailId: x.Id, Price: x.Price)).ToList();
             return new OrderSingleResponse(OrderId: order.Id, TotalPrice: order.TotalPrice, OrdererDetails: orderDetail);
@@ -68,8 +69,15 @@ namespace PES.Application.Service
 
         public async Task<IReadOnlyList<OrderResponse>> GetOrder()
         {
-            string userId = "a3cf5c94-b866-4b80-982a-243daa7edf87";
-            var order = _unitOfWork.OrderRepository.WhereAsync(x => x.UserId == userId).Result.Select(x => new OrderResponse(OrderId: x.Id, TotalPrice: x.TotalPrice)).ToList();
+            string userId = _claimsService.GetCurrentUserId;
+
+            var order = _unitOfWork.OrderRepository.WhereAsync(x => x.UserId == userId, x => x.OrderDetails).Result.Select(x => new OrderResponse(OrderId: x.Id, TotalPrice: x.TotalPrice, ProductCount: x.OrderDetails.Count)).ToList();
+            return order;
+        }
+
+        public async Task<FrozenSet<OrderResponse>> GetOrderByUser(string UserId)
+        {
+            FrozenSet<OrderResponse> order = _unitOfWork.OrderRepository.WhereAsync(x => x.UserId == UserId).Result.Select(x => new OrderResponse(OrderId: x.Id, TotalPrice: x.TotalPrice, ProductCount: x.OrderDetails.Count)).ToFrozenSet();
             return order;
         }
     }

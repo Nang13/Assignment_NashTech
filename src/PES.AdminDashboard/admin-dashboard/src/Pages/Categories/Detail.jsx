@@ -142,6 +142,8 @@ function CategoryDetail() {
             });
     }
 
+    
+
 
     const handleOk = () => {
         setIsModalOpen(false);
@@ -299,7 +301,7 @@ function CategoryDetail() {
     };
 
     return (
-        <div className="font-sans leading-relaxed text-gray-800 bg-gray-100">
+        <div className="font-sans leading-relaxed text-gray-800 bg-gray-50">
             <h2 className="my-8 text-3xl font-bold text-center">Category Tree</h2>
             <p className="mb-8 text-center"></p>
             {loading && <div>Loading...</div>}

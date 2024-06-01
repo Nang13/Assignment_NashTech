@@ -7,7 +7,7 @@ import { CheckOutlined, UserOutlined } from "@ant-design/icons";
 
 function User() {
   const { Option } = Select;
-  const {Search } = Input;
+  const { Search } = Input;
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -92,7 +92,7 @@ function User() {
   };
 
   return (
-    <Space size={30} direction="vertical" >
+    <Space size={30} direction="vertical" className="w-full p-4">
       <Typography.Title level={4}>User</Typography.Title>
       <div className="flex space-x-4 mb-6">
         <Select
@@ -107,14 +107,14 @@ function User() {
           placeholder={`Search by ${searchType}`}
           onSearch={handleSearch}
           enterButton
-          style={{ width: 250 }}
+          className="w-64"
         />
       </div>
       <Table
         loading={loading}
         columns={[
           {
-            title: "  ",
+            title: "Icon",
             render: () => {
               return <UserOutlined />;
             },
@@ -134,7 +134,7 @@ function User() {
                 <Button
                   onClick={() => toggleUserStatus(record.userId, record.isInactive)}
                   type="primary"
-                  style={{ backgroundColor: record.isInactive ? 'green' : 'red' }}
+                  className={`bg-${record.isInactive ? 'green-500' : 'red-500'} text-white`}
                 >
                   {record.isInactive ? "Activate" : "Deactivate"}
                 </Button>
@@ -144,11 +144,10 @@ function User() {
             width: 150, // Set the width of this column
           },
           {
-
-            title: "Action",
+            title: "Order Detail",
             render: (text, record) => {
               return (
-                <Link to={`/category_detail/${record.categoryId}`} style={{ color: 'green' }}>
+                <Link to={`/orders/${record.userId}`} className="text-green-500 hover:underline">
                   View Detail
                 </Link>
               );
@@ -159,8 +158,10 @@ function User() {
         pagination={{
           pageSize: 5,
         }}
-      ></Table>
+        className="ant-table-wrapper"
+      />
     </Space>
+
   )
 }
 

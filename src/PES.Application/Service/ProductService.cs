@@ -10,7 +10,7 @@ using PES.Application.IService;
 using PES.Application.Utilities;
 using PES.Domain.Constant;
 using PES.Domain.DTOs.Order;
-using PES.Domain.DTOs.Product;
+using PES.Domain.DTOs.ProductDTO;
 using PES.Domain.Entities.Model;
 using PES.Infrastructure.Common;
 using PES.Infrastructure.UnitOfWork;
@@ -40,29 +40,41 @@ namespace PES.Application.Service
         public async Task<ProductResponse> AddNewProduct(AddNewProductRequest request)
         {
             request.MainImage = request.ListImages.FirstOrDefault();
+            request.ListImages.RemoveAt(0);
             Guid productId = Guid.NewGuid();
-            Product product = new()
-            {
-                ProductName = request.ProductName,
-                Price = request.Price,
-                Id = productId,
-                Created = CurrentTime.RecentTime
-                ,
-                CategoryId = request.CategoryId,
-                Quantity = request.Quantity,
-                Description = request.Description
-            };
+            //Product product = new()
+            //{
+            //    ProductName = request.ProductName,
+            //    Price = request.Price,
+            //    Id = productId,
+            //    Created = CurrentTime.RecentTime,
+            //    CategoryId = request.CategoryId,
+            //    Quantity = request.Quantity,
+            //    Description = request.Description
+            //};
+            Product product = request.ToDTO();
+            product.Id = productId;
+
+
             await _unitOfWork.ProductRepository.AddAsync(product);
             await _unitOfWork.SaveChangeAsync();
 
-            var Task1 = AddInconsequentialImage(request.ListImages, productId);
+            if (request.ListImages.Count > 1)
+            {
+                var Task1 = AddInconsequentialImage(request.ListImages, productId);
+                var Task2 = AddMainImage(request.MainImage, productId);
+                await Task.WhenAll(Task1, Task2);
+            }
+            else
+            {
+                await AddMainImage(request.MainImage, productId);
+            }
 
-            var Task2 = AddMainImage(request.MainImage, productId);
 
             if (request.NutrionInforrmationRequest is not null) await AddNutrionInformation(request.NutrionInforrmationRequest, productId);
             if (request.ImformationRequest is not null) await AddImportantInformation(request.ImformationRequest, productId);
 
-            await Task.WhenAll(Task1, Task2);
+
             await _unitOfWork.SaveChangeAsync();
             return new ProductResponse(productId, request.ProductName, product.Created);
         }
@@ -110,14 +122,15 @@ namespace PES.Application.Service
         }
         public async Task AddImportantInformation(ImportantImformationRequest request, Guid ProductId)
         {
-            ImportantInformation information = new()
-            {
-                Ingredients = request.Ingredients,
-                LegalDisclaimer = request.LegalDisclaimer,
-                Directions = request.Directions,
-                ProductId = ProductId
-            };
-
+            //ImportantInformation information = new()
+            //{
+            //    Ingredients = request.Ingredients,
+            //    LegalDisclaimer = request.LegalDisclaimer,
+            //    Directions = request.Directions,
+            //    ProductId = ProductId
+            //};
+            ImportantInformation information = request.MapperDTO();
+            information.ProductId = ProductId;
             await _unitOfWork.ImportantInfoRepository.AddAsync(information);
             await _unitOfWork.SaveChangeAsync();
         }
@@ -140,27 +153,13 @@ namespace PES.Application.Service
         {
             var product = await _unitOfWork.ProductRepository.FirstOrDefaultAsync(x => x.Id == productId, x => x.ImportantInformation, x => x.NutritionInformation, x => x.ProductImages, x => x.Category);
 
+            var nutritionInfo = product.NutritionInformation != null ? product.MapperNutrionDTO() : null;
 
-            var nutritionInfo = product.NutritionInformation != null
-                ? new NutrionInfo(product.NutritionInformation.Calories, product.NutritionInformation.Fiber, product.NutritionInformation.Protein, product.NutritionInformation.Sodium, product.NutritionInformation.Sugars)
-                : null;
+            var importantInfo = product.ImportantInformation != null ? product.MapperImportantDTO() : null;
 
-            var importantInfo = product.ImportantInformation != null
-            ? new ImportantInfo(product.ImportantInformation.Ingredients, product.ImportantInformation.Directions, product.ImportantInformation.LegalDisclaimer)
-            : null;
+            var productImage = product.ProductImages != null ? product.ProductImages.Select(x => new ProductImageResponse(x.ImageUrl, x.IsMain)).ToList() : null;
 
-            var productImage = product.ProductImages != null
-                ? product.ProductImages.Select(x => new ProductImageResponse(x.ImageUrl, x.IsMain)).ToList() : null;
-
-
-            // return new ProductResponseDetail(productId, product.ProductName, product.Price,
-            //     new NutrionInfo(product.NutritionInformation.Calories, product.NutritionInformation.Fiber, product.NutritionInformation.Protein, product.NutritionInformation.Sodium, product.NutritionInformation.Sugars),
-            //     new ProductCategory(product.Category.Id, product.Category.CategoryName, product.Category.CategoryMain),
-            //     new ImportantInfo(product.ImportantInformation.Ingredients, product.ImportantInformation.Directions, product.ImportantInformation.LegalDisclaimer));
-            return new ProductResponseDetail(productId, product.ProductName, product.Price,
-              nutritionInfo,
-             new ProductCategory(product.Category.Id, product.Category.CategoryName, product.Category.CategoryMain),
-             importantInfo, productImage);
+            return new ProductResponseDetail(productId, product.ProductName, product.Price, nutritionInfo, product.MapperCategoryDTO(), importantInfo, productImage);
         }
 
         //? Search by CategoryName
@@ -204,22 +203,22 @@ namespace PES.Application.Service
 
 
 
-            //if (!subCategories.IsNullOrEmpty())
-            //{
-            //    foreach (var category in subCategories)
-            //    {
-            //        filterResult = filterResult.Union(FilterUtilities.SelectItems(filterResult, "CategoryId", category.ToString()));
-            //    }
-            //}
-            //if (request.Filter!.Count > 0)
-            //{
-            //    foreach (var filter in request.Filter)
-            //    {
-            //        var checker = FilterUtilities.SelectId(filterResult, filter.Key, filter.Value).Select(x => x.Id).ToList();
-            //        filterResult = filterResult.Where(x => checker.Contains(x.Id));
-            //        Console.WriteLine(filterResult);
-            //    }
-            //}
+            /*            if (!subCategories.IsNullOrEmpty())
+                        {
+                            foreach (var category in subCategories)
+                            {
+                                filterResult = filterResult.Union(FilterUtilities.SelectItems(filterResult, "CategoryId", category.ToString()));
+                            }
+                        }
+                        if (request.Filter!.Count > 0)
+                        {
+                            foreach (var filter in request.Filter)
+                            {
+                                var checker = FilterUtilities.SelectId(filterResult, filter.Key, filter.Value).Select(x => x.Id).ToList();
+                                filterResult = filterResult.Where(x => checker.Contains(x.Id));
+                                Console.WriteLine(filterResult);
+                            }
+                        }*/
             var filterResultTesting = request.Filter.Count > 0 ? new List<ProductsResponse>() : testingData;
             HashSet<Guid> categoryName = [];
             ////todo categoryName or categoryMain is not null

@@ -15,7 +15,7 @@ function SideMenu() {
         items={[{
           label: "Dashboard",
           icon: <AppstoreOutlined />,
-          key: '/'
+          key: '/dashboard'
         }, {
           label: 'User',
           icon: <UserOutlined />,

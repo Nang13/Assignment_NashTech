@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Carousel, Input, Button, Typography, Form, Checkbox, } from 'antd';
+import { Row, Col, Card, Carousel, Input, Button, Typography, Form, Checkbox, Select , message } from 'antd';
 import { getProductDetail } from '../../API';
 import { CloseOutlined } from '@ant-design/icons'
 import { useParams } from 'react-router';
 
 const UpdateProduct = () => {
     const { id } = useParams();
-    const [loading, setLoading] = useState(false);
+    const { Option } = Select;
+    const { Title } = Typography;
+    const [loading, setLoading] = useState(false);    
+    const [subcategories, setSubcategories] = useState([]);
     const [changedFields, setChangedFields] = useState({});
     const [newImage, setNewImage] = useState(null);
     const [showOptionalFields, setShowOptionalFields] = useState(false);
     const [showNutrionAdd, setshowNutrionAdd] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+    const [categories, setCategories] = useState([]);
+    const [error, setError] = useState(null);
     const [updatedProduct, setUpdatedProduct] = useState({
         id: '',
         productName: '',
@@ -47,6 +54,24 @@ const UpdateProduct = () => {
                 setLoading(false);
             });
     }, [id]);
+
+    useEffect(() => {
+        fetch("http://localhost:5046/api/v1/Category")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setCategories(data);
+                setLoading(false);
+            })
+            .catch(error => {
+                setError(error.message);
+                setLoading(false);
+            });
+    }, []);
 
     const handleCheckboxChange = () => {
         setShowOptionalFields(!showOptionalFields);
@@ -188,16 +213,16 @@ const UpdateProduct = () => {
             console.log(productName);
             const formData = new FormData();
             formData.append("imageFile", file);
-            
+
             const response = await fetch(`http://localhost:5046/api/v1/Product/upload?productName=${encodeURIComponent(productName)}`, {
                 method: 'POST',
                 body: formData
             });
-    
+
             if (!response.ok) {
                 throw new Error('Failed to upload image');
             }
-    
+
             const data = await response.json();
             console.log('Image uploaded successfully:', data);
             return data; // Return any response data if needed
@@ -207,101 +232,152 @@ const UpdateProduct = () => {
         }
     };
 
-    const handleImageChange = (e) => {  
+    const handleImageChange = (e) => {
         setNewImage(e.target.files[0]);
     };
 
 
+    const handleCategoryChange = (value) => {
+        setSelectedCategory(value);
+        setSelectedSubCategory(null); // Reset subcategory selection
+        fetchSubcategories(value); // Fetch subcategories
+    };
+
+    const handleSubCategoryChange = (value) => {
+        setSelectedSubCategory(value);
+    };
+
+    const fetchSubcategories = (categoryId) => {
+        fetch(`http://localhost:5046/api/v1/Category/${categoryId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setSubcategories(data);
+            })
+            .catch(error => {
+                message.error('Failed to fetch subcategories');
+                console.error('Error:', error);
+            });
+    };
+
     return (
-        <div className='w-full'>
+        <div className="container mx-auto p-6">
             <Row gutter={16}>
                 <Col span={8}>
-                    <Card>
-                        <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden mb-6">
-                            <div className="relative h-64 w-full">
-                                <Carousel autoplay>
-                                    {updatedProduct.productImages.map((image, index) => (
-                                        <div key={index} className="relative">
-                                            <img
-                                                src={image.isLocal ? URL.createObjectURL(image.url) : `https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/product%2F${image.url}?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074`}
-                                                alt={`${updatedProduct.productName} image ${index + 1}`}
-                                                className="object-cover w-full h-64"
-                                            />
-                                            <Button
-                                                type="text"
-                                                icon={<CloseOutlined />}
-                                                onClick={() => handleDeleteImage(index)}
-                                                className="absolute top-2 right-2 bg-white rounded-full"
-                                            />
-
-                                        </div>
-                                    ))}
-                                </Carousel>
-                            </div>
-                            <input type="file" onChange={handleImageChange} className="mt-2" />
-                            <Button onClick={handleAddImage} disabled={!newImage}>Add Image</Button>
+                    <Card className="shadow-lg rounded-lg">
+                        <div className="relative mb-6">
+                            <Carousel autoplay>
+                                {updatedProduct.productImages.map((image, index) => (
+                                    <div key={index} className="relative">
+                                        <img
+                                            src={image.isLocal ? URL.createObjectURL(image.url) : `https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/product%2F${image.url}?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074`}
+                                            alt={`${updatedProduct.productName} image ${index + 1}`}
+                                            className="object-cover w-full h-64 rounded-t-lg"
+                                        />
+                                        <Button
+                                            type="text"
+                                            icon={<CloseOutlined />}
+                                            onClick={() => handleDeleteImage(index)}
+                                            className="absolute top-2 right-2 bg-white rounded-full shadow"
+                                        />
+                                    </div>
+                                ))}
+                            </Carousel>
                         </div>
+                        <input type="file" onChange={handleImageChange} className="mt-2" />
+                        <Button onClick={handleAddImage} disabled={!newImage} className="mt-2 bg-green-500 hover:bg-green-600 text-white">Add Image</Button>
                         <div className="p-4">
                             <Input
                                 type="text"
                                 value={updatedProduct.productName}
                                 onChange={e => handleInputChange('productName', e.target.value)}
-                                className="text-xl font-bold w-full mb-2"
+                                className="text-xl font-bold w-full mb-4"
+                                placeholder="Product Name"
                             />
                             <Input
                                 type="number"
                                 value={updatedProduct.price}
                                 onChange={e => handleInputChange('price', e.target.value)}
-                                className="text-gray-600 w-full mb-2"
+                                className="text-gray-600 w-full mb-4"
+                                placeholder="Price"
                             />
-                            <h2 className="text-lg font-semibold">Category</h2>
-                            <Input
-                                type="text"
-                                value={updatedProduct.categoryId}
-                                onChange={e => handleInputChange('categoryId', e.target.value)}
-                                className="text-gray-600 w-full mb-2"
-                            />
+                            <h2 className="text-lg font-semibold mb-2">Category</h2>
+                            <Select
+                                placeholder="Select Category"
+                                value={selectedCategory}
+                                onChange={handleCategoryChange}
+                                className="w-full mb-4"
+                            >
+                                {categories.map(category => (
+                                    <Option key={category.categoryId} value={category.categoryId}>
+                                        {category.categoryName}
+                                    </Option>
+                                ))}
+                            </Select>
+                            {selectedCategory && (
+                                <>
+                                    <h2 className="text-lg font-semibold mb-2">Subcategory</h2>
+                                    <Select
+                                        placeholder="Select Subcategory"
+                                        value={selectedSubCategory}
+                                        onChange={handleSubCategoryChange}
+                                        className="w-full mb-4"
+                                    >
+                                        {subcategories.map(subcategory => (
+                                            <Option key={subcategory.categoryId} value={subcategory.categoryId}>
+                                                {subcategory.categoryName}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </>
+                            )}
                         </div>
-
-                        <Form.Item>
+                        <Form.Item className="p-4">
                             <Checkbox checked={showOptionalFields} onChange={handleCheckboxChange}>
                                 Add Important Information
                             </Checkbox>
                         </Form.Item>
-                        <Form.Item>
+                        <Form.Item className="p-4">
                             <Checkbox checked={showNutrionAdd} onChange={handleCheckboxChangeNutrionInformation}>
-                                Add Nutrion Information
+                                Add Nutrition Information
                             </Checkbox>
                         </Form.Item>
                     </Card>
                 </Col>
 
                 <Col span={8}>
-                    <Card>
-                        <div className="mt-4" style={{ visibility: showOptionalFields ? 'visible' : 'hidden', height: showOptionalFields ? 'auto' : 0 }}>
-                            <h2 className="text-lg font-semibold">Important Information</h2>
-                            <div className="mt-4">
-                                <h2 className="text-lg font-semibold">Ingredients</h2>
+                    <Card className="shadow-lg rounded-lg">
+                        <div className="p-4" style={{ visibility: showOptionalFields ? 'visible' : 'hidden', height: showOptionalFields ? 'auto' : 0 }}>
+                            <h2 className="text-lg font-semibold mb-4">Important Information</h2>
+                            <div className="mb-4">
+                                <h3 className="text-lg font-semibold mb-2">Ingredients</h3>
                                 <textarea
                                     value={updatedProduct.importantInfo?.ingredients || ''}
                                     onChange={e => handleInputChange('importantInfo.ingredients', e.target.value)}
-                                    className="text-gray-600 w-full mb-2"
+                                    className="text-gray-600 w-full p-2 border rounded"
+                                    placeholder="Ingredients"
                                 />
                             </div>
-                            <div className="mt-4">
-                                <h2 className="text-lg font-semibold">Directions</h2>
+                            <div className="mb-4">
+                                <h3 className="text-lg font-semibold mb-2">Directions</h3>
                                 <textarea
                                     value={updatedProduct.importantInfo?.directions || ''}
                                     onChange={e => handleInputChange('importantInfo.directions', e.target.value)}
-                                    className="text-gray-600 w-full mb-2"
+                                    className="text-gray-600 w-full p-2 border rounded"
+                                    placeholder="Directions"
                                 />
                             </div>
-                            <div className="mt-4">
-                                <h2 className="text-lg font-semibold">Legal Disclaimer</h2>
+                            <div className="mb-4">
+                                <h3 className="text-lg font-semibold mb-2">Legal Disclaimer</h3>
                                 <textarea
                                     value={updatedProduct.importantInfo?.legalDisclaimer || ''}
                                     onChange={e => handleInputChange('importantInfo.legalDisclaimer', e.target.value)}
-                                    className="text-gray-600 w-full mb-2"
+                                    className="text-gray-600 w-full p-2 border rounded"
+                                    placeholder="Legal Disclaimer"
                                 />
                             </div>
                         </div>
@@ -309,54 +385,58 @@ const UpdateProduct = () => {
                 </Col>
 
                 <Col span={8}>
-                    <Card>
-                        <div className="mt-4" style={{ visibility: showNutrionAdd ? 'visible' : 'hidden', height: showNutrionAdd ? 'auto' : 0 }}>
-                            <h2 className="text-lg font-semibold">Nutritional Information</h2>
-                            <ul className="mt-2 text-gray-600">
-                                <li>
-                                    <Typography.Title level={5}>Calories: (kcal)</Typography.Title>
+                    <Card className="shadow-lg rounded-lg">
+                        <div className="p-4" style={{ visibility: showNutrionAdd ? 'visible' : 'hidden', height: showNutrionAdd ? 'auto' : 0 }}>
+                            <h2 className="text-lg font-semibold mb-4">Nutritional Information</h2>
+                            <ul className="text-gray-600">
+                                <li className="mb-4">
+                                    <Title level={5}>Calories: (kcal)</Title>
                                     <Input
                                         type="number"
                                         value={updatedProduct.nutrionInfo?.calories || ''}
                                         onChange={e => handleInputChange('nutrionInfo.calories', e.target.value)}
                                         className="w-full mb-2"
+                                        placeholder="Calories"
                                     />
                                 </li>
-                                <li>
-                                    <Typography.Title level={5}>Protein: (g)</Typography.Title>
+                                <li className="mb-4">
+                                    <Title level={5}>Protein: (g)</Title>
                                     <Input
                                         type="number"
                                         value={updatedProduct.nutrionInfo?.protein || ''}
                                         onChange={e => handleInputChange('nutrionInfo.protein', e.target.value)}
                                         className="w-full mb-2"
-                                        placeholder='Nutrion Info'
+                                        placeholder="Protein"
                                     />
                                 </li>
-                                <li>
-                                    <Typography.Title level={5}>Sodium: (mg)</Typography.Title>
+                                <li className="mb-4">
+                                    <Title level={5}>Sodium: (mg)</Title>
                                     <Input
                                         type="number"
                                         value={updatedProduct.nutrionInfo?.sodium || ''}
                                         onChange={e => handleInputChange('nutrionInfo.sodium', e.target.value)}
                                         className="w-full mb-2"
+                                        placeholder="Sodium"
                                     />
                                 </li>
-                                <li>
-                                    <Typography.Title level={5}>Fiber: (g)</Typography.Title>
+                                <li className="mb-4">
+                                    <Title level={5}>Fiber: (g)</Title>
                                     <Input
                                         type="number"
                                         value={updatedProduct.nutrionInfo?.fiber || ''}
                                         onChange={e => handleInputChange('nutrionInfo.fiber', e.target.value)}
                                         className="w-full mb-2"
+                                        placeholder="Fiber"
                                     />
                                 </li>
-                                <li>
-                                    <Typography.Title level={5}>Sugars: (g)</Typography.Title>
+                                <li className="mb-4">
+                                    <Title level={5}>Sugars: (g)</Title>
                                     <Input
                                         type="number"
                                         value={updatedProduct.nutrionInfo?.sugars || ''}
                                         onChange={e => handleInputChange('nutrionInfo.sugars', e.target.value)}
                                         className="w-full mb-2"
+                                        placeholder="Sugars"
                                     />
                                 </li>
                             </ul>
@@ -364,7 +444,9 @@ const UpdateProduct = () => {
                     </Card>
                 </Col>
             </Row>
-            <Button onClick={handleUpdate}>Update Product</Button>
+            <div className="flex justify-center mt-6">
+                <Button onClick={handleUpdate} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Update Product</Button>
+            </div>
         </div>
     );
 };

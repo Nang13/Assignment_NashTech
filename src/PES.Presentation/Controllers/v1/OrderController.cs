@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Firebase.Auth;
 using Microsoft.AspNetCore.Mvc;
 using PES.Application.IService;
 using PES.Domain.DTOs.Order;
@@ -29,6 +30,13 @@ namespace PES.Presentation.Controllers.V1
             return Ok(response);
         }
 
+
+        [HttpGet("user/{UserId}")]
+        public async Task<IActionResult> GetOrderByUserId(string UserId)
+        {
+            var response = await _orderService.GetOrderByUser(UserId);
+            return Ok(response);
+        }
 
         [HttpGet]
         public async Task<ActionResult> GetOrder()

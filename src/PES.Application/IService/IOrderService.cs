@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,5 +13,7 @@ namespace PES.Application.IService
         public Task<OrderResponse> AddOrder(OrderRequest request);
         public Task<IReadOnlyList<OrderResponse>> GetOrder();
         public Task<OrderSingleResponse> GetOrderDetail(Guid id);
+
+        public Task<FrozenSet<OrderResponse>> GetOrderByUser(string UserId);
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
+using PES.UI.Pages.Shared;
 using System.Net.Http;
 using System.Text;
 
@@ -15,26 +16,18 @@ namespace PES.UI.Pages
 
         public async Task<IActionResult> OnPostLogin(string email, string password)
         {
-            // Your login logic here
-            //if (IsValidUser(email, password))
-            //{
-            //    // Redirect the user after successful login
-            //    return RedirectToPage("/Dashboard");
-            //}
-            //else
-            //{
-            //    // Handle invalid login
-            //    ModelState.AddModelError(string.Empty, "Invalid email or password");
-            //    return Page();
-            //}
-            await Login(email, password);
-            return Page();
+          
+            string data =  await Login(email, password);
+            UserData.AccessToken =data;
+            UserData.UserName = data;
+            Console.WriteLine(UserData.AccessToken);
+            return RedirectToPage("/Shop");
         }
 
         public async Task<IActionResult> OnPostRegister(string email, string password, string name, string confirmPassword)
         {
             await Register(email, password, name, confirmPassword);
-            return Page();
+            return RedirectToPage("/Shop");
         }
 
         public async Task<string> Login(string email, string password)

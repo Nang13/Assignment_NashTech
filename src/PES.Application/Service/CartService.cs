@@ -33,7 +33,7 @@ namespace PES.Application.Service
             //string items = JsonConvert.SerializeObject(cartItems);
             // _database.HashSet(_claimsService.GetCurrentUserId, "Name", cartItems[0].Name);
             //_database.HashSet(_claimsService.GetCurrentUserId,"Price",cartItems[0].Price.ToString());
-            string user = "a3cf5c94-b866-4b80-982a-243daa7edf87";
+            string user = _claimsService.GetCurrentUserId;
             if (cartItems.CartActionType == 0)
             {
                 _database.HashSet(user, cartItems.ProductId.ToString(), cartItems.Quantity);
@@ -56,7 +56,7 @@ namespace PES.Application.Service
 
         public async Task<Cart> GetCart()
         {
-            string userId = "a3cf5c94-b866-4b80-982a-243daa7edf87";
+            string userId =_claimsService.GetCurrentUserId;
             decimal TotalPrice = 0;
             List<CartItem> carts = [];
             HashEntry[] dataChecker = _database.HashGetAll(userId);
