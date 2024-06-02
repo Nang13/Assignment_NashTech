@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PES.Domain.DTOs.Product;
+using PES.Domain.DTOs.ProductDTO;
 using static Google.Apis.Requests.BatchRequest;
 using static System.Net.WebRequestMethods;
 

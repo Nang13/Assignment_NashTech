@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { Form, Checkbox, Input, Button, Upload } from "antd";
+import React, { useState, useEffect } from 'react';
+import { Form, Checkbox, Input, Button, Upload, Select, message, Typography } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
 function AddProductForm() {
+    const { Option } = Select;
     const [productData, setProductData] = useState({
         productName: '',
         price: '',
@@ -26,9 +27,15 @@ function AddProductForm() {
     });
 
     const [form] = Form.useForm();
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+    const [subcategories, setSubcategories] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [showOptionalFields, setShowOptionalFields] = useState(false);
     const [showImage, setShowImage] = useState(false);
     const [showNutrionAdd, setshowNutrionAdd] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -67,9 +74,10 @@ function AddProductForm() {
                     sugars: values.sugars
                 } : null,
                 listImages: values.listImages.fileList.map(file => file.name), // Assuming listImages is an array of files
-                categoryId: '78afaccf-33f3-4010-a362-812affb31876' // Replace with actual category ID
+                categoryId: selectedSubCategory// Replace with actual category ID
             };
 
+            console.log(data);
             // Make API request to add product with image data
             const response = await fetch('http://localhost:5046/api/v1/Product', {
                 method: 'Post',
@@ -101,6 +109,50 @@ function AddProductForm() {
         console.log('Failed:', errorInfo);
     };
 
+    const handleCategoryChange = (value) => {
+        setSelectedCategory(value);
+        setSelectedSubCategory(null); // Reset subcategory selection
+        fetchSubcategories(value); // Fetch subcategories
+    };
+
+    const fetchSubcategories = (categoryId) => {
+        fetch(`http://localhost:5046/api/v1/Category/${categoryId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setSubcategories(data);
+            })
+            .catch(error => {
+                message.error('Failed to fetch subcategories');
+                console.error('Error:', error);
+            });
+    };
+
+    useEffect(() => {
+        fetch("http://localhost:5046/api/v1/Category")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setCategories(data);
+                setLoading(false);
+            })
+            .catch(error => {
+                setError(error.message);
+                setLoading(false);
+            });
+    }, []);
+
+    const handleSubCategoryChange = (value) => {
+        setSelectedSubCategory(value);
+    };
     const handleCheckboxChange = () => {
         setShowOptionalFields(!showOptionalFields);
     };
@@ -167,6 +219,37 @@ function AddProductForm() {
                     <Input type="number" onChange={handleChange} />
                 </Form.Item>
 
+                <Select
+                    placeholder="Select Category"
+                    value={selectedCategory}
+                    onChange={handleCategoryChange}
+                    className="w-full mb-4"
+                >
+                    {categories.map(category => (
+                        <Option key={category.categoryId} value={category.categoryId}>
+                            {category.categoryName}
+                        </Option>
+                    ))}
+                </Select>
+
+
+                {selectedCategory && (
+                    <>
+                        <Typography.Title level={4} className="text-gray-800">Subcategory</Typography.Title>
+                        <Select
+                            placeholder="Select Subcategory"
+                            value={selectedSubCategory}
+                            onChange={handleSubCategoryChange}
+                            className="w-full mb-4"
+                        >
+                            {subcategories.map(subcategory => (
+                                <Option key={subcategory.categoryId} value={subcategory.categoryId}>
+                                    {subcategory.categoryName}
+                                </Option>
+                            ))}
+                        </Select>
+                    </>
+                )}
                 <Form.Item
                     label="Description"
                     name="description"

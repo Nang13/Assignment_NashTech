@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Google.Api.Gax.ResourceNames;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -59,15 +61,15 @@ namespace PES.Application.Service
             await _unitOfWork.ProductRepository.AddAsync(product);
             await _unitOfWork.SaveChangeAsync();
 
-            if (request.ListImages.Count > 1)
+            if (request.ListImages.Count >= 1)
             {
-                var Task1 = AddInconsequentialImage(request.ListImages, productId);
-                var Task2 = AddMainImage(request.MainImage, productId);
+                var Task1 = AddInconsequentialImage(request.ListImages, productId,request.ProductName);
+                var Task2 = AddMainImage(request.MainImage, productId,request.ProductName);
                 await Task.WhenAll(Task1, Task2);
             }
             else
             {
-                await AddMainImage(request.MainImage, productId);
+                await AddMainImage(request.MainImage, productId,request.ProductName);
             }
 
 
@@ -79,11 +81,11 @@ namespace PES.Application.Service
             return new ProductResponse(productId, request.ProductName, product.Created);
         }
 
-        public async Task AddInconsequentialImage(string Images, Guid productId)
+        public async Task AddInconsequentialImage(string Images, Guid productId,string productName)
         {
             var productImage = new ProductImage
             {
-                ImageUrl = Images,   // Assuming the image string is the path
+                ImageUrl = Images+ Regex.Replace(productName, @"\s", ""),   // Assuming the image string is the path
                 ProductId = productId,
                 IsMain = false
             };
@@ -92,11 +94,11 @@ namespace PES.Application.Service
         }
 
 
-        public async Task AddInconsequentialImage(List<string> Images, Guid productId)
+        public async Task AddInconsequentialImage(List<string> Images, Guid productId, string productName)
         {
             var productImages = Images.Select(image => new ProductImage
             {
-                ImageUrl = image,   // Assuming the image string is the path
+                ImageUrl = image + Regex.Replace(productName, @"\s", ""),   // Assuming the image string is the path
                 ProductId = productId,
                 IsMain = false
             }).ToList();
@@ -138,11 +140,11 @@ namespace PES.Application.Service
 
 
 
-        public async Task AddMainImage(string Images, Guid productId)
+        public async Task AddMainImage(string Images, Guid productId,string ProductName)
         {
             await _unitOfWork.ProductImageRepository.AddAsync(new ProductImage
             {
-                ImageUrl = Images,
+                ImageUrl = Images+ Regex.Replace(ProductName, @"\s", ""),
                 ProductId = productId,
                 IsMain = true,
             });
@@ -304,7 +306,7 @@ namespace PES.Application.Service
             if (!request.productImages.IsNullOrEmpty())
             {
                 List<ProductImage> productImages = await _unitOfWork.ProductImageRepository.WhereAsync(x => x.ProductId == id);
-
+                string productName =  _unitOfWork.ProductRepository.FirstOrDefaultAsync(x => x.Id == id).Result.ProductName;  
                 //? in Database    1  2   3
                 //? input Delete   1   2
                 foreach (var item in request.productImages)
@@ -313,7 +315,7 @@ namespace PES.Application.Service
                     //? if not found: New Image One
                     if (image is null)
                     {
-                        await AddInconsequentialImage(item, id);
+                        await AddInconsequentialImage(item, id,productName);
                     }
                     else
                     {

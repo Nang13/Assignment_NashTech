@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PES.UI.Pages.Shared;
 using System.Net.Http;
 using System.Text;
@@ -18,8 +19,10 @@ namespace PES.UI.Pages
         {
           
             string data =  await Login(email, password);
-            UserData.AccessToken =data;
-            UserData.UserName = data;
+            var json = JObject.Parse(data);
+            UserData.AccessToken = json["token"]["accessToken"].ToString();
+
+            UserData.UserName = json["name"].ToString();
             Console.WriteLine(UserData.AccessToken);
             return RedirectToPage("/Shop");
         }

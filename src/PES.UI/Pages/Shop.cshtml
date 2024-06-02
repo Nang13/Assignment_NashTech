@@ -193,9 +193,11 @@
                                             <p>@item.Description</p>
                                             <div class="d-flex justify-content-between flex-lg-wrap">
                                                 <p class="text-dark fs-5 fw-bold mb-0">$ @item.Price / kg</p>
-                                                <a href="/AddTo" class="btn btn-primary rounded-pill">
-                                                    <i class="fa fa-shopping-bag me-2"></i> Add to cart
-                                                </a>
+                                                <form asp-page="Shop" asp-page-handler="AddToCart" method="post" asp-route-id=@item.Id>
+                                                    <button type="submit" class="btn btn-primary rounded-pill">
+                                                        <i class="fa fa-shopping-bag me-2"></i> Add to cart
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>

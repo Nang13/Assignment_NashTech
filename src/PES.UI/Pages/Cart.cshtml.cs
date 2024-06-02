@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using PES.Domain.DTOs.Product;
+using PES.Domain.DTOs.ProductDTO;
 using PES.Domain.Entities.Model;
 using System.Net.Http;
 using PES.Domain.DTOs.Cart;
@@ -28,7 +28,7 @@ namespace PES.UI.Pages
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5046/api/v1/Cart");
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken); // Replace with your actual access token
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken); // Use the actual access token directly
 
                 var response = await _httpClient.SendAsync(request);
 
@@ -72,10 +72,22 @@ namespace PES.UI.Pages
             };
             var json = JsonConvert.SerializeObject(payload);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("http://localhost:5046/api/v1/Cart", content);
-            response.Headers.Add("Authorization", $"Bearer {UserData.AccessToken}");
-            HttpContent content1 = response.Content;
-            string message = await content1.ReadAsStringAsync();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5046/api/v1/Cart");
+            request.Content = content;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+
+            var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Handle error
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Error: {0}", errorMessage);
+                return RedirectToPage(); // or handle the error appropriately
+            }
+
+            string message = await response.Content.ReadAsStringAsync();
             Console.WriteLine("The output from thirdparty is: {0}", message);
 
             return RedirectToPage();
@@ -92,10 +104,22 @@ namespace PES.UI.Pages
             };
             var json = JsonConvert.SerializeObject(payload);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("http://localhost:5046/api/v1/Cart", content);
 
-            HttpContent content1 = response.Content;
-            string message = await content1.ReadAsStringAsync();
+            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5046/api/v1/Cart");
+            request.Content = content;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+
+            var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Handle error
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Error: {0}", errorMessage);
+                return RedirectToPage(); // or handle the error appropriately
+            }
+
+            string message = await response.Content.ReadAsStringAsync();
             Console.WriteLine("The output from thirdparty is: {0}", message);
             return RedirectToPage();
         }

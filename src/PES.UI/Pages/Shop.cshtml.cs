@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PES.Domain.DTOs.Category;
-using PES.Domain.DTOs.Product;
+using PES.Domain.DTOs.ProductDTO;
 using PES.Domain.Entities.Model;
+using PES.UI.Pages.Shared;
 using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace PES.UI.Pages
@@ -62,5 +65,40 @@ namespace PES.UI.Pages
             Categories = items.Select(item => item.ToObject<CategoryResponse>()).ToList();
 
         }
+    
+        
+        public async Task<IActionResult> OnPostAddToCart(string id)
+        {
+            var payload = new
+            {
+                productId = id,
+                quantity = 1,
+                cartActionType = 0
+            };
+
+            var json = JsonConvert.SerializeObject(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5046/api/v1/Cart");
+            request.Content = content;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+
+            var response = await httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Handle error
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Error: {0}", errorMessage);
+                return RedirectToPage(); // or handle the error appropriately
+            }
+
+            string message = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("The output from thirdparty is: {0}", message);
+
+            return RedirectToPage();
+
+        }
+            
     }
 }

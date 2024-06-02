@@ -40,8 +40,6 @@ function User() {
   const toggleUserStatus = async (userId, isInactive) => {
     try {
 
-      console.log(isInactive)
-      console.log(userId)
       if (isInactive) {
         // Call enable API endpoint for activating the user
         await fetch(`http://localhost:5046/api/v1/User/${userId}/enable`, {
@@ -63,7 +61,7 @@ function User() {
       }
       //Update the user status in the state
       const updatedUsers = users.map(user => {
-        if (user.id === userId) {
+        if (user.userId === userId) {
           return { ...user, isInactive: !user.isInactive };
         }
         return user;

@@ -34,6 +34,7 @@ namespace PES.Application.Service
             // _database.HashSet(_claimsService.GetCurrentUserId, "Name", cartItems[0].Name);
             //_database.HashSet(_claimsService.GetCurrentUserId,"Price",cartItems[0].Price.ToString());
             string user = _claimsService.GetCurrentUserId;
+            Console.WriteLine(user);
             if (cartItems.CartActionType == 0)
             {
                 _database.HashSet(user, cartItems.ProductId.ToString(), cartItems.Quantity);
@@ -63,6 +64,7 @@ namespace PES.Application.Service
             foreach (HashEntry dataCheckerItem in dataChecker)
             {
                 Product product = await _unitOfWork.ProductRepository.GetByIdAsync(Guid.Parse(dataCheckerItem.Name));
+                ProductImage productImage = await _unitOfWork.ProductImageRepository.FirstOrDefaultAsync(x => x.ProductId == Guid.Parse(dataCheckerItem.Name) && x.IsMain == true);
                 CartItem cartItem = new()
                 {
                     Id = Guid.Parse(dataCheckerItem.Name),
@@ -70,7 +72,7 @@ namespace PES.Application.Service
                     Quantity = int.Parse(dataCheckerItem.Value),
                     Name = product.ProductName,
                     TotalPrice = product.Price * int.Parse(dataCheckerItem.Value),
-                    ProductImage = "banana.jpg",
+                    ProductImage = productImage.ImageUrl,
                     IsSelected = false
                 };
                 TotalPrice += cartItem.Quantity * cartItem.Price;

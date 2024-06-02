@@ -52,7 +52,7 @@ function ProductDetail() {
                 {product.productImages.map((image, index) => (
                   <div key={index}>
                     <img
-                      src={`https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/product%2F${image.url}?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074`}
+                      src={`https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F${image.url}?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074`}
                       alt={`${product.productName} image ${index + 1}`}
                       className="object-cover w-full h-64"
                     />

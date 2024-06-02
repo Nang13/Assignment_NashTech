@@ -274,7 +274,7 @@ const UpdateProduct = () => {
                                 {updatedProduct.productImages.map((image, index) => (
                                     <div key={index} className="relative">
                                         <img
-                                            src={image.isLocal ? URL.createObjectURL(image.url) : `https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/product%2F${image.url}?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074`}
+                                            src={image.isLocal ? URL.createObjectURL(image.url) : `https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F${image.url}?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074`}
                                             alt={`${updatedProduct.productName} image ${index + 1}`}
                                             className="object-cover w-full h-64 rounded-t-lg"
                                         />

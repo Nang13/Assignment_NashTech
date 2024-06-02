@@ -82,7 +82,7 @@ function Product() {
             render: (link) => {
               return (
                 <Avatar
-                  src={`https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/product%2F${link}?alt=media&token=0830e8eb-6d0b-4953-8c5f-49d25819e879`}
+                  src={`https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F${link}?alt=media&token=0830e8eb-6d0b-4953-8c5f-49d25819e879`}
                 />
               );
             },
