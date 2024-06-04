@@ -23,7 +23,6 @@
                         <th scope="col">Price</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Total</th>
-                        <th scope="col">Handle</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -32,37 +31,20 @@
                         <tr>
                             <th scope="row">
                                 <div class="d-flex align-items-center">
-                                    <img src="~/image/vegetable-item-3.png" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                                    <img src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F@(cart.ProductImage)?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
                                 </div>
                             </th>
                             <td>
-                                <p class="mb-0 mt-4">@cart.OrderDetailId</p>
+                                <p class="mb-0 mt-4">@cart.ProductName</p>
                             </td>
                             <td>
                                 <p class="mb-0 mt-4">@cart.Price $</p>
                             </td>
                             <td>
-                                    @*     <div class="input-group quantity mt-4" style="width: 100px;">
-                                <a class="input-group-btn" asp-page-handler="DecreaseQuantity" asp-route-id="@cart.Id">
-                                <button class="btn btn-sm btn-minus rounded-circle bg-light border">
-                                <i class="fa fa-minus"></i>
-                                </button>
-                                </a>
-                                <input type="text" class="form-control form-control-sm text-center border-0" value="@cart.Quantity">
-                                <a class="input-group-btn" asp-page-handler="IncreaseQuantity" asp-route-id="@cart.Id">
-                                <button class="btn btn-sm btn-plus rounded-circle bg-light border">
-                                <i class="fa fa-plus"></i>
-                                </button>
-                                </a>
-                                </div> *@
+                                <p class="mb-0 mt-4">@cart.Quantity </p>
                             </td>
                             <td>
-                                @* <p class="mb-0 mt-4">@cart.TotalPrice $</p> *@
-                            </td>
-                            <td>
-                                <button class="btn btn-md rounded-circle bg-light border mt-4">
-                                    <i class="fa fa-times text-danger"></i>
-                                </button>
+                                <p class="mb-0 mt-4">@cart.TotalPrice $</p>
                             </td>
                         </tr>
                     }

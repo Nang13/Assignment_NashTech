@@ -22,7 +22,6 @@
                 <thead>
                     <tr>
                         <th scope="col">Products</th>
-                        <th scope="col">Name</th>
                         <th scope="col">Price</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Total</th>
@@ -35,37 +34,35 @@
                         <tr>
                             <th scope="row">
                                 <div class="d-flex align-items-center">
-                                    <img src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F@(cart.ProductImage)?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                                    <img src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F@(cart.ProductImage)?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074" class="img-fluid me-3 rounded-circle" style="width: 80px; height: 80px;" alt="@cart.Name">
+                                    <div>
+                                        <p class="mb-0 fw-bold">@cart.Name</p>
+                                    </div>
                                 </div>
                             </th>
-                            <td>
-                                <p class="mb-0 mt-4">@cart.Name</p>
+                            <td class="align-middle">
+                                <p class="mb-0">@cart.Price $</p>
                             </td>
-                            <td>
-                                <p class="mb-0 mt-4">@cart.Price $</p>
-                            </td>
-                            <td>
-                                <div class="input-group quantity mt-4" style="width: 100px;">
-                                    <a class="input-group-btn" asp-page-handler="DecreaseQuantity" asp-route-id="@cart.Id">
-                                        <button class="btn btn-sm btn-minus rounded-circle bg-light border">
-                                            <i class="fa fa-minus"></i>
-                                        </button>
+                            <td class="align-middle">
+                                <div class="input-group quantity" style="width: 120px;">
+                                    <a class="btn btn-sm btn-minus bg-light border" asp-page-handler="DecreaseQuantity" asp-route-id="@cart.Id">
+                                        <i class="fa fa-minus"></i>
                                     </a>
-                                    <input type="text" class="form-control form-control-sm text-center border-0" value="@cart.Quantity">
-                                    <a class="input-group-btn" asp-page-handler="IncreaseQuantity" asp-route-id="@cart.Id">
-                                        <button class="btn btn-sm btn-plus rounded-circle bg-light border">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
+                                    <input type="text" class="form-control form-control-sm text-center border-0" value="@cart.Quantity" readonly>
+                                    <a class="btn btn-sm btn-plus bg-light border" asp-page-handler="IncreaseQuantity" asp-route-id="@cart.Id">
+                                        <i class="fa fa-plus"></i>
                                     </a>
                                 </div>
                             </td>
-                            <td>
-                                <p class="mb-0 mt-4">@cart.TotalPrice $</p>
+                            <td class="align-middle">
+                                <p class="mb-0">@cart.TotalPrice $</p>
                             </td>
-                            <td>
-                                <button class="btn btn-md rounded-circle bg-light border mt-4">
-                                    <i class="fa fa-times text-danger"></i>
-                                </button>
+                            <td class="align-middle">
+                                <form method="post" asp-page-handler="DeleteProduct" asp-route-id="@cart.Id" class="d-inline" asp-page="/Cart">
+                                    <button type="submit" class="btn btn-md rounded-circle bg-light border">
+                                        <i class="fa fa-times text-danger"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     }

@@ -1,0 +1,106 @@
+﻿@page
+@model PES.UI.Pages.RegisterModel
+@{
+}
+<style>
+    body {
+        background-color: #f0f8e2;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .auth-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+        .auth-header h2 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4caf50;
+        }
+
+        .auth-header img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+    .form-label {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .btn-primary {
+        background-color: #4caf50;
+        border-color: #4caf50;
+    }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+            border-color: #45a049;
+        }
+
+    .auth-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+        .auth-link a {
+            color: #4caf50;
+            text-decoration: none;
+        }
+
+            .auth-link a:hover {
+                text-decoration: underline;
+            }
+
+    .auth-container {
+        max-width: 400px;
+        margin: auto;
+        margin-top: 50px;
+    }
+
+   
+    /*
+        #loginForm {
+            display: none;
+        }  */
+
+    .toggle-link {
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+    }
+</style>
+<div class="auth-container">
+    <h2 id="auth-title">Login to Organic Store</h2>
+    <div id="registerForm">
+        <form asp-page="/SignIn" asp-page-handler="register" method="post">
+            <div class="mb-3">
+                <label for="registerEmail" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="registerEmail" aria-describedby="emailHelp" name="email">
+            </div>
+            <div class="mb-3">
+                <label for="registerEmail" class="form-label">Name</label>
+                <input name="name" type="text" class="form-control" id="registerEmail" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="registerPassword" class="form-label">Password</label>
+                <input type="password" class="form-control" id="registerPassword" name="password">
+            </div>
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+</div>

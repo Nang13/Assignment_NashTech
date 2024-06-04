@@ -99,28 +99,18 @@
         </form>
     </div>
 
-    <div id="registerForm">
-        <form asp-page="/SignIn" asp-page-handler="register" method="post">
-            <div class="mb-3">
-                <label for="registerEmail" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="registerEmail" aria-describedby="emailHelp" name="email">
-            </div>
-            <div class="mb-3">
-                <label for="registerEmail" class="form-label">Name</label>
-                <input  name="name" type="text" class="form-control" id="registerEmail" aria-describedby="emailHelp">
-            </div>
-            <div class="mb-3">
-                <label for="registerPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="registerPassword" name="password">
-            </div>
-            <div class="mb-3">
-                <label for="confirmPassword" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
+
+
+    <div class="mt-3">
+        <a asp-page="/Register" id="toggle-link" class="text-decoration-none text-primary">
+            Don't have an account? <span class="fw-bold">Register here</span>
+        </a>
     </div>
 
-    <p id="toggle-link" class="mt-3">Don't have an account? <span class="toggle-link" onclick="toggleForms()">Register here</span></p>
+    <div class="mt-3">
+        <a asp-page="/ForgetPassword" id="toggle-link" class="text-decoration-none text-primary">
+            Forgot Password? <span class="fw-bold">Reset here</span>
+        </a>
+    </div>
 </div>
 

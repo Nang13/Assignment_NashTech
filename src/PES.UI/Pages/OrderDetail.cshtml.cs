@@ -25,7 +25,6 @@ namespace PES.UI.Pages
                 JArray items = responseObject["ordererDetails"];
                 ordererDetailResponses = items.Select(item => item.ToObject<OrdererDetailResponse>()).ToList();
                 Total = responseObject["totalPrice"];
-
                 //TempData["cart"] = CartItems;
 
 

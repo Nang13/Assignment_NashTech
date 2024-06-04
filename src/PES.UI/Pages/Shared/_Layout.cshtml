@@ -46,27 +46,29 @@
                                 <a class="nav-item nav-link" asp-area="" asp-page="/Order">Order</a>
                                 <a class="nav-item nav-link" asp-area="" asp-page="/Shop">Shop</a>
                                 <a class="nav-item nav-link" asp-area="" asp-page="/Cart">Cart</a>
-                                @*      <div class="nav-item dropdown">
-                                <a href="#" classa="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Pages</a>
-                                <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                     <a class="dropdown-item active" asp-area="" asp-page="/Shop">Favorite Product</a>
-                                    <a class="dropdown-item"  asp-area="" asp-page="/Order">Order</a> 
-                                    <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                                    <a href="404.html" class="dropdown-item">404 Page</a>
-                                </div>
-                            </div> *@
                                 <a href="contact.html" class="nav-item nav-link">Contact</a>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-page="/SignIn">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-page="/Register">Register</a>
+                                </li>
                             }
                         </div>
                         <div class="d-flex m-3 me-0">
                             <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
-                            <a href="#" class="position-relative me-4 my-auto">
-                                <i class="fa fa-shopping-bag fa-2x"></i>
-                                <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">3</span>
-                            </a>
-                            <a href="#" class="my-auto">
-                                <i class="fas fa-user fa-2x"></i>
-                            </a>
+                            @if (UserData.UserName != "NotLogin")
+                            {
+                                <a href="#" class="position-relative me-4 my-auto">
+                                    <i class="fa fa-shopping-bag fa-2x"></i>
+                                    <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">3</span>
+                                </a>
+                                <a href="#" class="my-auto">
+                                    <i class="fas fa-user fa-2x"></i>
+                            </a>}
                         </div>
                     </div>
                 </nav>
@@ -143,7 +145,6 @@
             &copy; 2024 - PES.UI - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

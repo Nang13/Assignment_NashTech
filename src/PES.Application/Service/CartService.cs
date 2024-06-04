@@ -48,6 +48,10 @@ namespace PES.Application.Service
 
                 await _database.HashDecrementAsync(user, cartItems.ProductId.ToString(), cartItems.Quantity);
             }
+            else
+            {
+                await _database.HashDeleteAsync(user, cartItems.ProductId.ToString());
+            }
         }
 
         public Task DecreaseQuantity(Guid ProductId)
@@ -57,7 +61,7 @@ namespace PES.Application.Service
 
         public async Task<Cart> GetCart()
         {
-            string userId =_claimsService.GetCurrentUserId;
+            string userId = _claimsService.GetCurrentUserId;
             decimal TotalPrice = 0;
             List<CartItem> carts = [];
             HashEntry[] dataChecker = _database.HashGetAll(userId);

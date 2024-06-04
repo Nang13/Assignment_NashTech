@@ -7,7 +7,9 @@ using Newtonsoft.Json.Linq;
 using PES.Domain.DTOs.Cart;
 using PES.Domain.DTOs.Order;
 using PES.Domain.Entities.Model;
+using PES.UI.Pages.Shared;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace PES.UI.Pages
@@ -31,7 +33,11 @@ namespace PES.UI.Pages
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             try
             {
-                HttpResponseMessage responseMessage = await httpClient.GetAsync(testCase);
+                var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5046/api/v1/Cart");
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+
+                HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
                 HttpContent contentHihi = responseMessage.Content;
                 string message = await contentHihi.ReadAsStringAsync();
                 dynamic responseObject = JsonConvert.DeserializeObject(message);
@@ -45,6 +51,10 @@ namespace PES.UI.Pages
                 };
                 var json = JsonConvert.SerializeObject(payload);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                // Add Bearer token to the request
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+
                 var response = await httpClient.PostAsync("http://localhost:5046/api/v1/Order", content);
 
                 HttpContent content1 = response.Content;

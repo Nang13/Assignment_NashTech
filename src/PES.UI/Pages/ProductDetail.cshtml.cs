@@ -34,6 +34,8 @@ namespace PES.UI.Pages
         [BindProperty]
         public List<ProductImageResponse> productImages { get; set; }
 
+        [BindProperty]
+        public List<RatingResponse> ratings { get; set; }
 
         static HttpClient httpClient = new HttpClient();
         public async Task<IActionResult> OnGet(string id)
@@ -52,7 +54,7 @@ namespace PES.UI.Pages
                 JToken imporatantObject = responseObject["importantInfo"];
                 JToken categoryObject = responseObject["productCategory"];
                 JArray productIma = responseObject["productImages"];
-
+                JArray ratingsData = responseObject["ratings"];
                 ProductName = responseObject["productName"].ToString();
                 id = responseObject["id"];
                 ProductId = Guid.Parse(id);
@@ -61,6 +63,7 @@ namespace PES.UI.Pages
                 ProductCategory = categoryObject.ToObject<ProductCategory>();
                 importantInfo = imporatantObject.ToObject<ImportantInfo>();
                 productImages = productIma.Select(item => item.ToObject<ProductImageResponse>()).ToList();
+                ratings = ratingsData.Select(item => item.ToObject<RatingResponse>()).ToList();
 
                 RedirectToPage();
             }
@@ -101,7 +104,7 @@ namespace PES.UI.Pages
                 // Handle success response
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 Console.WriteLine(jsonResponse);
-                return RedirectToPage("SuccessPage"); // Redirect to success page
+                return Page(); // Redirect to success page
             }
             else
             {

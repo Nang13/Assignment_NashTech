@@ -12,59 +12,41 @@
 <div class="container-fluid py-5">
     <div class="container py-5">
         <div class="table-responsive">
-            <table class="table">
-                <thead>
+            <table class="table table-hover table-striped">
+                <thead class="thead-light">
                     <tr>
                         <th scope="col"></th>
                         <th scope="col">STT</th>
-                        <th scope="col">Price</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Total</th>
                         <th scope="col">Handle</th>
                     </tr>
                 </thead>
                 <tbody>
-                     @foreach (var cart in Model.orders)
+                    @for (int i = 0; i < Model.orders.Count; i++)
                     {
                         <tr>
                             <th scope="row">
                                 <div class="d-flex align-items-center">
-                                    <img src="~/image/organic-logo.png" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                                    <img src="~/image/organic-logo.png" class="img-fluid me-3 rounded-circle" style="width: 80px; height: 80px;" alt="Order Image">
                                 </div>
                             </th>
-                            <td>
-                                <p class="mb-0 mt-4">@cart.OrderId</p>
+                            <td class="align-middle">
+                                <p class="mb-0">@i</p>
                             </td>
-                            <td>
-                                <p class="mb-0 mt-4">@cart.TotalPrice $</p>
+                            <td class="align-middle">
+                                <p class="mb-0">@Model.orders[i].ProductCount</p> 
                             </td>
-                            <td>
-                                @* <div class="input-group quantity mt-4" style="width: 100px;">
-                                    <a class="input-group-btn" asp-page-handler="DecreaseQuantity" asp-route-id="@cart.Id">
-                                        <button class="btn btn-sm btn-minus rounded-circle bg-light border">
-                                            <i class="fa fa-minus"></i>
-                                        </button>
-                                    </a>
-                                    <input type="text" class="form-control form-control-sm text-center border-0" value="@cart.Quantity">
-                                    <a class="input-group-btn" asp-page-handler="IncreaseQuantity" asp-route-id="@cart.Id">
-                                        <button class="btn btn-sm btn-plus rounded-circle bg-light border">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </a>
-                                </div> *@
+                            <td class="align-middle">
+                                <p class="mb-0">@Model.orders[i].TotalPrice $</p>
                             </td>
-                            <td>
-                                <a href="/OrderDetail?id=@cart.OrderId">
-                                    View Detail
+                            <td class="align-middle">
+                                <a href="/OrderDetail?id=@Model.orders[i].OrderId" class="btn btn-link text-decoration-none">
+                                    View Details
                                 </a>
                             </td>
-                            <td>
-                                <button class="btn btn-md rounded-circle bg-light border mt-4">
-                                    <i class="fa fa-times text-danger"></i>
-                                </button>
-                            </td>
                         </tr>
-                    } 
+                    }
                 </tbody>
             </table>
         </div>

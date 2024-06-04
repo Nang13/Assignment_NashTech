@@ -14,6 +14,8 @@ namespace PES.Domain.Entities.Model
         public decimal? TotalPrice { get; set; } = 0;
         public Guid ProductId { get; set; }
 
+
+        public int? Quantity { get; set; } = 0;
         public Order? Order { get; set; } = null;
 
         public Guid OrderId { get; set; }

@@ -1,0 +1,115 @@
+﻿@page
+@model PES.UI.Pages.User.UserProfileModel
+@{
+}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        padding-top: 50px; /* Added padding to move content below the navbar */
+    }
+
+    .profile-picture {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 5px solid #fff;
+        margin: auto; /* Center the profile picture */
+        margin-bottom: -75px; /* Adjusted margin for better positioning */
+        background: url('https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F439227876_986925919455866_7120463816632084604_n.jpg?alt=media&token=6082c45e-8d02-4e04-8a33-f5454559c45d') no-repeat center center; background-size: cover;
+    }
+
+    .profile-info {
+        text-align: center;
+        color: #2d3436;
+        margin-bottom: 30px; /* Added margin for separation */
+    }
+
+        .profile-info h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .profile-info p {
+            font-size: 18px;
+            margin-bottom: 0; /* Removed margin bottom to avoid extra space */
+        }
+
+    .profile-content {
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        margin-top: -50px;
+    }
+
+        .profile-content h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #2d3436;
+        }
+
+        .profile-content p {
+            color: #636e72;
+            line-height: 1.6;
+            margin-bottom: 20px; /* Added margin bottom for separation */
+        }
+</style>
+<div class="container">
+    <div class="profile-header">
+        <!-- Background image for profile header -->
+    </div>
+    <div class="profile-info">
+        <div class="profile-picture"></div>
+        <h1>John Doe</h1>
+        <p>Organic Enthusiast</p>
+    </div>
+
+    <div class="profile-content">
+        <h2>About Me</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod felis ac ante auctor, nec placerat risus ullamcorper. Vestibulum rhoncus nunc vel leo sollicitudin, vitae malesuada est aliquet. Phasellus porta, ex vitae pellentesque fringilla, mauris dui lobortis ligula, at aliquet ligula leo vitae turpis. Suspendisse nec pharetra dolor. Ut pretium sed nisl id placerat.</p>
+        <h2>Contact Information</h2>
+        <p><i class="fas fa-envelope"></i> john.doe@example.com</p>
+        <p><i class="fas fa-phone"></i> +123 456 7890</p>
+        <h2>Interests</h2>
+        <p>Organic farming, Sustainable living, Healthy lifestyle</p>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal">
+            Update Profile
+        </button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel">Update Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <!-- Add more fields as needed -->
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+@* <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlE/J5npJ+27yW1Z0KjBd4L4eZ5o6em4lw5O3s7b3e5S9/KH9cXaNu8Q1DT" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgVQ5Cdgtzbyj2h6IpK9UafVf8vsUFp+XWW5y9b7o54uA4w8a4J" crossorigin="anonymous"></script> *@
+

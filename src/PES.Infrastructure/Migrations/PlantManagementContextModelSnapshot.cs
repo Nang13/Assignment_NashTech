@@ -399,6 +399,9 @@ namespace PES.Infrastructure.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("integer");
+
                     b.Property<decimal?>("TotalPrice")
                         .HasColumnType("numeric");
 

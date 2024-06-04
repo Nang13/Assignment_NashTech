@@ -39,6 +39,7 @@ namespace PES.UI.Pages
                     JArray items = responseObject.items;
                     CartItems = items.Select(item => item.ToObject<CartItem>()).ToList();
                     Total = responseObject.totalPrice;
+                    TempDataHelper.Put(TempData, "cart", CartItems);
                 }
                 else
                 {
@@ -49,7 +50,8 @@ namespace PES.UI.Pages
             }
             catch (HttpRequestException exception)
             {
-                Console.WriteLine("An HTTP request exception occurred. {0}", exception.Message);
+                Console.WriteLine("An HTTP request exception occurred" +
+                    ". {0}", exception.Message);
             }
         }
 
@@ -124,6 +126,36 @@ namespace PES.UI.Pages
             return RedirectToPage();
         }
 
+
+        public async Task<IActionResult> OnPostDeleteProduct(string id)
+        {
+            var payload = new
+            {
+                productId = id,
+                quantity = 1,
+                cartActionType = 3
+            };
+            var json = JsonConvert.SerializeObject(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5046/api/v1/Cart");
+            request.Content = content;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+
+            var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Handle error
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Error: {0}", errorMessage);
+                return RedirectToPage(); // or handle the error appropriately
+            }
+
+            string message = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("The output from thirdparty is: {0}", message);
+            return RedirectToPage();
+        }
         public async Task<IActionResult> OnGetSubmit()
         {
             return RedirectToPage();

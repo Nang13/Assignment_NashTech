@@ -77,31 +77,6 @@
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <div class="mb-3">
-                                    <h4>Additional</h4>
-                                    <div class="mb-2">
-                                        <input type="radio" class="me-2" id="Categories-1" name="Categories-1" value="Beverages">
-                                        <label for="Categories-1"> Organic</label>
-                                    </div>
-                                    <div class="mb-2">
-                                        <input type="radio" class="me-2" id="Categories-2" name="Categories-1" value="Beverages">
-                                        <label for="Categories-2"> Fresh</label>
-                                    </div>
-                                    <div class="mb-2">
-                                        <input type="radio" class="me-2" id="Categories-3" name="Categories-1" value="Beverages">
-                                        <label for="Categories-3"> Sales</label>
-                                    </div>
-                                    <div class="mb-2">
-                                        <input type="radio" class="me-2" id="Categories-4" name="Categories-1" value="Beverages">
-                                        <label for="Categories-4"> Discount</label>
-                                    </div>
-                                    <div class="mb-2">
-                                        <input type="radio" class="me-2" id="Categories-5" name="Categories-1" value="Beverages">
-                                        <label for="Categories-5"> Expired</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
                                 <h4 class="mb-3">Featured products</h4>
                                 <div class="d-flex align-items-center justify-content-start">
                                     <div class="rounded me-4" style="width: 100px; height: 100px;">
@@ -178,22 +153,20 @@
                         <div class="row g-4 justify-content-center">
                             @foreach (var item in Model.Products)
                             {
-                                <div class="col-md-6 col-lg-6 col-xl-4">
-                                    <div class="rounded position-relative fruite-item" style="height: 400px;">
-                                        <!-- Set a fixed height -->
-                                        <div class="fruite-img" style="height: 60%;">
-                                            <!-- Set the image container to fill 60% of the height -->
-                                            <img src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F@(item.ImageMain)?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074" class="img-fluid w-100 rounded-top" alt="">
+                                <div class="col-md-6 col-lg-6 col-xl-4 mb-4">
+                                    <div class="card h-100 rounded">
+                                        <div class="position-relative" style="height: 60%;">
+                                            <img src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F@(item.ImageMain)?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074" class="card-img-top h-100 w-100" alt="@item.ProductName" style="object-fit: cover;">
+                                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">@item.CategoryName</div>
                                         </div>
-                                        <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">@item.CategoryName</div>
-                                        <div class="p-4 border border-secondary border-top-0 rounded-bottom">
-                                            <a href="/ProductDetail?id=@item.Id">
-                                                <h4>@item.ProductName</h4>
+                                        <div class="card-body d-flex flex-column">
+                                            <a href="/ProductDetail?id=@item.Id" class="text-decoration-none">
+                                                <h4 class="card-title text-dark">@item.ProductName</h4>
                                             </a>
-                                            <p>@item.Description</p>
-                                            <div class="d-flex justify-content-between flex-lg-wrap">
+                                            <p class="card-text text-muted">@item.Description</p>
+                                            <div class="mt-auto d-flex justify-content-between align-items-center">
                                                 <p class="text-dark fs-5 fw-bold mb-0">$ @item.Price / kg</p>
-                                                <form asp-page="Shop" asp-page-handler="AddToCart" method="post" asp-route-id=@item.Id>
+                                                <form asp-page="Shop" asp-page-handler="AddToCart" method="post" asp-route-id="@item.Id">
                                                     <button type="submit" class="btn btn-primary rounded-pill">
                                                         <i class="fa fa-shopping-bag me-2"></i> Add to cart
                                                     </button>

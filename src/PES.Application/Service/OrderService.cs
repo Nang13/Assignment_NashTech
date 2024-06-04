@@ -52,7 +52,8 @@ namespace PES.Application.Service
                 OrderId = OrderId,
                 Price = order.Price,
                 ProductId = order.ProductId,
-                TotalPrice = order.Price * order.Quantity
+                TotalPrice = order.Price * order.Quantity,
+                Quantity = order.Quantity
             }).ToList());
             await _unitOfWork.SaveChangeAsync();
         }
@@ -60,9 +61,9 @@ namespace PES.Application.Service
 
         public async Task<OrderSingleResponse> GetOrderDetail(Guid id)
         {
-            string userId = _claimsService.GetCurrentUserId;
+          //  string userId = _claimsService.GetCurrentUserId;
             Order order = await _unitOfWork.OrderRepository.GetByIdAsync(id) ?? throw new Exception("hihi");
-            var orderDetail = _unitOfWork.OrderDetailRepository.WhereAsync(x => x.OrderId == id).Result.Select(x => new OrdererDetailResponse(OrderDetailId: x.Id, Price: x.Price)).ToList();
+            var orderDetail = _unitOfWork.OrderDetailRepository.WhereAsync(x => x.OrderId == id,x => x.Product,x => x.Product.ProductImages).Result.Select(x => new OrdererDetailResponse(OrderDetailId: x.Id, Price: x.Price,ProductName : x.Product.ProductName,ProductImage : x.Product.ProductImages.FirstOrDefault(pro => pro.IsMain == true).ImageUrl,Quantity : x.Quantity,TotalPrice : x.TotalPrice)).ToList();
             return new OrderSingleResponse(OrderId: order.Id, TotalPrice: order.TotalPrice, OrdererDetails: orderDetail);
 
         }

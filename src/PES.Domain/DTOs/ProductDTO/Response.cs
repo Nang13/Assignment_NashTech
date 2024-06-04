@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 namespace PES.Domain.DTOs.ProductDTO
 {
     public record ProductResponse(Guid Id, string ProductName, DateTime CreatedDate);
-    public record ProductResponseDetail(Guid Id, string ProductName, decimal Price, NutrionInfo? NutrionInfo , ProductCategory? ProductCategory, ImportantInfo? ImportantInfo, List<ProductImageResponse> ProductImages );
+    public record ProductResponseDetail(Guid Id, string ProductName, decimal Price, NutrionInfo? NutrionInfo , ProductCategory? ProductCategory, ImportantInfo? ImportantInfo, List<ProductImageResponse> ProductImages,IReadOnlyCollection<RatingResponse> Ratings );
 
+
+     public  record RatingResponse(string UserId,string UserComment,int UserRating ,string UserName,DateTime commentDate);
     public record ProductCategory(Guid categoryId, string CategoryName, string CategoryMain);
     public record ProductImageResponse(string url ,bool isMain);
     public record NutrionInfo(decimal? Calories, decimal? Protein, decimal? Sodium, decimal? Fiber, decimal? Sugars);

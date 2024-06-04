@@ -159,9 +159,10 @@ namespace PES.Application.Service
 
             var importantInfo = product.ImportantInformation != null ? product.MapperImportantDTO() : null;
 
-            var productImage = product.ProductImages != null ? product.ProductImages.Select(x => new ProductImageResponse(x.ImageUrl, x.IsMain)).ToList() : null;
+            var productImage = product.ProductImages?.Select(x => new ProductImageResponse(x.ImageUrl, x.IsMain)).ToList();
+            var ratingProduct = _unitOfWork.ProductRatingRepository.WhereAsync(x => x.ProductId == productId,x => x.User).Result.Select(x => new RatingResponse(UserId : x.UserId, UserComment : x.Comment,UserRating : x.Rating,UserName : x.User.UserName,commentDate : x.Created)).ToList();
 
-            return new ProductResponseDetail(productId, product.ProductName, product.Price, nutritionInfo, product.MapperCategoryDTO(), importantInfo, productImage);
+            return new ProductResponseDetail(productId, product.ProductName, product.Price, nutritionInfo, product.MapperCategoryDTO(), importantInfo, productImage,ratingProduct);
         }
 
         //? Search by CategoryName

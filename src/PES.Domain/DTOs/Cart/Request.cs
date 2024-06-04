@@ -22,7 +22,7 @@ namespace PES.Domain.DTOs.Cart
         public int Quantity { get; set; } = 0;
 
         [Required]
-        [Range(0, 2)]
+        [Range(0, 3)]
         public int CartActionType { get; set; }
     }
     public class CartModel
