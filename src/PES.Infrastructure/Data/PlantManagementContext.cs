@@ -32,5 +32,6 @@ namespace PES.Infrastructure.Data
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
+        
     }
 }

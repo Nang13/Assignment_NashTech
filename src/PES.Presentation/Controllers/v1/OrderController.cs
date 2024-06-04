@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Firebase.Auth;
 using Microsoft.AspNetCore.Mvc;
 using PES.Application.IService;
-using PES.Domain.DTOs.Order;
+using PES.Domain.DTOs.OrderDTO;
 
 namespace PES.Presentation.Controllers.V1
 {

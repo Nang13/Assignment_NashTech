@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PES.Domain.DTOs.Cart;
-using PES.Domain.DTOs.Order;
+using PES.Domain.DTOs.OrderDTO;
 using PES.Domain.Entities.Model;
 using PES.UI.Pages.Shared;
 using System.Net.Http;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using PES.Application.IService;
-using PES.Domain.DTOs.Category;
+using PES.Domain.DTOs.CategoryDTO;
 using PES.Domain.Entities.Model;
 using PES.Domain.Enum;
 using PES.Infrastructure.UnitOfWork;
@@ -44,11 +44,13 @@ namespace PES.Application.Service
             }
             else
             {
-
                 rightValue = 1;
-
             }
-            //? 1.Check CategoryMain is in system before
+            var parentCategory = request.MapperDTO(rightValue,parentId);
+/*            parentCategory.CategoryLeft = rightValue;
+            parentCategory.CategoryRight = rightValue + 1;
+            parentCategory.CategoryParentId = parentId;
+            ? 1.Check CategoryMain is in system before
             var parentCategory = new Category()
             {
                 CategoryLeft = rightValue,
@@ -57,12 +59,13 @@ namespace PES.Application.Service
                 CategoryName = request.CategoryName,
                 CategoryDescription = request.CategoryDescription,
                 CategoryParentId = parentId,
-            };
+            };*/
             await _unitOfWork.CategoryRepository.AddAsync(parentCategory);
             await _unitOfWork.SaveChangeAsync();
             var categoryAdded = await _unitOfWork.CategoryRepository.FirstOrDefaultAsync(x => x.CategoryName == request.CategoryName);
-            return new CategoryDetailResponse(categoryAdded.Id, categoryAdded.CategoryMain, categoryAdded.CategoryName, categoryAdded.CategoryLeft, categoryAdded.CategoryRight);
+          //  return new CategoryDetailResponse(categoryAdded.Id, categoryAdded.CategoryMain, categoryAdded.CategoryName, categoryAdded.CategoryLeft, categoryAdded.CategoryRight);
 
+            return categoryAdded.MapperDTODetail();
 
         }
 
@@ -86,29 +89,13 @@ namespace PES.Application.Service
             var category = await _unitOfWork.CategoryRepository.GetByIdAsync(categoryParentId);
             if (category is not null)
             {
-                var subCategory = _unitOfWork.CategoryRepository.WhereAsync(x => x.CategoryMain == category.CategoryMain && x.CategoryLeft > category.CategoryLeft && x.CategoryRight <= category.CategoryRight)
-                .Result
-                .Select(x => new CategoryResponse
-                {
-                    CategoryId = x.Id,
-                    Left = x.CategoryLeft,
-                    Right = x.CategoryRight,
-                    CategoryName = x.CategoryName,
-                    ParentId = x.CategoryParentId,
-                    CategoryDescription = x.CategoryDescription
-                    
-                }).ToList();
+                var subCategory = _unitOfWork.CategoryRepository
+                    .WhereAsync(x => x.CategoryMain == category.CategoryMain && x.CategoryLeft > category.CategoryLeft && x.CategoryRight <= category.CategoryRight)
+                    .Result
+                    .Select(x => x.MapperDTO()).ToList();
                 var parentCategort = _unitOfWork.CategoryRepository.FirstOrDefaultAsync(x => x.Id == categoryParentId).Result;
-                subCategory.Add(new CategoryResponse
-                {
-                    CategoryId = parentCategort.Id,
-                    CategoryName = parentCategort.CategoryName,
-                    Left = parentCategort.CategoryLeft,
-                    Right = parentCategort.CategoryRight,
-                    ParentId = parentCategort.CategoryParentId,
-                    CategoryDescription  = parentCategort.CategoryDescription,
-                    
-                });
+
+                subCategory.Add(parentCategort.MapperDTO());
                 return subCategory;
 
             }
@@ -125,19 +112,11 @@ namespace PES.Application.Service
             {
                 categoryUpdate.CategoryName = request.CategoryName;
                 categoryUpdate.CategoryDescription = request.CategoryDescription;
-                 _unitOfWork.CategoryRepository.Update(categoryUpdate);
+                _unitOfWork.CategoryRepository.Update(categoryUpdate);
                 await _unitOfWork.SaveChangeAsync();
 
 
-                return new CategoryResponse
-                {
-                    CategoryId = categoryUpdate.Id,
-                    CategoryName = request.CategoryName,
-                    CategoryDescription = request.CategoryDescription,
-                    Left = categoryUpdate.CategoryLeft,
-                    Right = categoryUpdate.CategoryRight,
-                    ParentId = categoryUpdate.CategoryParentId,
-                };
+                return categoryUpdate.MapperDTO();
             }
 
             return null;

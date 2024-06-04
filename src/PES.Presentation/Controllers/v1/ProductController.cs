@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PES.Application.Helper;
 using PES.Application.IService;
-using PES.Domain.DTOs.Order;
+using PES.Domain.DTOs.OrderDTO;
 using PES.Domain.DTOs.ProductDTO;
 
 namespace PES.Presentation.Controllers.V1

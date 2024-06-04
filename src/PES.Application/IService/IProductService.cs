@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using PES.Domain.DTOs.Order;
+using PES.Domain.DTOs.OrderDTO;
 using PES.Domain.DTOs.ProductDTO;
 using PES.Domain.Entities.Model;
 using PES.Infrastructure.Common;

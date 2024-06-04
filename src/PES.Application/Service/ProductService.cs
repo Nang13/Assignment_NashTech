@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using PES.Application.IService;
 using PES.Application.Utilities;
 using PES.Domain.Constant;
-using PES.Domain.DTOs.Order;
+using PES.Domain.DTOs.OrderDTO;
 using PES.Domain.DTOs.ProductDTO;
 using PES.Domain.Entities.Model;
 using PES.Infrastructure.Common;
