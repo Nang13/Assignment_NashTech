@@ -43,12 +43,13 @@ namespace PES.Infrastructure.Repository
             _context.Categories.Where(x => x.CategoryMain == category.CategoryMain && x.CategoryLeft > rightValue).ExecuteUpdate(x => x.SetProperty(b => b.CategoryLeft, b => b.CategoryRight + 2));
         }
 
-         public async Task DeleteAndUpdateSubCategories(string CategoryMain, int leftValue, int rightValue, int width)
+        public async Task DeleteAndUpdateSubCategories(string CategoryMain, int leftValue, int rightValue, int width)
         {
             _context.Categories.Where(x => x.CategoryMain == CategoryMain && x.CategoryLeft >= leftValue && x.CategoryRight <= rightValue).ExecuteDelete();
             //? update position after delete
             _context.Categories.Where(x => x.CategoryMain == CategoryMain && x.CategoryRight > rightValue).ExecuteUpdate(x => x.SetProperty(x => x.CategoryRight, x => x.CategoryRight - width));
             _context.Categories.Where(x => x.CategoryMain == CategoryMain && x.CategoryLeft > rightValue).ExecuteUpdate(x => x.SetProperty(x => x.CategoryLeft, x => x.CategoryLeft - width));
+            
 
         }
     }

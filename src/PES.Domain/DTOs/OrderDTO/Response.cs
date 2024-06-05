@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace PES.Domain.DTOs.OrderDTO
 {
-    public record OrderResponse(Guid OrderId, decimal TotalPrice,int ProductCount);
+    public record OrderResponse(Guid OrderId, decimal TotalPrice,int ProductCount,string Status,string PaymentType,string? OrderCurrencyCode,string UserID,string UserName);
     
-
+   
     public record OrderSingleResponse(Guid OrderId, decimal TotalPrice,IReadOnlyList<OrdererDetailResponse> OrdererDetails);
 
 

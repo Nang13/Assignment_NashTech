@@ -74,8 +74,7 @@ function Category() {
   }
   return (
 
-    <div className="container mx-auto p-6  rounded-lg shadow-lg">
-    <Space size={20} direction="vertical" className="w-full">
+    <Space size={30} direction="vertical" className="w-full p-4">
       <Title level={4} className="text-gray-800">Category</Title>
       <Link className="mb-4">
         <button
@@ -149,8 +148,9 @@ function Category() {
           </Form.Item>
         </Form>
       </Modal>
+
+ 
     </Space>
-  </div>
   )
 }
 

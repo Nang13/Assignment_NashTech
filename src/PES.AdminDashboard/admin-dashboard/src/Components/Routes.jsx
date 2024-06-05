@@ -18,6 +18,7 @@ import Footer from "./Footer";
 import MainLayout from "./MainLayout";
 import Orders from "../Pages/Users/Orders";
 import OrderDetail from "../Pages/Users/OrderDetail";
+import Order from "../Pages/Order/Index";
 function AppRoutes() {
     return (
         <Routes>
@@ -28,13 +29,14 @@ function AppRoutes() {
               <Route path="" element={<Dashboard />} />
               <Route path="user" element={<User />} />
               <Route path="category" element={<Category />} />
-              <Route path="product" element={<Product />} />
+              <Route path="/product" element={<Product />} />
               <Route path="category_detail/:id" element={<CategoryDetail />} />
               <Route path="product_update/:id" element={<UpdateProduct />} />
               <Route path="product_detail/:id" element={<ProductDetail />} />
               <Route path="add_product" element={<AddNewProduct />} />
               <Route path="/orders/:userId" element={<Orders />} />
               <Route path="/order/:orderId" element={<OrderDetail />} />
+              <Route path="/order" element={<Order />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/login" />} />

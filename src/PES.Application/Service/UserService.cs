@@ -129,18 +129,20 @@ namespace PES.Application.Service
             var user = await _userManager.FindByEmailAsync(loginRequest.Email);
             if (user.LockoutEnabled) throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Your Account have been locked");
             bool checkPassword = await _userManager.CheckPasswordAsync(user, loginRequest.Password);
+            var roles = await _userManager.GetRolesAsync(user);
             var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+          
 
             //var newToken = await _userManager.Login(user, "Jwt Bearer", "JWT");
             // var result = await _authorizationService.AuthorizeAsync(principal, user.UserName);
             string secretKeyConfig = _configuration["JWTSecretKey:SecretKey"];
-            string jwt = GenerateJWT(user, secretKeyConfig);
+            string jwt = GenerateJWT(user, secretKeyConfig,roles);
             //  Console.WriteLine(newToken);
-            return new AuthDTO(user.Id, user.UserName, user.Email, user.LockoutEnabled, new UserToken(jwt, "comsuonbitalon"));
+            return new AuthDTO(user.Id, user.UserName, user.Email, user.LockoutEnabled,roles.First(), new UserToken(jwt, "comsuonbitalon"));
         }
 
 
-        private static string GenerateJWT(ApplicationUser user, string secretKeyConfig)
+        private static string GenerateJWT(ApplicationUser user, string secretKeyConfig,IList<string> userRoles)
         {
 
             DateTime secretKeyDatetime = DateTime.UtcNow;
@@ -149,7 +151,8 @@ namespace PES.Application.Service
             var claims = new List<Claim>
             {
                 new("UserId", user.Id.ToString()),
-                new(ClaimTypes.Name, user.UserName)
+                new(ClaimTypes.Name, user.UserName),
+                new (ClaimTypes.Role,userRoles.First()),
             };
             // claims.Add( new Claim((await _userManager.GetRolesAsync(user)).Select(x => new Claim(ClaimTypes.Role, x))));
 
@@ -178,12 +181,12 @@ namespace PES.Application.Service
             {
                 throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, string.Join(", ", result.Errors.Select(x => "Code " + x.Code + " Description" + x.Description)));
             }
-
+            var roles = await _userManager.GetRolesAsync(user);
 
             string secretKeyConfig = _configuration["JWTSecretKey:SecretKey"];
-            string jwt = GenerateJWT(user, secretKeyConfig);
+            string jwt = GenerateJWT(user, secretKeyConfig,roles);
             var userData = await _userManager.Users.Where(x => x.Email == request.Email).FirstOrDefaultAsync();
-            return new AuthDTO(userData.Id, userData.UserName, userData.Email, userData.LockoutEnabled, new UserToken(jwt, "comsuonbitalon"));
+            return new AuthDTO(userData.Id, userData.UserName, userData.Email, userData.LockoutEnabled, roles.First(),new UserToken(jwt, "comsuonbitalon"));
 
         }
 

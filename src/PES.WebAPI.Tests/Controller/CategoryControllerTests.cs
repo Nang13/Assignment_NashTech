@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
-using PES.Domain.DTOs.Category;
+using PES.Domain.DTOs.CategoryDTO;
 using PES.Domain.Entities.Model;
 using PES.Domain.Tests;
 using PES.Presentation.Controllers.V1;

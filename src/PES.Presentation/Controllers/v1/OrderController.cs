@@ -6,6 +6,7 @@ using Firebase.Auth;
 using Microsoft.AspNetCore.Mvc;
 using PES.Application.IService;
 using PES.Domain.DTOs.OrderDTO;
+using PES.Domain.DTOs.ProductDTO;
 
 namespace PES.Presentation.Controllers.V1
 {
@@ -39,9 +40,9 @@ namespace PES.Presentation.Controllers.V1
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetOrder()
+        public async Task<ActionResult> GetOrder([FromQuery] Dictionary<string, string> filter, [FromQuery] int pageNumber = 0, [FromQuery] int pageSize = 1)
         {
-            var response = await _orderService.GetOrder();
+            var response = await _orderService.GetOrder(new GetOrderRequest { Filter = filter, PageNumber = pageNumber, PageSize = pageSize });
             return Ok(response);
         }
 

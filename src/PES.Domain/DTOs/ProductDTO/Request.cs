@@ -24,10 +24,12 @@ namespace PES.Domain.DTOs.ProductDTO
         [Range(0, int.MaxValue)]
         public int Quantity { get; set; } = 0;
 
+        [Required]
         public string? Description { get; set; } = null;
         public ImportantImformationRequest? ImformationRequest { get; set; } = null;
         public NutrionInforrmationRequest? NutrionInforrmationRequest { get; set; } = null;
 
+        [Required]
         public List<string> ListImages { get; set; } = [];
 
         [JsonIgnore]
@@ -47,11 +49,15 @@ namespace PES.Domain.DTOs.ProductDTO
 
     public class NutrionInforrmationRequest
     {
+        [Range(0,100)]
         public decimal Calories { get; set; } = 0;
+        [Range(0, 100)]
         public decimal Protein { get; set; } = 0;
+        [Range(0, 100)]
         public decimal Sodium { get; set; } = 0;
-
+        [Range(0, 100)]
         public decimal Fiber { get; set; } = 0;
+        [Range(0, 100)]
         public decimal Sugars { get; set; } = 0;
     }
     public class UpdateProductRequest : IValidatableObject

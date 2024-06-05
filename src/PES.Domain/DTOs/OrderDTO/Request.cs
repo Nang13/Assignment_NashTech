@@ -46,4 +46,11 @@ namespace PES.Domain.DTOs.OrderDTO
 
         public Guid ProductId { get; set; }
     }
+
+    public class GetOrderRequest
+    {
+        public Dictionary<string, string>? Filter { get; set; } = default!;
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+    }
 }

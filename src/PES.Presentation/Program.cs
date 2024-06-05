@@ -3,6 +3,7 @@ using PES.Application;
 using PES.Application.Helper.ErrorHandler;
 using PES.Infrastructure;
 using PES.Infrastructure.Data;
+using PES.Infrastructure.Data.Config;
 using PES.Presentation;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseOutputCache();
 app.UseHttpsRedirection();
-
+//app.InitialiseDatabaseAsync();
 app.UseAuthorization();
 
 

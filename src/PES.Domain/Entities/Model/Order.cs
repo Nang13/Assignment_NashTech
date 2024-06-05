@@ -8,8 +8,10 @@ namespace PES.Domain.Entities.Model
     public class Order : BaseAuditableEntity 
     {
         public decimal TotalPrice { get; set; }
-
-        public virtual ICollection<OrderDetail> OrderDetails{ get; set; } = new List<OrderDetail>();
+        public string? PaymentType { get; set; } = "COD";
+        public string? CurrencyCode { get; set; } = "PES_001";
+        public string? Status { get; set; } = "Proccessing";
+         public virtual ICollection<OrderDetail> OrderDetails{ get; set; } = new List<OrderDetail>();
 
         public ApplicationUser? User { get; set; } = null;
       

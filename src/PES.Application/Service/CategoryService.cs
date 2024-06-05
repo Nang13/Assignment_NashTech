@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
+using PES.Application.Helper.ErrorHandler;
 using PES.Application.IService;
 using PES.Domain.DTOs.CategoryDTO;
 using PES.Domain.Entities.Model;
@@ -32,6 +34,8 @@ namespace PES.Application.Service
         {
             int rightValue = 0;
             Guid parentId = Guid.Parse("00000000-0000-0000-0000-000000000000");
+            //? check name this category exists in system 
+            if (!await CheckDuplicateCategoryName(request.CategoryName)) throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, "This Name already used in system");
             if (request.AddType == (int)AddCategoryType.AddChildCategory)
             {
 
@@ -46,31 +50,26 @@ namespace PES.Application.Service
             {
                 rightValue = 1;
             }
-            var parentCategory = request.MapperDTO(rightValue,parentId);
-/*            parentCategory.CategoryLeft = rightValue;
-            parentCategory.CategoryRight = rightValue + 1;
-            parentCategory.CategoryParentId = parentId;
-            ? 1.Check CategoryMain is in system before
-            var parentCategory = new Category()
-            {
-                CategoryLeft = rightValue,
-                CategoryRight = rightValue + 1,
-                CategoryMain = request.CategoryMain,
-                CategoryName = request.CategoryName,
-                CategoryDescription = request.CategoryDescription,
-                CategoryParentId = parentId,
-            };*/
+            var parentCategory = request.MapperDTO(rightValue, parentId);
             await _unitOfWork.CategoryRepository.AddAsync(parentCategory);
             await _unitOfWork.SaveChangeAsync();
+
             var categoryAdded = await _unitOfWork.CategoryRepository.FirstOrDefaultAsync(x => x.CategoryName == request.CategoryName);
-          //  return new CategoryDetailResponse(categoryAdded.Id, categoryAdded.CategoryMain, categoryAdded.CategoryName, categoryAdded.CategoryLeft, categoryAdded.CategoryRight);
+            //  return new CategoryDetailResponse(categoryAdded.Id, categoryAdded.CategoryMain, categoryAdded.CategoryName, categoryAdded.CategoryLeft, categoryAdded.CategoryRight);
 
             return categoryAdded.MapperDTODetail();
 
         }
 
 
-
+        private async Task<bool> CheckDuplicateCategoryName(string CategoryName)
+        {
+            if (_unitOfWork.CategoryRepository.WhereAsync(x => x.CategoryName == CategoryName).Result.IsNullOrEmpty())
+            {
+                return true;
+            }
+            return false;
+        }
 
         public async Task<bool> DeleteCategory(Guid categoryId)
         {
@@ -78,7 +77,8 @@ namespace PES.Application.Service
             int leftValue = category.CategoryLeft;
             int rightValue = category.CategoryRight;
             int width = rightValue - leftValue + 1;
-            throw new NotImplementedException();
+            await _unitOfWork.CategoryRepository.DeleteAndUpdateSubCategories(category.CategoryMain, leftValue, rightValue, width);
+            return true;
         }
 
         public async Task<List<CategoryResponse>> GetMainCategories() => await _unitOfWork.CategoryRepository.GetAllParentCategory();

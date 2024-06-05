@@ -52,27 +52,29 @@ function Product() {
     setSearchType(value);
   };
   return (
-    <div className="container mx-auto p-4">
-      <Title level={4}>Product</Title>
-      <div className="flex space-x-4 mb-4">
-        <Select defaultValue={searchType} onChange={handleSearchTypeChange} style={{ width: 150 }} className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none">
-          <Option value="ProductName">Product Name</Option>
-          <Option value="CategoryMain">Category Main</Option>
-          <Option value="CategoryName">Category Name</Option>
-        </Select>
-        <Search
-          placeholder={`Search by ${searchType}`}
-          onSearch={handleSearch}
-          enterButton
-          style={{ width: 250 }}
-          className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none"
-        />
+    <Space size={30} direction="vertical" className="w-full p-4">
+       <Typography.Title level={4}>Product</Typography.Title>
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
+        <div className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-4 mb-4 lg:mb-0">
+          <Select defaultValue={searchType} onChange={handleSearchTypeChange} style={{ width: 150 }} className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none">
+            <Option value="ProductName">Product Name</Option>
+            <Option value="CategoryMain">Category Main</Option>
+            <Option value="CategoryName">Category Name</Option>
+          </Select>
+          <Search
+            placeholder={`Search by ${searchType}`}
+            onSearch={handleSearch}
+            enterButton
+            style={{ width: 250 }}
+            className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none"
+          />
+        </div>
+        <Link to="/add_product">
+          <Button type="primary" className="rounded-md">
+            <PlusOutlined /> Add New Product
+          </Button>
+        </Link>
       </div>
-      <Link to="/add_product" className="mb-4">
-        <Button type="primary" className="rounded-md">
-          <PlusOutlined /> Add New
-        </Button>
-      </Link>
       <Table
         loading={loading}
         columns={[
@@ -138,7 +140,7 @@ function Product() {
         }}
         className="w-full"
       />
-    </div>
+    </Space>
   );
 }
 

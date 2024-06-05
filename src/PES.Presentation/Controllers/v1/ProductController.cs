@@ -34,6 +34,10 @@ namespace PES.Presentation.Controllers.V1
         public async Task<IActionResult> Add(AddNewProductRequest request)
         {
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             await _productService.AddNewProduct(request);
             return Ok("Create Product Successfully");
         }
@@ -68,7 +72,7 @@ namespace PES.Presentation.Controllers.V1
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetailById(Guid id)
         {
-            
+
             return Ok(await _productService.GetProductDetail(id));
         }
 
@@ -88,23 +92,14 @@ namespace PES.Presentation.Controllers.V1
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> Upload(IFormFile imageFile,string productName)
+        public async Task<IActionResult> Upload(IFormFile imageFile)
         {
-            string imageName = imageFile.FileName + Regex.Replace(productName, @"\s", "");
-
-            using (var memoryStream = new MemoryStream())
+            await StorageHandler.UploadFileAsync(imageFile, "Product");
+            return Ok(new
             {
-                await imageFile.CopyToAsync(memoryStream);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                var newFile = new FormFile(memoryStream, 0, memoryStream.Length, null, imageName)
-                {
-                    Headers = imageFile.Headers,
-                    ContentType =   imageFile.ContentType
-                };
-                await StorageHandler.UploadFileAsync(newFile, "Product");
-            }
-            return Ok(imageName);
-        } 
+                message = "Upload Image Successfully"
+            });
+        }
 
     }
 }

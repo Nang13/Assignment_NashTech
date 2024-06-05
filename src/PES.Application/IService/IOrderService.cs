@@ -5,13 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using PES.Domain.DTOs.OrderDTO;
 using PES.Domain.Entities.Model;
+using PES.Infrastructure.Common;
 
 namespace PES.Application.IService
 {
     public interface IOrderService
     {
         public Task<OrderResponse> AddOrder(OrderRequest request);
-        public Task<IReadOnlyList<OrderResponse>> GetOrder();
+        public Task<Pagination<OrderResponse>> GetOrder(GetOrderRequest request);
         public Task<OrderSingleResponse> GetOrderDetail(Guid id);
 
         public Task<FrozenSet<OrderResponse>> GetOrderByUser(string UserId);

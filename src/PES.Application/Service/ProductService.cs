@@ -8,6 +8,7 @@ using Google.Api.Gax.ResourceNames;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PES.Application.Helper.ErrorHandler;
 using PES.Application.IService;
 using PES.Application.Utilities;
 using PES.Domain.Constant;
@@ -41,19 +42,13 @@ namespace PES.Application.Service
         }
         public async Task<ProductResponse> AddNewProduct(AddNewProductRequest request)
         {
+            //? check name is existed 
+            if (!await CheckDuplicateProductName(request.ProductName)) throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, "This Name already used in system");
+
+
             request.MainImage = request.ListImages.FirstOrDefault();
             request.ListImages.RemoveAt(0);
             Guid productId = Guid.NewGuid();
-            //Product product = new()
-            //{
-            //    ProductName = request.ProductName,
-            //    Price = request.Price,
-            //    Id = productId,
-            //    Created = CurrentTime.RecentTime,
-            //    CategoryId = request.CategoryId,
-            //    Quantity = request.Quantity,
-            //    Description = request.Description
-            //};
             Product product = request.ToDTO();
             product.Id = productId;
 
@@ -63,13 +58,13 @@ namespace PES.Application.Service
 
             if (request.ListImages.Count >= 1)
             {
-                var Task1 = AddInconsequentialImage(request.ListImages, productId,request.ProductName);
-                var Task2 = AddMainImage(request.MainImage, productId,request.ProductName);
+                var Task1 = AddInconsequentialImage(request.ListImages, productId);
+                var Task2 = AddMainImage(request.MainImage, productId);
                 await Task.WhenAll(Task1, Task2);
             }
             else
             {
-                await AddMainImage(request.MainImage, productId,request.ProductName);
+                await AddMainImage(request.MainImage, productId);
             }
 
 
@@ -81,11 +76,20 @@ namespace PES.Application.Service
             return new ProductResponse(productId, request.ProductName, product.Created);
         }
 
-        public async Task AddInconsequentialImage(string Images, Guid productId,string productName)
+        private async Task<bool> CheckDuplicateProductName(string productName)
+        {
+            if (_unitOfWork.ProductRepository.WhereAsync(x => x.ProductName == productName).Result.IsNullOrEmpty())
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task AddInconsequentialImage(string Images, Guid productId)
         {
             var productImage = new ProductImage
             {
-                ImageUrl = Images+ Regex.Replace(productName, @"\s", ""),   // Assuming the image string is the path
+                ImageUrl = Images , // Assuming the image string is the path
                 ProductId = productId,
                 IsMain = false
             };
@@ -94,11 +98,11 @@ namespace PES.Application.Service
         }
 
 
-        public async Task AddInconsequentialImage(List<string> Images, Guid productId, string productName)
+        public async Task AddInconsequentialImage(List<string> Images, Guid productId)
         {
             var productImages = Images.Select(image => new ProductImage
             {
-                ImageUrl = image + Regex.Replace(productName, @"\s", ""),   // Assuming the image string is the path
+                ImageUrl = image ,   // Assuming the image string is the path
                 ProductId = productId,
                 IsMain = false
             }).ToList();
@@ -140,11 +144,11 @@ namespace PES.Application.Service
 
 
 
-        public async Task AddMainImage(string Images, Guid productId,string ProductName)
+        public async Task AddMainImage(string Images, Guid productId)
         {
             await _unitOfWork.ProductImageRepository.AddAsync(new ProductImage
             {
-                ImageUrl = Images+ Regex.Replace(ProductName, @"\s", ""),
+                ImageUrl = Images ,
                 ProductId = productId,
                 IsMain = true,
             });
@@ -160,9 +164,9 @@ namespace PES.Application.Service
             var importantInfo = product.ImportantInformation != null ? product.MapperImportantDTO() : null;
 
             var productImage = product.ProductImages?.Select(x => new ProductImageResponse(x.ImageUrl, x.IsMain)).ToList();
-            var ratingProduct = _unitOfWork.ProductRatingRepository.WhereAsync(x => x.ProductId == productId,x => x.User).Result.Select(x => new RatingResponse(UserId : x.UserId, UserComment : x.Comment,UserRating : x.Rating,UserName : x.User.UserName,commentDate : x.Created)).ToList();
+            var ratingProduct = _unitOfWork.ProductRatingRepository.WhereAsync(x => x.ProductId == productId, x => x.User).Result.Select(x => new RatingResponse(UserId: x.UserId, UserComment: x.Comment, UserRating: x.Rating, UserName: x.User.UserName, commentDate: x.Created)).ToList();
 
-            return new ProductResponseDetail(productId, product.ProductName, product.Price, nutritionInfo, product.MapperCategoryDTO(), importantInfo, productImage,ratingProduct);
+            return new ProductResponseDetail(productId, product.ProductName, product.Price, nutritionInfo, product.MapperCategoryDTO(), importantInfo, productImage, ratingProduct);
         }
 
         //? Search by CategoryName
@@ -202,7 +206,7 @@ namespace PES.Application.Service
 
             //  var filterResult = request.Filter.Count > 0 ? [] : _unitOfWork.ProductRepository.GetAllAsync().Result.AsEnumerable();
             var filterResult = _unitOfWork.ProductRepository.GetAllAsync(x => x.Category, x => x.ProductImages).Result.AsEnumerable();
-            var testingData = _unitOfWork.ProductRepository.GetAllAsync(x => x.Category, x => x.ProductImages).Result.Select(x => new ProductsResponse(x.Id, x.ProductName, x.Created, x.ProductImages.FirstOrDefault().ImageUrl, x.Category.CategoryMain, x.Category.CategoryName, x.Price, x.Description, x.CategoryId)).AsEnumerable();
+            var testingData = _unitOfWork.ProductRepository.GetAllAsync(x => x.Category, x => x.ProductImages,x => x.ProductRating).Result.Select(x => new ProductsResponse(x.Id, x.ProductName, x.Created, x.ProductImages.FirstOrDefault().ImageUrl, x.Category.CategoryMain, x.Category.CategoryName, x.Price, x.Description, x.CategoryId)).AsEnumerable();
 
 
 
@@ -307,27 +311,28 @@ namespace PES.Application.Service
             if (!request.productImages.IsNullOrEmpty())
             {
                 List<ProductImage> productImages = await _unitOfWork.ProductImageRepository.WhereAsync(x => x.ProductId == id);
-                string productName =  _unitOfWork.ProductRepository.FirstOrDefaultAsync(x => x.Id == id).Result.ProductName;  
+           
                 //? in Database    1  2   3
                 //? input Delete   1   2
                 foreach (var item in request.productImages)
                 {
-                    ProductImage image = await _unitOfWork.ProductImageRepository.FirstOrDefaultAsync(x => x.ImageUrl == item);
+                    ProductImage image = await  _unitOfWork.ProductImageRepository.FirstOrDefaultAsync(x => x.ImageUrl == item);
                     //? if not found: New Image One
                     if (image is null)
                     {
-                        await AddInconsequentialImage(item, id,productName);
+                        await AddInconsequentialImage(item, id);
                     }
                     else
                     {
                         //? remove element 
                         //? after finish this if the loop have element it will be deleted
-                        productImages.Remove(image);
+
+                        productImages.Remove(productImages.FirstOrDefault(x => x.ImageUrl == item));
                     }
                 }
-                if (productImages is not null)
+                if (!productImages.IsNullOrEmpty())
                 {
-                    await _unitOfWork.ProductImageRepository.DeleteRange(productImages);
+                        await _unitOfWork.ProductImageRepository.DeleteRange(productImages);
                 }
 
 

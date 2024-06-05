@@ -3,6 +3,7 @@ import { getCategoryDetail } from '../../API/index';
 import { useParams } from 'react-router-dom';
 import { Button, Modal, Form, Select, Input, message } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 
 
 
@@ -20,16 +21,45 @@ function CategoryDetail() {
 
 
     const showModal = (category = null) => {
+        console.log(category);
+        setIsModalOpen(true);
         setCurrentCategory(category);
-        if (category) {
-            form.setFieldsValue({
-                categoryName: category.name,
-                categoryDescription: category.description,
-            });
-        } else {
-            form.resetFields();
-        }
+        // if (category) {
+        //     form.setFieldsValue({
+        //         categoryName: category.name,
+        //         categoryDescription: category.description,
+        //     });
+        // } else {
+        //     form.resetFields();
+        // }
         //   setIsModalVisible(true);
+        deleteCategory(category.categoryId)
+    };
+
+  
+    const deleteCategory = (categoryId) => {
+        const url = `http://localhost:5046/api/v1/Category/${categoryId}`;
+
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+
+        fetch(url, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                window.location.reload()
+                message.success('Category deleted successfully');
+                // You can perform additional actions here if needed
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle error here
+            });
     };
 
     const handleCancel = () => {
@@ -79,23 +109,42 @@ function CategoryDetail() {
                 fetch("http://localhost:5046/api/v1/Category", requestOptions)
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                            toast(response.message, {
+                                position: "top-right",
+                                autoClose: 5000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "light",
+                                transition: Bounce,
+                            });
                         }
                         return response.json();
                     })
                     .then(data => {
-                        form.resetFields();
-                        //  setIsModalVisible(false);
-                        setCurrentCategory(null);
+                        debugger
+                        if (data.status == 400) {
+                            message.error("Name have been duplicated or the length of description");
+                        } else {
+                            message.success("Add Category Successfully")
+                            console.log(data);
+                            form.resetFields();
+                            setCurrentCategory(null);
+                            window.location.reload()
+                        }
+                        // Reload the page to get new elements
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        message.error('Failed to submit category');
+                        // message.error('Failed to submit category');
                     });
             })
             .catch(info => {
                 console.log('Validate Failed:', info);
             });
+
         setIsModalAdding(false);
     }
 
@@ -116,21 +165,19 @@ function CategoryDetail() {
 
                 fetch(`http://localhost:5046/api/v1/Category/${currentCategory.id}`, requestOptions)
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                        debugger
+                        console.log(response);
+                        if (response.status != 200) {
+                            message.error("Check your data again")
+                        } else {
+                            message.success('Category updated successfully');
+                            form.resetFields();
+                            setIsModalAdding(false);
+                            setIsModalUpdate(false);
+                            setCurrentCategory(null);
+                            window.location.reload()
                         }
                         return response.json();
-                    })
-                    .then(data => {
-                        if (currentCategory) {
-                            message.success('Category updated successfully');
-                        } else {
-                            message.success('Category added successfully');
-                        }
-                        form.resetFields();
-                        setIsModalAdding(false);
-                        setIsModalUpdate(false);
-                        setCurrentCategory(null);
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -142,7 +189,7 @@ function CategoryDetail() {
             });
     }
 
-    
+
 
 
     const handleOk = () => {
@@ -188,7 +235,7 @@ function CategoryDetail() {
                             <div className="flex items-center text-base">
                                 <div className="ml-2 text-gray-700">{subcategory.categoryName}</div>
                                 <PlusOutlined onClick={() => showModalAdding(subcategory.categoryId)} style={{ color: 'green' }} className='pl-3' />
-                                <DeleteOutlined onClick={() => showModal()} style={{ color: 'red' }} className='pl-3' />
+                                <DeleteOutlined onClick={() => showModal(subcategory)} style={{ color: 'red' }} className='pl-3' />
                                 <EditOutlined onClick={() => showModalUpdate({ id: subcategory.categoryId, name: subcategory.categoryName, description: subcategory.categoryDescription })} style={{ color: 'black' }} className='pl-3' />
                             </div>
 
@@ -211,15 +258,13 @@ function CategoryDetail() {
                         <div className="flex items-center text-base">
                             <div className="ml-2 text-gray-700">{category.categoryName}</div>
                             <PlusOutlined onClick={() => showModalAdding(category.categoryId)} style={{ color: 'green' }} className='pl-3' />
-                            <DeleteOutlined onClick={() => showModal()} style={{ color: 'red' }} className='pl-3' />
+                            <DeleteOutlined onClick={() => showModal(category)} style={{ color: 'red' }} className='pl-3' />
                             <EditOutlined onClick={() => showModalUpdate({ id: category.categoryId, name: category.categoryName, description: category.categoryDescription })} style={{ color: 'black' }} className='pl-3' />
                         </div>
 
 
                         <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-                            <p>Some contents...</p>
-                            <p>Some contents...</p>
-                            <p>Some contents...</p>
+                            <p>Is Delete Category ?</p>
                         </Modal>
                         <Modal title="Basic Modal" open={isModalAdding} onOk={handleOKAdding} onCancel={handleCancel}>
                             <Form
@@ -306,6 +351,21 @@ function CategoryDetail() {
             <p className="mb-8 text-center"></p>
             {loading && <div>Loading...</div>}
             {!loading && renderTopLevelCategories()}
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+
+            />
+            {/* Same as */}
+            <ToastContainer />
         </div>
     );
 }

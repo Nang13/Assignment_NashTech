@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Carousel, Input, Button, Typography, Form, Checkbox, Select , message } from 'antd';
+import { Row, Col, Card, Carousel, Input, Button, Typography, Form, Checkbox, Select, message } from 'antd';
 import { getProductDetail } from '../../API';
 import { CloseOutlined } from '@ant-design/icons'
 import { useParams } from 'react-router';
@@ -8,7 +8,7 @@ const UpdateProduct = () => {
     const { id } = useParams();
     const { Option } = Select;
     const { Title } = Typography;
-    const [loading, setLoading] = useState(false);    
+    const [loading, setLoading] = useState(false);
     const [subcategories, setSubcategories] = useState([]);
     const [changedFields, setChangedFields] = useState({});
     const [newImage, setNewImage] = useState(null);
@@ -148,6 +148,8 @@ const UpdateProduct = () => {
 
 
     const handleUpdate = async () => {
+
+        debugger
         const payload = {};
         Object.keys(changedFields).forEach(field => {
             const keys = field.split('.');
@@ -173,7 +175,7 @@ const UpdateProduct = () => {
 
         console.log(payload);
         const imageUploadPromises = updatedProduct.productImages.map(async (image) => {
-            console.log(image)
+            console.log(image);
             if (image.isLocal) {
                 const uploadedUrl = await uploadImage(updatedProduct.productName, image.url);
                 return { ...image, url: uploadedUrl, isLocal: false };
@@ -181,55 +183,53 @@ const UpdateProduct = () => {
             return image;
         });
 
-        await Promise.all(imageUploadPromises);
         if (payload.productImages) {
 
             const transformedArray = payload.productImages.map((item, index) => {
                 const isMain = item.isMain !== undefined ? item.isMain : false; // Default value if isMain is not provided
                 const fileName = item.url instanceof File ? item.url.name : item.url; // Get the fileName from url if it's a File object
-                return fileName; // Return the transformed object
+
+
+                return fileName
             });
             payload.productImages = transformedArray;
         }
+        debugger
+        console.log(payload);
 
-
-        // fetch(`http://localhost:5046/api/v1/Product/${updatedProduct.id}`, {
-        //     method: 'PATCH',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(payload)
-        // })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         console.log('Success:', data);
-        //     })
-        //     .catch(error => {
-        //         console.error('Error:', error);
-        //     });
+        fetch(`http://localhost:5046/api/v1/Product/${updatedProduct.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
 
     };
 
     const uploadImage = async (productName, file) => {
-        try {
-            console.log(productName);
-            const formData = new FormData();
-            formData.append("imageFile", file);
+        console.log(productName);
+        const formData = new FormData();
+        formData.append("imageFile", file);
 
-            const response = await fetch(`http://localhost:5046/api/v1/Product/upload?productName=${encodeURIComponent(productName)}`, {
-                method: 'POST',
-                body: formData
-            });
+        const response = await fetch(`http://localhost:5046/api/v1/Product/upload?}`, {
+            method: 'POST',
+            body: formData
+        });
 
-            if (!response.ok) {
-                throw new Error('Failed to upload image');
-            }
-
-            const data = await response.json();
-            console.log('Image uploaded successfully:', data);
-            return data; // Return any response data if needed
-        } catch (error) {
-            console.error('Error uploading image:', error);
-            throw error;
+        if (!response.ok) {
+            throw new Error('Failed to upload image');
         }
+
+        const data = await response.json();
+        console.log('Image uploaded successfully:', data);
+        return data; // Return any response data if needed
+
     };
 
     const handleImageChange = (e) => {

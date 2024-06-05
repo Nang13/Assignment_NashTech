@@ -12,7 +12,6 @@ function User() {
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [searchType, setSearchType] = useState('Name');
-
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -27,7 +26,7 @@ function User() {
         response = await fetch(`http://localhost:5046/api/v1/User?${type}=${query}&pageNumber=0&pageSize=10`);
       }
       const data = await response.json();
-
+console.log(data)
       setUsers(data["items"]);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -126,15 +125,18 @@ function User() {
             dataIndex: "email",
           },
           {
-            title: "Action",
+            title: 'Action',
             render: (text, record) => {
+              const buttonClass = record.isInactive ? 'bg-green-500' : 'bg-red-500';
+              const buttonText = record.isInactive ? 'Activate' : 'Deactivate';
+      
               return (
                 <Button
                   onClick={() => toggleUserStatus(record.userId, record.isInactive)}
                   type="primary"
-                  className={`bg-${record.isInactive ? 'green-500' : 'red-500'} text-white`}
+                  className={`${buttonClass} text-white`}
                 >
-                  {record.isInactive ? "Activate" : "Deactivate"}
+                  {buttonText}
                 </Button>
               );
             },
@@ -145,7 +147,10 @@ function User() {
             title: "Order Detail",
             render: (text, record) => {
               return (
-                <Link to={`/orders/${record.userId}`} className="text-green-500 hover:underline">
+                <Link
+                to={`/orders/${record.userId}?userName=${encodeURIComponent(record.name)}`}
+                className="text-green-500 hover:underline"
+              >
                   View Detail
                 </Link>
               );

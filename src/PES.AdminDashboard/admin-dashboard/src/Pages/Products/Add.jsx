@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Checkbox, Input, Button, Upload, Select, message, Typography } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-
+import { useNavigate } from 'react-router-dom';
 function AddProductForm() {
+    const navigate = useNavigate();
+
     const { Option } = Select;
     const [productData, setProductData] = useState({
         productName: '',
@@ -77,7 +79,9 @@ function AddProductForm() {
                 categoryId: selectedSubCategory// Replace with actual category ID
             };
 
+
             console.log(data);
+            debugger
             // Make API request to add product with image data
             const response = await fetch('http://localhost:5046/api/v1/Product', {
                 method: 'Post',
@@ -86,15 +90,16 @@ function AddProductForm() {
                 },
                 body: JSON.stringify(data)
             });
-
+            debugger
             if (!response.ok) {
                 console.log(response)
-                throw new Error('Failed to add product');
+                message.error('Failed to add product');
+            } else {
+                navigate('/product');
+                // Optionally, do something with the response data
+
             }
 
-            const responseData = await response.json();
-            console.log('Product added successfully:', responseData);
-            // Optionally, do something with the response data
 
             // Reset form after submission
             form.resetFields();
@@ -169,7 +174,7 @@ function AddProductForm() {
             const formData = new FormData();
             formData.append("imageFile", file);
 
-            const response = await fetch(`http://localhost:5046/api/v1/Product/upload?productName=${encodeURIComponent(productName)}`, {
+            const response = await fetch(`http://localhost:5046/api/v1/Product/upload`, {
                 method: 'POST',
                 body: formData
             });
@@ -217,6 +222,7 @@ function AddProductForm() {
 
                 <Form.Item label="Quantity" name="quantity">
                     <Input type="number" onChange={handleChange} />
+
                 </Form.Item>
 
                 <Select
@@ -258,26 +264,22 @@ function AddProductForm() {
                     <Input.TextArea onChange={handleChange} />
                 </Form.Item>
 
-                <Form.Item>
+                {/* <Form.Item>
                     <Checkbox checked={showImage} onChange={handleCheckboxChangeShowImage}>
                         Add Image Options
                     </Checkbox>
-                </Form.Item>
+                </Form.Item> */}
 
-                {showImage && (
-                    <div>
-                        <Form.Item label="Images" name="listImages">
-                            <Upload
-                                beforeUpload={() => false}
-                                listType="picture"
-                                maxCount={10} // Maximum number of images user can upload
-                                accept="image/*"
-                            >
-                                <Button icon={<UploadOutlined />}>Upload</Button>
-                            </Upload>
-                        </Form.Item>
-                    </div>
-                )}
+                <Form.Item label="Images" name="listImages">
+                    <Upload
+                        beforeUpload={() => false}
+                        listType="picture"
+                        maxCount={10} // Maximum number of images user can upload
+                        accept="image/*"
+                    >
+                        <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
+                </Form.Item>
 
                 <Form.Item>
                     <Checkbox checked={showOptionalFields} onChange={handleCheckboxChange}>
