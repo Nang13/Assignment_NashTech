@@ -36,7 +36,6 @@ namespace PES.Presentation.Tests.Controller
             response.Content.Headers.ContentType.Should().NotBeNull();
             response.Content.Headers.ContentType!.ToString().Should().Be("application/json; charset=utf-8");
 
-
             var responseContent = await response.Content.ReadAsStringAsync();
             var invoices = JsonSerializer.Deserialize<List<CategoryResponse>>(responseContent, new JsonSerializerOptions
             {

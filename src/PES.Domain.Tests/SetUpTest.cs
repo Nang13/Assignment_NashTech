@@ -21,6 +21,7 @@ namespace PES.Domain.Tests
         protected readonly Mock<ICategoryService> _categoryServiceMock;
         protected readonly Mock<IClaimsService> _claimServiceMock;
         protected readonly Mock<ICategoryRepository> _categoryRepositoryMock;
+       // protected readonly Mock<IUnitOfWorkRepository> _
         protected readonly PlantManagementContext _context;
 
         public SetUpTest()

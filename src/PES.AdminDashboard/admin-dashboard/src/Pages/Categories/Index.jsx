@@ -3,6 +3,7 @@ import { getCategories } from "../../API/index";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Avatar, Rate, Space, Table, Typography, Modal, Form, Input, message } from "antd";
+import { ClusterOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 function Category() {
@@ -89,9 +90,9 @@ function Category() {
         loading={loading}
         columns={[
           {
-            title: "Image",
+            title: "",
             render: () => (
-              <Avatar src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/OIP%20(4).jpg?alt=media&token=d30f5a2d-3598-430e-a7ad-28708271a927" />
+             <ClusterOutlined />
             ),
           },
           {

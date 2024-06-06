@@ -5,6 +5,7 @@ using PES.Infrastructure;
 using PES.Infrastructure.Data;
 using PES.Infrastructure.Data.Config;
 using PES.Presentation;
+using PES.Presentation.Infrastructures;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -45,6 +46,7 @@ app.Use((context, next) =>
     return next.Invoke();
 });
 
+app.UseMinimalAPI();
 app.UseMiddleware<CustomExceptionMiddleware>();
 app.UseCors();
 app.MapControllers();

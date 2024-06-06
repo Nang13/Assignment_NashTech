@@ -10,5 +10,10 @@ namespace PES.Infrastructure.IRepository
     {
         Task ExcuteUpdate(Guid id ,Dictionary<string, object?> updateObject);
         Task <List<ProductsResponse>> GetProductByCategoryId(List<Guid> categoryId);
+
+        Task<bool> CheckProductRating(string userId,Guid ProductId);
+
+
+        Task UpdateProduct(Guid ProductID, int Quantity);
     }
 }

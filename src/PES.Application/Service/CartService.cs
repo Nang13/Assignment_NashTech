@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using PES.Application.Helper.ErrorHandler;
 using PES.Application.IService;
 using PES.Application.Utilities;
 using PES.Domain.DTOs.Cart;
@@ -33,27 +34,90 @@ namespace PES.Application.Service
             //string items = JsonConvert.SerializeObject(cartItems);
             // _database.HashSet(_claimsService.GetCurrentUserId, "Name", cartItems[0].Name);
             //_database.HashSet(_claimsService.GetCurrentUserId,"Price",cartItems[0].Price.ToString());
-            string user = _claimsService.GetCurrentUserId;
-            Console.WriteLine(user);
-            if (cartItems.CartActionType == 0)
-            {
-                _database.HashSet(user, cartItems.ProductId.ToString(), cartItems.Quantity);
-            }
-            else if (cartItems.CartActionType == 1)
-            {
-                await _database.HashIncrementAsync(user, cartItems.ProductId.ToString(), cartItems.Quantity);
-            }
-            else if (cartItems.CartActionType == 2)
-            {
 
-                await _database.HashDecrementAsync(user, cartItems.ProductId.ToString(), cartItems.Quantity);
-            }
-            else
+            string user =  _claimsService.GetCurrentUserId;
+            var productId = Guid.Parse(cartItems.ProductId.ToString());
+            var productKey = productId.ToString();
+
+            switch (cartItems.CartActionType)
             {
-                await _database.HashDeleteAsync(user, cartItems.ProductId.ToString());
+                case 0:
+                    await AddOrUpdateProductInCartAsync(productId, productKey, user, cartItems.Quantity);
+                    break;
+                case 1:
+                    await IncrementProductQuantityAsync(productId, productKey, user, cartItems.Quantity);
+                    break;
+                case 2:
+                    await DecrementProductQuantityAsync(productId, productKey, user, cartItems.Quantity);
+                    break;
+                default:
+                    await RemoveProductFromCartAsync(productKey, user);
+                    break;
             }
         }
 
+
+        private async Task AddOrUpdateProductInCartAsync(Guid productId, string productKey, string user, int quantity)
+        {
+            if (await CheckInCartBefore(productId, user))
+            {
+                await _database.HashIncrementAsync(user, productKey, quantity);
+            }
+            else
+            {
+                _database.HashSet(user, productKey, quantity);
+            }
+        }
+
+        private async Task IncrementProductQuantityAsync(Guid productId, string productKey, string user, int quantity)
+        {
+            var quantityInCart = (int)await _database.HashGetAsync(user, productKey);
+
+            if (await CheckInputIsSensitive(productId, quantityInCart, quantity))
+            {
+                await _database.HashIncrementAsync(user, productKey, quantity);
+            }
+            else
+            {
+                throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Cannot add more than Product Quantity");
+            }
+        }
+
+        private async Task DecrementProductQuantityAsync(Guid productId, string productKey, string user, int quantity)
+        {
+            await _database.HashDecrementAsync(user, productKey, quantity);
+            await CheckAndDeleteOutCart(productId, user);
+        }
+
+        private async Task RemoveProductFromCartAsync(string productKey, string user)
+        {
+            await _database.HashDeleteAsync(user, productKey);
+        }
+        private async ValueTask CheckAndDeleteOutCart(Guid productId, string userId)
+        {
+            int productQuantityCart = (int)await _database.HashGetAsync(userId, productId.ToString());
+            if (productQuantityCart == 0) await _database.HashDeleteAsync(userId, productId.ToString());
+        }
+
+        private async ValueTask<bool> CheckInCartBefore(Guid productId, string userId)
+        {
+            if (_database.HashGetAsync(userId, productId.ToString()) is null)
+            {
+                return false;
+            }
+            else { return true; }
+        }
+
+        private async ValueTask<bool> CheckInputIsSensitive(Guid productId, int quantityProduct, int quantityInput)
+        {
+            int ProductQuantity = _unitOfWork.ProductRepository.FirstOrDefaultAsync(x => x.Id == productId).Result.Quantity;
+            if (ProductQuantity < quantityInput + quantityProduct)
+            {
+                return false;
+            }
+            return true;
+
+        }
         public Task DecreaseQuantity(Guid ProductId)
         {
             throw new NotImplementedException();
@@ -97,11 +161,7 @@ namespace PES.Application.Service
             throw new NotImplementedException();
         }
 
-        public async Task<string> TestRedis()
-        {
-            SetCachedData<string>("bun dau mam tom", "hen xui", TimeSpan.FromHours(1));
-            return "com suon";
-        }
+     
 
         public void SetCachedData<T>(string key, T data, TimeSpan cacheDuration)
         {

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PES.Application.Helper;
 using PES.Application.IService;
 using PES.Application.Utilities;
 using PES.Domain.DTOs.OrderDTO;
@@ -15,6 +16,9 @@ using PES.Domain.Entities.Model;
 using PES.Domain.Enum;
 using PES.Infrastructure.Common;
 using PES.Infrastructure.UnitOfWork;
+using StackExchange.Redis;
+using Order = PES.Domain.Entities.Model.Order;
+using Role = PES.Domain.Enum.Role;
 
 namespace PES.Application.Service
 {
@@ -29,45 +33,58 @@ namespace PES.Application.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly IClaimsService _claimsService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IDatabase _database;
+        private const string LockKey = "order-processing-lock";
+        private static readonly TimeSpan LockExpiry = TimeSpan.FromSeconds(30);
 
-        public OrderService(IUnitOfWork unitOfWork, IClaimsService claimsService, UserManager<ApplicationUser> user)
+        public OrderService(IUnitOfWork unitOfWork, IClaimsService claimsService, UserManager<ApplicationUser> user, IDatabase database)
         {
             _unitOfWork = unitOfWork;
             _claimsService = claimsService;
             _userManager = user;
+            _database = database;
         }
         public async Task<OrderResponse> AddOrder(OrderRequest request)
         {
-            string userId = _claimsService.GetCurrentUserId;
-            Guid orderId = Guid.NewGuid();
-            Order order = request.MapperDTO(userId, orderId);
-            var user = _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId).Result;
+            using (var redislock = new LockHandler(_database, LockKey, LockExpiry))
+            {
+                if (await redislock.AcquireLockAsync())
+                {
+                    try
+                    {
+                        string userId = _claimsService.GetCurrentUserId;
+                        Guid orderId = Guid.NewGuid();
+                        Order order = request.MapperDTO(userId, orderId);
+                        var user = _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId).Result;
 
-            //Order order = new()
-            //{
-            //    Id = orderId,
-            //    CreatedBy = userId,
-            //    UserId = userId,
-            //    TotalPrice = request.Total,
+                        await _unitOfWork.OrderRepository.AddAsync(order);
+                        await _unitOfWork.SaveChangeAsync();
+                        await AddOrderDetail(request.orderDetails, orderId,userId);
+                        return new OrderResponse(OrderId: orderId, TotalPrice: request.Total, ProductCount: 1, Status: order.Status, order.PaymentType, OrderCurrencyCode: order.CurrencyCode, UserID: userId, UserName: user.UserName);
+                    }
+                    finally
+                    {
+                        await redislock.ReleaseLockAsync();
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Could not acquire lock to process order . Try again later.");
+                }
+            }
 
-            //};
-            await _unitOfWork.OrderRepository.AddAsync(order);
-            await _unitOfWork.SaveChangeAsync();
-            await AddOrderDetail(request.orderDetails, orderId);
+            return null;
 
-            return new OrderResponse(OrderId: orderId, TotalPrice: request.Total, ProductCount: 1, Status: order.Status, order.PaymentType, OrderCurrencyCode: order.CurrencyCode, UserID: userId, UserName: user.UserName);
+
+          
         }
-        private async Task AddOrderDetail(List<OrderDetailRequest> request, Guid OrderId)
+        private async Task AddOrderDetail(List<OrderDetailRequest> request, Guid OrderId,string UserID)
         {
-            //await _unitOfWork.OrderDetailRepository.AddRangeAsync(request.Select(order => new OrderDetail
-            //{
-            //    OrderId = OrderId,
-            //    Price = order.Price,
-            //    ProductId = order.ProductId,
-            //    TotalPrice = order.Price * order.Quantity,
-            //    Quantity = order.Quantity
-            //}).ToList());
-            await _unitOfWork.OrderDetailRepository.AddRangeAsync(request.Select(order => order.MapperDTO(OrderId)).ToList());
+            await _unitOfWork.OrderDetailRepository.AddRangeAsync(request.Select(order => order.MapperDTO(OrderId, UserID)).ToList());
+            foreach (var item in request)
+            {
+                await _unitOfWork.ProductRepository.UpdateProduct(item.ProductId, item.Quantity);
+            }
             await _unitOfWork.SaveChangeAsync();
         }
 

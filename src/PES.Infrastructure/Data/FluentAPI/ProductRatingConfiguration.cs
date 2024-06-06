@@ -13,7 +13,7 @@ namespace PES.Infrastructure.Data.FluentAPI
         public void Configure(EntityTypeBuilder<ProductRating> builder)
         {
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.HasOne(x => x.Product).WithOne(x => x.ProductRating).HasForeignKey<ProductRating>(x => x.ProductId);
+            builder.HasOne(x => x.Product).WithMany(x => x.ProductRating).HasForeignKey(x => x.ProductId);
         }
 
     }

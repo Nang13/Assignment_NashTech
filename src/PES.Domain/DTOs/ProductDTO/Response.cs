@@ -14,6 +14,6 @@ namespace PES.Domain.DTOs.ProductDTO
     public record ProductImageResponse(string url ,bool isMain);
     public record NutrionInfo(decimal? Calories, decimal? Protein, decimal? Sodium, decimal? Fiber, decimal? Sugars);
     public record ImportantInfo(string Ingredients, string Directions, string LegalDisclaimer);
-    public record ProductsResponse(Guid Id, string ProductName, DateTime CreatedDate, string ImageMain, string CategoryMain, string CategoryName, decimal Price, string Description, Guid CategoryId);
+    public record ProductsResponse(Guid Id, string ProductName, double Rating,DateTime CreatedDate, string ImageMain, string CategoryMain, string CategoryName, decimal Price, string Description, Guid CategoryId,string Status);
     //Include(x => x.Category).Include(x => x.ProductImages)
 }

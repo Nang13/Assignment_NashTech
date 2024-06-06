@@ -15,6 +15,7 @@ using PES.Domain.Constant;
 using PES.Domain.DTOs.OrderDTO;
 using PES.Domain.DTOs.ProductDTO;
 using PES.Domain.Entities.Model;
+using PES.Domain.Enum;
 using PES.Infrastructure.Common;
 using PES.Infrastructure.UnitOfWork;
 using static System.Net.Mime.MediaTypeNames;
@@ -89,7 +90,7 @@ namespace PES.Application.Service
         {
             var productImage = new ProductImage
             {
-                ImageUrl = Images , // Assuming the image string is the path
+                ImageUrl = Images, // Assuming the image string is the path
                 ProductId = productId,
                 IsMain = false
             };
@@ -102,7 +103,7 @@ namespace PES.Application.Service
         {
             var productImages = Images.Select(image => new ProductImage
             {
-                ImageUrl = image ,   // Assuming the image string is the path
+                ImageUrl = image,   // Assuming the image string is the path
                 ProductId = productId,
                 IsMain = false
             }).ToList();
@@ -112,31 +113,13 @@ namespace PES.Application.Service
 
         public async Task AddNutrionInformation(NutrionInforrmationRequest request, Guid ProductId)
         {
-            NutritionInformation nutrition = new()
-            {
-                Calories = request.Calories,
-                Fiber = request.Fiber,
-                Protein = request.Protein,
-                Sodium = request.Sodium,
-                Sugars = request.Sugars,
-                ProductId = ProductId,
-                Created = DateTime.UtcNow.AddHours(7),
-
-            };
+            NutritionInformation nutrition = request.MapDTO(ProductId);
             await _unitOfWork.NutrionInfoRepository.AddAsync(nutrition);
             await _unitOfWork.SaveChangeAsync();
         }
         public async Task AddImportantInformation(ImportantImformationRequest request, Guid ProductId)
         {
-            //ImportantInformation information = new()
-            //{
-            //    Ingredients = request.Ingredients,
-            //    LegalDisclaimer = request.LegalDisclaimer,
-            //    Directions = request.Directions,
-            //    ProductId = ProductId
-            //};
-            ImportantInformation information = request.MapperDTO();
-            information.ProductId = ProductId;
+            ImportantInformation information = request.MapperDTO(ProductId);
             await _unitOfWork.ImportantInfoRepository.AddAsync(information);
             await _unitOfWork.SaveChangeAsync();
         }
@@ -148,7 +131,7 @@ namespace PES.Application.Service
         {
             await _unitOfWork.ProductImageRepository.AddAsync(new ProductImage
             {
-                ImageUrl = Images ,
+                ImageUrl = Images,
                 ProductId = productId,
                 IsMain = true,
             });
@@ -205,30 +188,14 @@ namespace PES.Application.Service
             }
 
             //  var filterResult = request.Filter.Count > 0 ? [] : _unitOfWork.ProductRepository.GetAllAsync().Result.AsEnumerable();
-            var filterResult = _unitOfWork.ProductRepository.GetAllAsync(x => x.Category, x => x.ProductImages).Result.AsEnumerable();
-            var testingData = _unitOfWork.ProductRepository.GetAllAsync(x => x.Category, x => x.ProductImages,x => x.ProductRating).Result.Select(x => new ProductsResponse(x.Id, x.ProductName, x.Created, x.ProductImages.FirstOrDefault().ImageUrl, x.Category.CategoryMain, x.Category.CategoryName, x.Price, x.Description, x.CategoryId)).AsEnumerable();
+            var filterResult = _unitOfWork.ProductRepository.GetAllAsync(x => x.Category, x => x.ProductImages, x => x.ProductRating).Result.AsEnumerable();
+            var testingData = _unitOfWork.ProductRepository.GetAllAsync(x => x.Category, x => x.ProductImages, x => x.ProductRating).Result.Select(x => new ProductsResponse(x.Id, x.ProductName, x.ProductRating.Any() ? x.ProductRating.Average(r => r.Rating) : 0, x.Created, x.ProductImages.FirstOrDefault().ImageUrl, x.Category.CategoryMain, x.Category.CategoryName, x.Price, x.Description, x.CategoryId, x.Status)).AsEnumerable();
 
 
-
-            /*            if (!subCategories.IsNullOrEmpty())
-                        {
-                            foreach (var category in subCategories)
-                            {
-                                filterResult = filterResult.Union(FilterUtilities.SelectItems(filterResult, "CategoryId", category.ToString()));
-                            }
-                        }
-                        if (request.Filter!.Count > 0)
-                        {
-                            foreach (var filter in request.Filter)
-                            {
-                                var checker = FilterUtilities.SelectId(filterResult, filter.Key, filter.Value).Select(x => x.Id).ToList();
-                                filterResult = filterResult.Where(x => checker.Contains(x.Id));
-                                Console.WriteLine(filterResult);
-                            }
-                        }*/
             var filterResultTesting = request.Filter.Count > 0 ? new List<ProductsResponse>() : testingData;
+
             HashSet<Guid> categoryName = [];
-            ////todo categoryName or categoryMain is not null
+            //todo categoryName or categoryMain is not null
             if (request.Filter.ContainsKey("CategoryName"))
             {
                 categoryName = categoryName.Union(await GetCategoryIdByCategoryMain(request.Filter.GetValueOrDefault("CategoryName"))).ToHashSet();
@@ -252,18 +219,22 @@ namespace PES.Application.Service
                 }
             }
 
+
+
+
             var dataCheck = new Pagination<ProductsResponse>
             {
                 PageIndex = request.PageNumber,
                 PageSize = request.PageSize,
                 TotalItemsCount = filterResult.Count(),
                 Items = PaginatedList<ProductsResponse>.Create(
-                       source: filterResultTesting.AsQueryable(),
-                       pageIndex: request.PageNumber,
-                       pageSize: request.PageSize)
+                      source: filterResultTesting.Where(x => x.Status == ProductState.InStock).AsQueryable(),
+                      pageIndex: request.PageNumber,
+                      pageSize: request.PageSize)
 
 
             };
+
             // Serialize the result with reference handling
 
 
@@ -281,9 +252,7 @@ namespace PES.Application.Service
                 }
                 else
                 {
-                    Imrequest.Ingredients = request.importantInfo.Ingredients;
-                    Imrequest.Directions = request.importantInfo.Directions;
-                    Imrequest.LegalDisclaimer = request.importantInfo.LegalDisclaimer;
+                    Imrequest = request.importantInfo.MapperDTO(id);
                     _unitOfWork.ImportantInfoRepository.Update(Imrequest);
                 }
 
@@ -297,11 +266,7 @@ namespace PES.Application.Service
                 }
                 else
                 {
-                    NuRequest.Sodium = request.nutrionInfo.Sodium;
-                    NuRequest.Sugars = request.nutrionInfo.Sugars;
-                    NuRequest.Protein = request.nutrionInfo.Protein;
-                    NuRequest.Calories = request.nutrionInfo.Calories;
-                    NuRequest.Fiber = request.nutrionInfo.Fiber;
+                    NuRequest = request.nutrionInfo.MapDTO(id);
                     _unitOfWork.NutrionInfoRepository.Update(NuRequest);
                 }
 
@@ -311,12 +276,12 @@ namespace PES.Application.Service
             if (!request.productImages.IsNullOrEmpty())
             {
                 List<ProductImage> productImages = await _unitOfWork.ProductImageRepository.WhereAsync(x => x.ProductId == id);
-           
+
                 //? in Database    1  2   3
                 //? input Delete   1   2
                 foreach (var item in request.productImages)
                 {
-                    ProductImage image = await  _unitOfWork.ProductImageRepository.FirstOrDefaultAsync(x => x.ImageUrl == item);
+                    ProductImage image = await _unitOfWork.ProductImageRepository.FirstOrDefaultAsync(x => x.ImageUrl == item);
                     //? if not found: New Image One
                     if (image is null)
                     {
@@ -332,7 +297,7 @@ namespace PES.Application.Service
                 }
                 if (!productImages.IsNullOrEmpty())
                 {
-                        await _unitOfWork.ProductImageRepository.DeleteRange(productImages);
+                    await _unitOfWork.ProductImageRepository.DeleteRange(productImages);
                 }
 
 

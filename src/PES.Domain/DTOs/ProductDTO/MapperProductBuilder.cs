@@ -40,7 +40,7 @@ namespace PES.Domain.DTOs.ProductDTO
         }
 
 
-        public static ImportantInformation MapperDTO(this ImportantImformationRequest request)
+        public static ImportantInformation MapperDTO(this ImportantImformationRequest request,Guid ProductId)
         {
             if (request != null)
             {
@@ -49,6 +49,7 @@ namespace PES.Domain.DTOs.ProductDTO
                     Ingredients = request.Ingredients,
                     LegalDisclaimer = request.LegalDisclaimer,
                     Directions = request.Directions,
+                    ProductId = ProductId
                 };
             }
 
@@ -59,15 +60,6 @@ namespace PES.Domain.DTOs.ProductDTO
         {
             if (request != null)
             {
-                //return new NutrionInfo()
-                //{
-                //    Calories = request.NutritionInformation.Calories,
-                //    Fiber = request.NutritionInformation.Fiber,
-                //    Protein = request.NutritionInformation.Protein,
-                //    Sodium = request.NutritionInformation.Sodium,   
-                //    Sugars = request.NutritionInformation.Sugars,
-                //};
-
                 return new NutrionInfo(request.NutritionInformation.Calories, request.NutritionInformation.Fiber, request.NutritionInformation.Protein, request.NutritionInformation.Sodium, request.NutritionInformation.Sugars);
             }
             return null;
@@ -84,7 +76,7 @@ namespace PES.Domain.DTOs.ProductDTO
 
         public static ProductCategory MapperCategoryDTO(this Product product)
         {
-            if(product != null)
+            if (product != null)
             {
                 return new ProductCategory(product.Category.Id, product.Category.CategoryName, product.Category.CategoryMain);
             }
@@ -92,7 +84,30 @@ namespace PES.Domain.DTOs.ProductDTO
         }
 
 
-         
+        public static NutritionInformation MapDTO(this NutrionInforrmationRequest request,Guid ProductId)
+        {
+            if (request != null)
+            {
+                return new()
+                {
+                    Calories = request.Calories,
+                    Fiber = request.Fiber,
+                    Protein = request.Protein,
+                    Sodium = request.Sodium,
+                    Sugars = request.Sugars,
+                    ProductId = ProductId,
+                    Created = DateTime.UtcNow.AddHours(7),
+
+                };
+            }
+            return null;
+        }
+
+
+      
+
+
+
     }
 
 

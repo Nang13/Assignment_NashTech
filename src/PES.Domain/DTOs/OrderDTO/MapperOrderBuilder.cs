@@ -24,7 +24,7 @@ namespace PES.Domain.DTOs.OrderDTO
         }
 
 
-        public static OrderDetail MapperDTO(this OrderDetailRequest request, Guid OrderID)
+        public static OrderDetail MapperDTO(this OrderDetailRequest request, Guid OrderID,string userID)
         {
             return request == null
                 ? throw new ArgumentNullException(nameof(request))
@@ -36,6 +36,7 @@ namespace PES.Domain.DTOs.OrderDTO
                     ProductId = request.ProductId,
                     TotalPrice = request.Price * request.Quantity,
                     Quantity = request.Quantity,
+                    CreatedBy =  userID
                 };
         }
 

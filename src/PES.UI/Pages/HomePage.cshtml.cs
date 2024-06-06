@@ -17,10 +17,11 @@ namespace PES.UI.Pages
         public async Task OnGetAsync()
         {
 
-            string testCase = "http://localhost:5046/api/v1/Product?pageNumber=0&pageSize=10";
+            string testCase = "http://localhost:5046/api/v1/Product?pageNumber=0&pageSize=4";
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             try
             {
+                
                 HttpResponseMessage responseMessage = await httpClient.GetAsync(testCase);
                 HttpContent content = responseMessage.Content;
                 string message = await content.ReadAsStringAsync();
@@ -39,7 +40,7 @@ namespace PES.UI.Pages
 
         public async Task<IActionResult> OnGetUpdate(string id)
         {
-            string testCase = $"http://localhost:5046/api/v1/Product?CategoryId={id}&pageNumber=0&pageSize=10";
+            string testCase = $"http://localhost:5046/api/v1/Product?CategoryMain={id}&pageNumber=0&pageSize=10";
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             HttpResponseMessage responseMessage = await httpClient.GetAsync(testCase);
             HttpContent content = responseMessage.Content;

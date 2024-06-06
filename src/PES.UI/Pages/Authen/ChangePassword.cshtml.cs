@@ -44,7 +44,7 @@ namespace PES.UI.Pages.Authen
                 if (response.IsSuccessStatusCode)
                 {
                     // You can redirect to a confirmation page or show a success message here.
-                    return RedirectToPage("/Authen/Login");
+                    return RedirectToPage("/Login");
                 }
                 else
                 {

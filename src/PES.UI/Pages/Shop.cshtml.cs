@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PES.Domain.DTOs.Category;
+using PES.Domain.DTOs.CategoryDTO;
 using PES.Domain.DTOs.ProductDTO;
 using PES.Domain.Entities.Model;
 using PES.UI.Pages.Shared;

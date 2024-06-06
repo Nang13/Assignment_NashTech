@@ -118,6 +118,7 @@ namespace PES.UI.Pages
                 // Handle error
                 var errorMessage = await response.Content.ReadAsStringAsync();
                 Console.WriteLine("Error: {0}", errorMessage);
+                ModelState.AddModelError(string.Empty, "Failed to change password.");
                 return RedirectToPage(); // or handle the error appropriately
             }
 

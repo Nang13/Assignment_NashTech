@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using PES.Domain.DTOs.ProductDTO;
 using PES.Domain.Entities.Model;
 using System.Net.Http;
-using PES.Domain.DTOs.Category;
+using PES.Domain.DTOs.CategoryDTO;
 using System.Text;
 using PES.UI.Pages.Shared;
 

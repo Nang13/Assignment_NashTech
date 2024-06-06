@@ -13,7 +13,6 @@ namespace PES.Application.IService
         public Task DecreaseQuantity(Guid ProductId);
         public Task<Cart> GetCart();
 
-        public Task<string> TestRedis();
 
 
     }

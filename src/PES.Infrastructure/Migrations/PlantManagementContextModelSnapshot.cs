@@ -537,8 +537,7 @@ namespace PES.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId")
-                        .IsUnique();
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("UserId");
 
@@ -671,8 +670,8 @@ namespace PES.Infrastructure.Migrations
             modelBuilder.Entity("PES.Domain.Entities.Model.ProductRating", b =>
                 {
                     b.HasOne("PES.Domain.Entities.Model.Product", "Product")
-                        .WithOne("ProductRating")
-                        .HasForeignKey("PES.Domain.Entities.Model.ProductRating", "ProductId")
+                        .WithMany("ProductRating")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

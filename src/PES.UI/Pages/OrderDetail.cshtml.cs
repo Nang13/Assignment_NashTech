@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using PES.Domain.DTOs.Order;
+using PES.Domain.DTOs.OrderDTO;
 
 namespace PES.UI.Pages
 {

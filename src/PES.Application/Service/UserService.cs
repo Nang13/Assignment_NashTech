@@ -48,11 +48,7 @@ namespace PES.Application.Service
         public async Task<string> ForgetPassword(string Email)
         {
             SendMailHandler sendMail = new SendMailHandler(_configuration);
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == Email);
-            if (user is null)
-            {
-                throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Your Account have been locked");
-            }
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == Email) ?? throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Your Account have been locked");
             int otp = await GenerateOTP(user.UserName);
             Task.Run(() => sendMail.SendMail(OTP: otp.ToString(), UserName: user.UserName));
             return otp.ToString();
@@ -61,7 +57,7 @@ namespace PES.Application.Service
 
         public async Task<int> GenerateOTP(string userName)
         {
-            Random random = new Random();
+            Random random = new();
             int randomNumber = random.Next(100000, 999999);
             await _database.StringSetAndGetAsync(userName + "_OTPKey", randomNumber);
             return randomNumber;
