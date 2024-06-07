@@ -58,13 +58,6 @@ namespace PES.Presentation.Controllers.V1
                     message = "Change password Successfully"
                 }) ;
             }
-            //var response = await _userService.ForgetPassword(email);
-            //return Ok(new
-            //{
-            //    OTP = response
-            //});
-
-
             return BadRequest(new
             {
                 message = "Change password Unsuccessfully"

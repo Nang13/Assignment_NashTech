@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PES.Application.Helper;
+using PES.Application.Helper.RedisHandler;
 using PES.Application.IService;
 using PES.Application.Utilities;
 using PES.Domain.DTOs.OrderDTO;
@@ -59,7 +60,7 @@ namespace PES.Application.Service
 
                         await _unitOfWork.OrderRepository.AddAsync(order);
                         await _unitOfWork.SaveChangeAsync();
-                        await AddOrderDetail(request.orderDetails, orderId,userId);
+                        await AddOrderDetail(request.orderDetails, orderId, userId);
                         return new OrderResponse(OrderId: orderId, TotalPrice: request.Total, ProductCount: 1, Status: order.Status, order.PaymentType, OrderCurrencyCode: order.CurrencyCode, UserID: userId, UserName: user.UserName);
                     }
                     finally
@@ -76,9 +77,9 @@ namespace PES.Application.Service
             return null;
 
 
-          
+
         }
-        private async Task AddOrderDetail(List<OrderDetailRequest> request, Guid OrderId,string UserID)
+        private async Task AddOrderDetail(List<OrderDetailRequest> request, Guid OrderId, string UserID)
         {
             await _unitOfWork.OrderDetailRepository.AddRangeAsync(request.Select(order => order.MapperDTO(OrderId, UserID)).ToList());
             foreach (var item in request)
@@ -94,8 +95,7 @@ namespace PES.Application.Service
             //  string userId = _claimsService.GetCurrentUserId;
             Order order = await _unitOfWork.OrderRepository.GetByIdAsync(id) ?? throw new Exception("hihi");
 
-
-            var orderDetail = _unitOfWork.OrderDetailRepository.WhereAsync(x => x.OrderId == id, x => x.Product, x => x.Product.ProductImages).Result.Select(x => new OrdererDetailResponse(OrderDetailId: x.Id, Price: x.Price, ProductName: x.Product.ProductName, ProductImage: x.Product.ProductImages.FirstOrDefault(pro => pro.IsMain == true).ImageUrl, Quantity: x.Quantity, TotalPrice: x.TotalPrice)).ToList();
+            var orderDetail = _unitOfWork.OrderDetailRepository.WhereAsync(x => x.OrderId == id, x => x.Product, x => x.Product.ProductImages).Result.Select(x => x.MapDTO()).ToList();
             return new OrderSingleResponse(OrderId: order.Id, TotalPrice: order.TotalPrice, OrdererDetails: orderDetail);
 
         }
@@ -108,7 +108,7 @@ namespace PES.Application.Service
                 string userId = _claimsService.GetCurrentUserId;
                 var user = await _userManager.FindByIdAsync(userId);
                 var order = _unitOfWork.OrderRepository.WhereAsync(x => x.UserId == userId, x => x.OrderDetails).Result.Select(x => x.MapperDTO(userId, user.UserName)).ToList();
-                var dataCheck = new Pagination<OrderResponse>
+                return new Pagination<OrderResponse>
                 {
                     PageIndex = request.PageNumber,
                     PageSize = request.PageSize,
@@ -120,10 +120,6 @@ namespace PES.Application.Service
 
 
                 };
-                // Serialize the result with reference handling
-
-
-                return dataCheck;
             }
             else
             {
@@ -139,7 +135,7 @@ namespace PES.Application.Service
                     }
                 }
 
-                var dataCheck = new Pagination<OrderResponse>
+                return new Pagination<OrderResponse>
                 {
                     PageIndex = request.PageNumber,
                     PageSize = request.PageSize,
@@ -151,19 +147,37 @@ namespace PES.Application.Service
 
 
                 };
-                // Serialize the result with reference handling
-
-
-                return dataCheck;
             }
-
-
         }
 
         public async Task<FrozenSet<OrderResponse>> GetOrderByUser(string UserId)
         {
             FrozenSet<OrderResponse> order = _unitOfWork.OrderRepository.WhereAsync(x => x.UserId == UserId, x => x.User).Result.Select(x => x.MapperDTO(x.User.Id, x.User.UserName)).ToFrozenSet();
             return order;
+        }
+
+        public async Task<bool> SetFinishOrder(Guid OrderId)
+        {
+            Order order = await _unitOfWork.OrderRepository.GetByIdAsync(OrderId, x => x.OrderDetails);
+            if (order == null)
+            {
+                return false;
+            }
+            order.Status = OrderStatus.InFinish;
+            _unitOfWork.OrderRepository.Update(order);
+            await _unitOfWork.SaveChangeAsync();
+            Task.Run(() => AddProductToOrderHandlers(order.OrderDetails.ToList(), order.UserId));
+            return true;
+        }
+
+        public async Task AddProductToOrderHandlers(List<OrderDetail> orders, string UserId)
+        {
+            using var redis = new PopularProductHandler(_database);
+            foreach (var item in orders)
+            {
+                await redis.ProductVoting(UserId, item.ProductId, 2);
+
+            }
         }
     }
 }

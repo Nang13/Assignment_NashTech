@@ -40,7 +40,7 @@ namespace PES.Domain.DTOs.ProductDTO
         }
 
 
-        public static ImportantInformation MapperDTO(this ImportantImformationRequest request,Guid ProductId)
+        public static ImportantInformation MapperDTO(this ImportantImformationRequest request, Guid ProductId)
         {
             if (request != null)
             {
@@ -84,7 +84,7 @@ namespace PES.Domain.DTOs.ProductDTO
         }
 
 
-        public static NutritionInformation MapDTO(this NutrionInforrmationRequest request,Guid ProductId)
+        public static NutritionInformation MapDTO(this NutrionInforrmationRequest request, Guid ProductId)
         {
             if (request != null)
             {
@@ -103,8 +103,15 @@ namespace PES.Domain.DTOs.ProductDTO
             return null;
         }
 
+        public static RatingResponse MapDTO(this ProductRating productRating)
+        {
+            return productRating == null
+      ? throw new ArgumentNullException(nameof(productRating)) :
+      new RatingResponse(UserId: productRating.UserId, UserComment: productRating.Comment, UserRating: productRating.Rating, UserName: productRating.User.UserName, commentDate: productRating.Created);
+        }
 
-      
+
+
 
 
 

@@ -16,5 +16,7 @@ namespace PES.Application.IService
         public Task<OrderSingleResponse> GetOrderDetail(Guid id);
 
         public Task<FrozenSet<OrderResponse>> GetOrderByUser(string UserId);
+
+        public Task<bool> SetFinishOrder(Guid OrderId);
     }
 }

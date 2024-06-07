@@ -18,7 +18,7 @@ namespace PES.Application.Tests.Service
 
         public ProductServiceTests()
         {
-            _productService = new ProductService(_unitOfWorkMock.Object, _claimServiceMock.Object, _categoryServiceMock.Object);
+            _productService = new ProductService(_unitOfWorkMock.Object, _claimServiceMock.Object, _categoryServiceMock.Object,_redisMock.Object);
         }
 
         [Fact]

@@ -30,21 +30,8 @@ namespace PES.Presentation.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> GetCart()
         {
-            //await _cartService.GetCart();
             return Ok(await _cartService.GetCart());
         }
-
-
-        // [HttpPost("uploadImage")]
-        // public async Task<IActionResult> UpImage([FromForm]AddIamge request )
-        // {
-        //     await StorageHandler.UploadFileAsync(request.file, request.file.Name);
-        //     return Ok("com suon mon hoc");
-        // }
-
-        // public class AddIamge
-        // {
-        //     public IFormFile file { get; set; }
-        // }
+     
     }
 }

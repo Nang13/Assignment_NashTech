@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PES.Application.Helper.ErrorHandler;
+using PES.Application.Helper.RedisHandler;
 using PES.Application.IService;
 using PES.Application.Utilities;
 using PES.Domain.Constant;
@@ -18,6 +19,7 @@ using PES.Domain.Entities.Model;
 using PES.Domain.Enum;
 using PES.Infrastructure.Common;
 using PES.Infrastructure.UnitOfWork;
+using StackExchange.Redis;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace PES.Application.Service
@@ -34,12 +36,14 @@ namespace PES.Application.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly IClaimsService _claimsService;
         private readonly ICategoryService _categoryService;
+        private readonly IDatabase _dataabse;
 
-        public ProductService(IUnitOfWork unitOfWork, IClaimsService claimsService, ICategoryService categoryService)
+        public ProductService(IUnitOfWork unitOfWork, IClaimsService claimsService, ICategoryService categoryService, IDatabase database)
         {
             _unitOfWork = unitOfWork;
             _claimsService = claimsService;
             _categoryService = categoryService;
+            _dataabse = database;
         }
         public async Task<ProductResponse> AddNewProduct(AddNewProductRequest request)
         {
@@ -140,6 +144,8 @@ namespace PES.Application.Service
 
         public async Task<ProductResponseDetail> GetProductDetail(Guid productId)
         {
+            if (_claimsService.UserRole == Domain.Enum.Role.User) Task.Run(() => ViewProductHandlers(_claimsService.GetCurrentUserId, productId));
+              
             var product = await _unitOfWork.ProductRepository.FirstOrDefaultAsync(x => x.Id == productId, x => x.ImportantInformation, x => x.NutritionInformation, x => x.ProductImages, x => x.Category);
 
             var nutritionInfo = product.NutritionInformation != null ? product.MapperNutrionDTO() : null;
@@ -147,9 +153,15 @@ namespace PES.Application.Service
             var importantInfo = product.ImportantInformation != null ? product.MapperImportantDTO() : null;
 
             var productImage = product.ProductImages?.Select(x => new ProductImageResponse(x.ImageUrl, x.IsMain)).ToList();
-            var ratingProduct = _unitOfWork.ProductRatingRepository.WhereAsync(x => x.ProductId == productId, x => x.User).Result.Select(x => new RatingResponse(UserId: x.UserId, UserComment: x.Comment, UserRating: x.Rating, UserName: x.User.UserName, commentDate: x.Created)).ToList();
+            var ratingProduct = _unitOfWork.ProductRatingRepository.WhereAsync(x => x.ProductId == productId, x => x.User).Result.Select(x => x.MapDTO()).ToList();
 
             return new ProductResponseDetail(productId, product.ProductName, product.Price, nutritionInfo, product.MapperCategoryDTO(), importantInfo, productImage, ratingProduct);
+        }
+
+        public async ValueTask ViewProductHandlers(string UserId, Guid ProductId)
+        {
+            using var objectT = new PopularProductHandler(_dataabse);
+            await objectT.ProductVoting(UserId, ProductId, 1);
         }
 
         //? Search by CategoryName

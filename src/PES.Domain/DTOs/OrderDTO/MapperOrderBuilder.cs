@@ -49,5 +49,13 @@ namespace PES.Domain.DTOs.OrderDTO
 
 
         }
+
+
+        public static OrdererDetailResponse MapDTO(this OrderDetail orderDetail)
+        {
+            return orderDetail == null
+          ? throw new ArgumentNullException(nameof(orderDetail)) :
+             new OrdererDetailResponse(OrderDetailId: orderDetail.Id, Price: orderDetail.Price, ProductName: orderDetail.Product.ProductName, ProductImage: orderDetail.Product.ProductImages.FirstOrDefault(pro => pro.IsMain == true).ImageUrl, Quantity: orderDetail.Quantity, TotalPrice: orderDetail.TotalPrice);
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using PES.Application.Helper.ErrorHandler;
+using PES.Application.Helper.RedisHandler;
 using PES.Application.IService;
 using PES.Application.Utilities;
 using PES.Domain.DTOs.Cart;
@@ -38,7 +39,7 @@ namespace PES.Application.Service
             string user =  _claimsService.GetCurrentUserId;
             var productId = Guid.Parse(cartItems.ProductId.ToString());
             var productKey = productId.ToString();
-
+            Task.Run(() => AddProductToCartHandlers(user, productId));
             switch (cartItems.CartActionType)
             {
                 case 0:
@@ -56,7 +57,11 @@ namespace PES.Application.Service
             }
         }
 
-
+        public async ValueTask AddProductToCartHandlers(string UserId, Guid ProductId)
+        {
+            using var objectT = new PopularProductHandler(_database);
+            await objectT.ProductVoting(UserId, ProductId, 2);
+        }
         private async Task AddOrUpdateProductInCartAsync(Guid productId, string productKey, string user, int quantity)
         {
             if (await CheckInCartBefore(productId, user))
@@ -118,10 +123,6 @@ namespace PES.Application.Service
             return true;
 
         }
-        public Task DecreaseQuantity(Guid ProductId)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<Cart> GetCart()
         {
@@ -156,21 +157,10 @@ namespace PES.Application.Service
             };
         }
 
-        public Task IncreaseQuantity(Guid ProductId)
-        {
-            throw new NotImplementedException();
-        }
+       
 
      
 
-        public void SetCachedData<T>(string key, T data, TimeSpan cacheDuration)
-        {
-            var options = new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = cacheDuration
-            };
-            var jsonData = System.Text.Json.JsonSerializer.Serialize(data);
-            _distributedCache.SetString(key, jsonData, options);
-        }
+        
     }
 }

@@ -10,7 +10,6 @@ namespace PES.Application.Helper.RedisHandler
     public class PopularProductHandler : IDisposable
     {
         private readonly IDatabase _database;
-        private const int Month = 30 * 86400;
 
         public PopularProductHandler(IDatabase database)
         {
