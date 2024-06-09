@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PES.Application.IService;
@@ -86,7 +87,7 @@ namespace PES.Presentation
 
             services.AddSwaggerGen(opt =>
             {
-                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Fire Alarm Camera Solution - API", Version = "v1" });
+                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Organic Store  - API", Version = "v1" });
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -115,7 +116,7 @@ namespace PES.Presentation
 
 
             //? 
-           services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+            services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
 
             return services;

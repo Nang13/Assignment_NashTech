@@ -25,9 +25,9 @@ function Product() {
     try {
       var response = "";
       if (query == '') {
-        response = await fetch('http://localhost:5046/api/v1/Product?pageNumber=0&pageSize=10');
+        response = await fetch('https://localhost:7187/api/v1/Product?pageNumber=0&pageSize=50');
       } else {
-        response = await fetch(`http://localhost:5046/api/v1/Product?${type}=${query}&pageNumber=0&pageSize=10`);
+        response = await fetch(`https://localhost:7187/api/v1/Product?${type}=${query}&pageNumber=0&pageSize=50`);
       }
 
       const data = await response.json();

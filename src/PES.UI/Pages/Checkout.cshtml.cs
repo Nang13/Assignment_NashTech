@@ -29,11 +29,11 @@ namespace PES.UI.Pages
         public async Task<IActionResult> OnGetProceedToCheckout()
         {
 
-            string testCase = "http://localhost:5046/api/v1/Cart";
+            string testCase = "https://localhost:7187/api/v1/Cart";
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5046/api/v1/Cart");
+                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7187/api/v1/Cart");
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
 
@@ -55,7 +55,7 @@ namespace PES.UI.Pages
                 // Add Bearer token to the request
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
 
-                var response = await httpClient.PostAsync("http://localhost:5046/api/v1/Order", content);
+                var response = await httpClient.PostAsync("https://localhost:7187/api/v1/Order", content);
 
                 HttpContent content1 = response.Content;
                 string messageKhoNoi = await content1.ReadAsStringAsync();

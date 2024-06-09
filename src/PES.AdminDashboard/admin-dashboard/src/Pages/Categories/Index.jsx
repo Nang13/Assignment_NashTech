@@ -50,7 +50,7 @@ function Category() {
           body: JSON.stringify(payload),
         };
 
-        fetch("http://localhost:5046/api/v1/Category", requestOptions)
+        fetch("https://localhost:7187/api/v1/Category", requestOptions)
           .then(response => {
             if (!response.ok) {
               throw new Error('Network response was not ok');

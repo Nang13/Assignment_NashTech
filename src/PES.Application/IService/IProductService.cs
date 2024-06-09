@@ -19,5 +19,9 @@ namespace PES.Application.IService
         Task<bool> DeleteProduct(Guid productId);
 
         Task AddRatingProduct(Guid id,ProductRatingRequest request);
+
+        Task ActiveProdudct(Guid productId);
+
+        Task InactiveProduct(Guid productId);
     }
 }

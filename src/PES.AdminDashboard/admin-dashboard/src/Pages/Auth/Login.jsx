@@ -8,7 +8,7 @@ function Login() {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch('http://localhost:5046/api/v1/Auth/login', {
+      const response = await fetch('https://localhost:7187/api/v1/Auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -17,7 +17,7 @@ namespace PES.UI.Pages
         public async Task OnGetAsync()
         {
 
-            string testCase = "http://localhost:5046/api/v1/Product?pageNumber=0&pageSize=4";
+            string testCase = "https://localhost:7187/api/v1/Product?pageNumber=0&pageSize=4";
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             try
             {

@@ -83,7 +83,7 @@ function AddProductForm() {
             console.log(data);
             debugger
             // Make API request to add product with image data
-            const response = await fetch('http://localhost:5046/api/v1/Product', {
+            const response = await fetch('https://localhost:7187/api/v1/Product', {
                 method: 'Post',
                 headers: {
                     'Content-Type': 'application/json'
@@ -121,7 +121,7 @@ function AddProductForm() {
     };
 
     const fetchSubcategories = (categoryId) => {
-        fetch(`http://localhost:5046/api/v1/Category/${categoryId}`)
+        fetch(`https://localhost:7187/api/v1/Category/${categoryId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -138,7 +138,7 @@ function AddProductForm() {
     };
 
     useEffect(() => {
-        fetch("http://localhost:5046/api/v1/Category")
+        fetch("https://localhost:7187/api/v1/Category")
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -174,7 +174,7 @@ function AddProductForm() {
             const formData = new FormData();
             formData.append("imageFile", file);
 
-            const response = await fetch(`http://localhost:5046/api/v1/Product/upload`, {
+            const response = await fetch(`https://localhost:7187/api/v1/Product/upload`, {
                 method: 'POST',
                 body: formData
             });

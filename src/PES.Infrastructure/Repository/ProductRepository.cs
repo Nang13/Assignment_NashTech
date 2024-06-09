@@ -46,13 +46,14 @@ namespace PES.Infrastructure.Repository
 
         public async Task ExcuteUpdate(Guid id, Dictionary<string, object?> updateObject)
         {
+         //   _context.Products.Where(x => x.Id == id).ExecuteUpdate(x => x.SetProperty(x => x.LastModified, DateTime.UtcNow.AddHours(7)));
             _context.Products.Where(x => x.Id == id).ExecuteUpdate(updateObject);
         }
 
         public async Task<List<ProductsResponse>> GetProductByCategoryId(List<Guid> categoryId)
         {
             var result = await _context.Products.Where(x => categoryId.Contains(x.CategoryId)).Include(x => x.Category).Include(x => x.ProductImages).Include(x => x.ProductRating)
-                .Select(x => new ProductsResponse(x.Id, x.ProductName, x.ProductRating.Select(x => x.Rating).Average(), x.Created, x.ProductImages.FirstOrDefault().ImageUrl, x.Category.CategoryMain, x.Category.CategoryName, x.Price, x.Description, x.CategoryId,x.Status))
+                .Select(x => new ProductsResponse(x.Id, x.ProductName, x.ProductRating.Select(x => x.Rating).Average(), x.Created, x.ProductImages.FirstOrDefault().ImageUrl, x.Category.CategoryMain, x.Category.CategoryName, x.Price, x.Description, x.CategoryId, x.Status, (bool)x.IsDeleted))
                 .ToListAsync();
             return result;
 

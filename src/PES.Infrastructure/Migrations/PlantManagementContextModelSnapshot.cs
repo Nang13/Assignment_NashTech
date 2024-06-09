@@ -441,6 +441,9 @@ namespace PES.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("timestamp with time zone");
 

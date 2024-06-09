@@ -19,9 +19,11 @@ using PES.Application.Utilities;
 using PES.Domain.DTOs.ProductDTO;
 using PES.Domain.DTOs.User;
 using PES.Domain.Entities.Model;
+using PES.Domain.Enum;
 using PES.Infrastructure.Common;
 using StackExchange.Redis;
 using static PES.Domain.DTOs.User.RegisterRequest;
+using Role = PES.Domain.Enum.Role;
 
 
 namespace PES.Application.Service
@@ -33,7 +35,6 @@ namespace PES.Application.Service
         private readonly IAuthorizationService _authorizationService;
         private readonly IDatabase _database;
         private readonly IClaimsService _claimService;
-
         private readonly IConfiguration _configuration;
 
         public UserService(UserManager<ApplicationUser> userManager, IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory, IAuthorizationService authorizationService, IConfiguration configuration, IDatabase database, IClaimsService claimsService)
@@ -48,7 +49,7 @@ namespace PES.Application.Service
         public async Task<string> ForgetPassword(string Email)
         {
             SendMailHandler sendMail = new SendMailHandler(_configuration);
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == Email) ?? throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Your Account have been locked");
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == Email) ?? throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Not found this email");
             int otp = await GenerateOTP(user.UserName);
             Task.Run(() => sendMail.SendMail(OTP: otp.ToString(), UserName: user.UserName));
             return otp.ToString();
@@ -134,7 +135,7 @@ namespace PES.Application.Service
             string secretKeyConfig = _configuration["JWTSecretKey:SecretKey"];
             string jwt = GenerateJWT(user, secretKeyConfig,roles);
             //  Console.WriteLine(newToken);
-            return new AuthDTO(user.Id, user.UserName, user.Email, user.LockoutEnabled,roles.First(), new UserToken(jwt, "comsuonbitalon"));
+            return new AuthDTO(user.Id, user.UserName, user.Email, user.LockoutEnabled,roles.First(), new UserToken(jwt, "________"));
         }
 
 
@@ -169,10 +170,12 @@ namespace PES.Application.Service
             {
                 UserName = request.UserName,
                 Email = request.Email,
-                LockoutEnabled = false,
+              
             };
 
             var result = await _userManager.CreateAsync(user, request.Password);
+            await _userManager.SetLockoutEnabledAsync(user, false);
+            await _userManager.AddToRoleAsync(user, Role.User);
             if (result.Errors.Any())
             {
                 throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, string.Join(", ", result.Errors.Select(x => "Code " + x.Code + " Description" + x.Description)));
@@ -182,7 +185,7 @@ namespace PES.Application.Service
             string secretKeyConfig = _configuration["JWTSecretKey:SecretKey"];
             string jwt = GenerateJWT(user, secretKeyConfig,roles);
             var userData = await _userManager.Users.Where(x => x.Email == request.Email).FirstOrDefaultAsync();
-            return new AuthDTO(userData.Id, userData.UserName, userData.Email, userData.LockoutEnabled, roles.First(),new UserToken(jwt, "comsuonbitalon"));
+            return new AuthDTO(userData.Id, userData.UserName, userData.Email, userData.LockoutEnabled, roles.First(),new UserToken(jwt, "_______"));
 
         }
 

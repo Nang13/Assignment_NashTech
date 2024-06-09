@@ -1,7 +1,7 @@
 const url = "http://localhost:5046/api/v1/";
 
 export const getOrders = async () => {
-    const res = await fetch("https://dummyjson.com/carts/1");
+    const res = await fetch("https://localhost:7187/api/v1/Product?pageNumber=0&pageSize=3");
     return await res.json();
 };
 
@@ -11,11 +11,11 @@ export const getRevenue = async () => {
 };
 
 export const getProduct = async () => {
-    const res = await fetch("http://localhost:5046/api/v1/Product?pageNumber=0&pageSize=10");
+    const res = await fetch("https://localhost:7187/api/v1/Product?pageNumber=0&pageSize=10");
     return await res.json();
 };
 export const getProductDetail = async ({id}) => {
-    const res = await fetch(`http://localhost:5046/api/v1/Product/${id}`);
+    const res = await fetch(`https://localhost:7187/api/v1/Product/${id}`);
     return await res.json();
 };
 
@@ -29,17 +29,17 @@ export const getComments = async () => {
 };
 
 export const getCategories = async () => {
-    const res = await fetch("http://localhost:5046/api/v1/Category");
+    const res = await fetch("https://localhost:7187/api/v1/Category");
     return await res.json();
 };
 
 export const getCategoryDetail = async ({ id }) => {
-    const res = await fetch(`http://localhost:5046/api/v1/Category/${id}`);
+    const res = await fetch(`https://localhost:7187/api/v1/Category/${id}`);
     return await res.json();
   };
 
   export const getUsers = async () => {
-    const res = await fetch("http://localhost:5046/api/v1/User");
+    const res = await fetch("https://localhost:7187/api/v1/User");
     return await res.json();
 };
 

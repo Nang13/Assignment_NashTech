@@ -41,12 +41,21 @@
                                     </div>
                                 }
                             </div>
+                            <a class="carousel-control-prev" href="#imageCarousel" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#imageCarousel" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <h4 class="fw-bold mb-3">@Model.ProductName</h4>
                         <p class="mb-3">Category: @Model.ProductCategory.CategoryName</p>
                         <h5 class="fw-bold mb-3">@Model.Price $</h5>
+                        <p class="mb-4">Quantity : @Model.Quantity</p>
                         <div class="d-flex mb-4">
                             <i class="fa fa-star text-secondary"></i>
                             <i class="fa fa-star text-secondary"></i>
@@ -54,8 +63,7 @@
                             <i class="fa fa-star text-secondary"></i>
                             <i class="fa fa-star"></i>
                         </div>
-                        <p class="mb-4">The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic words etc.</p>
-                        <p class="mb-4">Susp endisse ultricies nisi vel quam suscipit. Sabertooth peacock flounder; chain pickerel hatchetfish, pencilfish snailfish</p>
+                        <p class="mb-4">@Model.Description</p>
                         <div class="input-group quantity mb-5" style="width: 100px;">
                             <div class="input-group-btn">
                                 <button class="btn btn-sm btn-minus rounded-circle bg-light border">
@@ -69,7 +77,12 @@
                                 </button>
                             </div>
                         </div>
-                        <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                        <form asp-page="ProductDetail" asp-page-handler="AddToCart" method="post" asp-route-id="@Model.ProductId">
+                            <button type="submit" class="btn btn-primary rounded-pill">
+                                <i class="fa fa-shopping-bag me-2"></i> Add to cart
+                            </button>
+                        </form>
+                        @* <a asp-page="ProductDetail" asp-page-handler="AddToCart" asp-route-id="@Model.ProductId" method="post" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a> *@
                     </div>
                     <div class="col-lg-12">
                         <nav>
@@ -475,29 +488,10 @@
     </div>
 </div>
 </div>
+</div>
 <!-- Copyright End -->
 <!-- Back to Top -->
 <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
-
-<script>
-    $(document).ready(function () {
-        $(".vegetable-carousel").owlCarousel({
-            items: 3,
-            margin: 10,
-            loop: true,
-            nav: true,
-            dots: true,
-            responsive: {
-                0: {
-                    items: 1
-                },
-                600: {
-                    items: 2
-                },
-                1000: {
-                    items: 3
-                }
-            }
-        });
-    });
-</script>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

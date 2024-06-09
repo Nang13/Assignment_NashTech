@@ -101,5 +101,25 @@ namespace PES.Presentation.Controllers.V1
             });
         }
 
+
+        [HttpPost("{productId}/active")]
+        public async Task<IActionResult> ActiveProduct(Guid productId)
+        {
+            await _productService.ActiveProdudct(productId);
+            return Ok(new
+            {
+                message = "Active Product Successfully"
+            });
+        }
+
+        [HttpPost("{productId}/inactive")]
+        public async Task<IActionResult> InactiveProduct(Guid productId)
+        {
+            await _productService.InactiveProduct(productId);
+            return Ok(new
+            {
+                message = "InActive Product Successfully"
+            });
+        }
     }
 }

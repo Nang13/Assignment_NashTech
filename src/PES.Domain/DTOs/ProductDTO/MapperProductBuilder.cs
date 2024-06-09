@@ -50,6 +50,7 @@ namespace PES.Domain.DTOs.ProductDTO
                     LegalDisclaimer = request.LegalDisclaimer,
                     Directions = request.Directions,
                     ProductId = ProductId
+                    
                 };
             }
 

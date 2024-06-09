@@ -19,7 +19,7 @@ namespace PES.UI.Pages.Authen
         {
             TempDataHelper.Put(TempData, "emailResetPassword",email );
             var client = _httpClientFactory.CreateClient();
-            var apiUrl = $"http://localhost:5046/api/v1/Auth/{email}/forgetpassword";
+            var apiUrl = $"https://localhost:7187/api/v1/Auth/{email}/forgetpassword";
 
             try
             {

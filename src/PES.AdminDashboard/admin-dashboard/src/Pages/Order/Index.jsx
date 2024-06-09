@@ -25,9 +25,9 @@ function Order() {
     try {
       var response = "";
       if (query == '') {
-        response = await fetch('http://localhost:5046/api/v1/Order?pageNumber=0&pageSize=10');
+        response = await fetch('https://localhost:7187/api/v1/Order?pageNumber=0&pageSize=50');
       } else {
-        response = await fetch(`http://localhost:5046/api/v1/Order?${type}=${query}&pageNumber=0&pageSize=10`);
+        response = await fetch(`https://localhost:7187/api/v1/Order?${type}=${query}&pageNumber=0&pageSize=50`);
       }
 
       const data = await response.json();
@@ -43,19 +43,44 @@ function Order() {
 
   const handleStatusFilterChange = (value) => {
 
-    fetchOrders(value , "Status");
-};
+    fetchOrders(value, "Status");
+  };
 
-const handlePaymentTypeFilterChange = value => {
-    fetchOrders(value , "PaymentType");
-};
+  const handlePaymentTypeFilterChange = value => {
+    fetchOrders(value, "PaymentType");
+  };
 
   const handleSearch = (value) => {
     setSearchText(value);
     fetchOrders(value, searchType);
   };
 
+  // Function to toggle user status
+  const toggleUserStatus = async (orderId) => {
+    const url = `https://localhost:7187/api/v1/Order/${orderId}/finish`;
 
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Accept': '*/*',
+        },
+        body: ''
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+      fetchOrders();
+      console.log(`Finished processing for userId: ${orderId}`, result);
+
+      // Update the state or UI accordingly
+    } catch (error) {
+      console.error(`There was a problem finishing the processing for userId: ${orderId}`, error);
+    }
+  };
   const handleSearchTypeChange = (value) => {
     setSearchType(value);
     fetchOrders(searchText, value); // Call the API with the new search type
@@ -131,8 +156,28 @@ const handlePaymentTypeFilterChange = value => {
           {
             title: "Status",
             dataIndex: "status"
+          }, {
+            title: "Action",
+            render: (text, record) => {
+              // Check if the status is "Processing"
+              if (record.status !== 'Proccessing') {
+                return null; // or return <></> for an empty fragment
+              }
 
-          },
+              const buttonClass = record.paymentType ? 'bg-green-500' : 'bg-red-500';
+              const buttonText = record.isInactive ? 'Activate' : 'Finish';
+
+              return (
+                <Button
+                  onClick={() => toggleUserStatus(record.orderId)}
+                  type="primary"
+                  className={`${buttonClass} text-white`}
+                >
+                  {buttonText}
+                </Button>
+              );
+            }
+          }
         ]}
         dataSource={dataSource}
         pagination={{

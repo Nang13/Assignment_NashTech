@@ -48,11 +48,21 @@ namespace PES.Presentation.Controllers.V1
 
 
         [HttpGet("{orderId}")]
-        public async Task<IActionResult> GetOrderDetail(Guid orderId) { 
+        public async Task<IActionResult> GetOrderDetail(Guid orderId)
+        {
             var response = await _orderService.GetOrderDetail(orderId);
-            return Ok(response); 
+            return Ok(response);
         }
 
+
+        [HttpPost("{orderId}/finish")]
+        public async Task<IActionResult> FinishOrder(Guid orderId) {
+             await _orderService.SetFinishOrder(orderId);
+            return Ok(new
+            {
+                message = "Finish Order Successfully"
+            });
+        }
 
     }
 }

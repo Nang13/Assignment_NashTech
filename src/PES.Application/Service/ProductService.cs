@@ -21,6 +21,7 @@ using PES.Infrastructure.Common;
 using PES.Infrastructure.UnitOfWork;
 using StackExchange.Redis;
 using static System.Net.Mime.MediaTypeNames;
+using Role = PES.Domain.Enum.Role;
 
 namespace PES.Application.Service
 {
@@ -56,7 +57,7 @@ namespace PES.Application.Service
             Guid productId = Guid.NewGuid();
             Product product = request.ToDTO();
             product.Id = productId;
-
+            product.IsDeleted = false;
 
             await _unitOfWork.ProductRepository.AddAsync(product);
             await _unitOfWork.SaveChangeAsync();
@@ -80,6 +81,8 @@ namespace PES.Application.Service
             await _unitOfWork.SaveChangeAsync();
             return new ProductResponse(productId, request.ProductName, product.Created);
         }
+
+      
 
         private async Task<bool> CheckDuplicateProductName(string productName)
         {
@@ -145,7 +148,8 @@ namespace PES.Application.Service
         public async Task<ProductResponseDetail> GetProductDetail(Guid productId)
         {
             if (_claimsService.UserRole == Domain.Enum.Role.User) Task.Run(() => ViewProductHandlers(_claimsService.GetCurrentUserId, productId));
-              
+
+
             var product = await _unitOfWork.ProductRepository.FirstOrDefaultAsync(x => x.Id == productId, x => x.ImportantInformation, x => x.NutritionInformation, x => x.ProductImages, x => x.Category);
 
             var nutritionInfo = product.NutritionInformation != null ? product.MapperNutrionDTO() : null;
@@ -155,7 +159,7 @@ namespace PES.Application.Service
             var productImage = product.ProductImages?.Select(x => new ProductImageResponse(x.ImageUrl, x.IsMain)).ToList();
             var ratingProduct = _unitOfWork.ProductRatingRepository.WhereAsync(x => x.ProductId == productId, x => x.User).Result.Select(x => x.MapDTO()).ToList();
 
-            return new ProductResponseDetail(productId, product.ProductName, product.Price, nutritionInfo, product.MapperCategoryDTO(), importantInfo, productImage, ratingProduct);
+            return new ProductResponseDetail(productId, product.ProductName, product.Quantity, product.Price, product.Status, product.IsDeleted, product.Description, nutritionInfo, product.MapperCategoryDTO(), importantInfo, productImage, ratingProduct);
         }
 
         public async ValueTask ViewProductHandlers(string UserId, Guid ProductId)
@@ -190,18 +194,8 @@ namespace PES.Application.Service
             request.Filter!.Remove("pageNumber");
 
 
-
-            //todo get categoryId by name 
-            if (request.Filter.ContainsKey("CategoryId"))
-            {
-
-                subCategories = _categoryService.GetSubCategories(Guid.Parse(request.Filter.GetValueOrDefault("CategoryId"))).Result.Select(x => x.CategoryId).ToList();
-
-            }
-
-            //  var filterResult = request.Filter.Count > 0 ? [] : _unitOfWork.ProductRepository.GetAllAsync().Result.AsEnumerable();
             var filterResult = _unitOfWork.ProductRepository.GetAllAsync(x => x.Category, x => x.ProductImages, x => x.ProductRating).Result.AsEnumerable();
-            var testingData = _unitOfWork.ProductRepository.GetAllAsync(x => x.Category, x => x.ProductImages, x => x.ProductRating).Result.Select(x => new ProductsResponse(x.Id, x.ProductName, x.ProductRating.Any() ? x.ProductRating.Average(r => r.Rating) : 0, x.Created, x.ProductImages.FirstOrDefault().ImageUrl, x.Category.CategoryMain, x.Category.CategoryName, x.Price, x.Description, x.CategoryId, x.Status)).AsEnumerable();
+            var testingData = _unitOfWork.ProductRepository.GetAllAsync(x => x.Category, x => x.ProductImages, x => x.ProductRating).Result.Select(x => new ProductsResponse(x.Id, x.ProductName, x.ProductRating.Any() ? x.ProductRating.Average(r => r.Rating) : 0, x.Created, x.ProductImages.FirstOrDefault().ImageUrl, x.Category.CategoryMain, x.Category.CategoryName, x.Price, x.Description, x.CategoryId, x.Status, (bool)x.IsDeleted)).AsEnumerable();
 
 
             var filterResultTesting = request.Filter.Count > 0 ? new List<ProductsResponse>() : testingData;
@@ -222,7 +216,18 @@ namespace PES.Application.Service
             }
 
             filterResultTesting = filterResultTesting.Union(testingData.Where(x => categoryName.Contains(x.CategoryId)));
+            if (request.Filter.ContainsKey("PopularProduct"))
+            {
 
+                using var redis = new PopularProductHandler(_dataabse);
+                SortedSetEntry[] entries = await redis.ProductRatingList(request.Filter?.GetValueOrDefault("PopularProduct"));
+                foreach (var item in entries.OrderByDescending(x => x.Score))
+                {
+                    filterResultTesting = filterResultTesting.Union(testingData.Where(x => x.Id == Guid.Parse(item.Element.ToString())));
+                }
+                request.Filter!.Remove("PopularProduct");
+
+            }
             if (request.Filter?.Count > 0)
             {
                 foreach (var filter in request.Filter)
@@ -232,23 +237,38 @@ namespace PES.Application.Service
             }
 
 
+            Pagination<ProductsResponse> dataCheck = new();
 
-
-            var dataCheck = new Pagination<ProductsResponse>
+            if (_claimsService.UserRole != Role.Administrator)
             {
-                PageIndex = request.PageNumber,
-                PageSize = request.PageSize,
-                TotalItemsCount = filterResult.Count(),
-                Items = PaginatedList<ProductsResponse>.Create(
-                      source: filterResultTesting.Where(x => x.Status == ProductState.InStock).AsQueryable(),
-                      pageIndex: request.PageNumber,
-                      pageSize: request.PageSize)
+                dataCheck = new Pagination<ProductsResponse>
+                {
+                    PageIndex = request.PageNumber,
+                    PageSize = request.PageSize,
+                    TotalItemsCount = filterResult.Count(),
+                    Items = PaginatedList<ProductsResponse>.Create(
+                  source: filterResultTesting.Where(x => x.isDeleted is false).AsQueryable(),
+                  pageIndex: request.PageNumber,
+                  pageSize: request.PageSize)
 
 
-            };
+                };
+            }
+            else
+            {
+                dataCheck = new Pagination<ProductsResponse>
+                {
+                    PageIndex = request.PageNumber,
+                    PageSize = request.PageSize,
+                    TotalItemsCount = filterResult.Count(),
+                    Items = PaginatedList<ProductsResponse>.Create(
+                  source: filterResultTesting.Where(x => x.Status == ProductState.InStock).AsQueryable(),
+                  pageIndex: request.PageNumber,
+                  pageSize: request.PageSize)
 
-            // Serialize the result with reference handling
-
+                    
+                };
+            }
 
             return dataCheck;
         }
@@ -264,6 +284,7 @@ namespace PES.Application.Service
                 }
                 else
                 {
+
                     Imrequest = request.importantInfo.MapperDTO(id);
                     _unitOfWork.ImportantInfoRepository.Update(Imrequest);
                 }
@@ -316,7 +337,9 @@ namespace PES.Application.Service
                 //? input Adding 1 2 3 4
             }
             await _unitOfWork.SaveChangeAsync();
+
             await _unitOfWork.ProductRepository.ExcuteUpdate(id, request.ObjectUpdate);
+
             return new ProductResponse(Guid.NewGuid(), "com suon hoc mon", DateTime.UtcNow);
         }
 
@@ -340,6 +363,22 @@ namespace PES.Application.Service
                 Comment = request.Comment
             };
             await _unitOfWork.ProductRatingRepository.AddAsync(productRating);
+            await _unitOfWork.SaveChangeAsync();
+        }
+
+        public async Task ActiveProdudct(Guid productId)
+        {
+            Product product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
+            product.IsDeleted = false;
+            _unitOfWork.ProductRepository.Update(product);
+            await _unitOfWork.SaveChangeAsync();
+        }
+
+        public async Task InactiveProduct(Guid productId)
+        {
+            Product product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
+            product.IsDeleted = true;
+            _unitOfWork.ProductRepository.Update(product);
             await _unitOfWork.SaveChangeAsync();
         }
     }

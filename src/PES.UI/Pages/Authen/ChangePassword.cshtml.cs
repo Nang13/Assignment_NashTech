@@ -25,7 +25,7 @@ namespace PES.UI.Pages.Authen
         {
             string email = TempDataHelper.Get<string>(TempData, "emailResetPassword") as string;
             var client = _httpClientFactory.CreateClient();
-            var apiUrl = "http://localhost:5046/api/v1/Auth/${email}/changepassword";
+            var apiUrl = "https://localhost:7187/api/v1/Auth/${email}/changepassword";
 
             var payload = new
             {
@@ -58,7 +58,7 @@ namespace PES.UI.Pages.Authen
                 ModelState.AddModelError(string.Empty, "An error occurred while changing the password.");
                 return Page();
             }
-            return RedirectToPage();
+         
         }
     }
 }

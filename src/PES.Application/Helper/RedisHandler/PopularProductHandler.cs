@@ -79,20 +79,26 @@ namespace PES.Application.Helper.RedisHandler
         }
 
 
-        public async Task<SortedSetEntry[]> ProductRatingList(string month)
+        public async Task<SortedSetEntry[]> ProductRatingList(string? month = null)
         {
             return await _database.SortedSetRangeByRankWithScoresAsync($"Voting_${month}");
+            
+           
 
 
         }
 
+
+        
 
 
 
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            ProductRatingList().GetAwaiter().GetResult();
         }
+
+        
     }
 }

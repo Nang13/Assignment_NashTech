@@ -29,7 +29,13 @@ namespace PES.UI.Pages
 
         public async Task<IActionResult> OnPostRegister(string email, string password, string name, string confirmPassword)
         {
-            await Register(email, password, name, confirmPassword);
+           
+            string data = await Register(email, password, name, confirmPassword);
+            var json = JObject.Parse(data);
+            UserData.AccessToken = json["token"]["accessToken"].ToString();
+
+            UserData.UserName = json["name"].ToString();
+            Console.WriteLine(UserData.AccessToken);
             return RedirectToPage("/Shop");
         }
 
@@ -43,7 +49,7 @@ namespace PES.UI.Pages
 
             var json = JsonConvert.SerializeObject(requestData);
             var requestBody = new StringContent(json, Encoding.UTF8, "application/json");
-            var responseMessage = await httpClient.PostAsync("http://localhost:5046/api/v1/Auth/login", requestBody);
+            var responseMessage = await httpClient.PostAsync("https://localhost:7187/api/v1/Auth/login", requestBody);
             HttpContent content = responseMessage.Content;
             string message = await content.ReadAsStringAsync();
 
@@ -57,13 +63,13 @@ namespace PES.UI.Pages
             {
                 email = email,
                 password = password,
-                name = name,
+                userName = name,
                 confirmPassword = confirmPassword
             };
 
             var json = JsonConvert.SerializeObject(requestData);
             var requestBody = new StringContent(json, Encoding.UTF8, "application/json");
-            var responseMessage = await httpClient.PostAsync("http://localhost:5046/api/v1/Auth/register", requestBody);
+            var responseMessage = await httpClient.PostAsync("https://localhost:7187/api/v1/Auth/register", requestBody);
             HttpContent content = responseMessage.Content;
             string message = await content.ReadAsStringAsync();
 

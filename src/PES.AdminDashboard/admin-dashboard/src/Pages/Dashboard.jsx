@@ -90,16 +90,17 @@ function RecentOrder() {
   useEffect(() => {
     setLoading(true);
     getOrders().then((res) => {
-      setDataSource(res.products.splice(0, 3));
+      console.log(res)
+      setDataSource(res.items);
       setLoading(false);
     });
   }, []);
   return (
     <Table
       columns={[
-        { title: 'title', dataIndex: 'title' },
-        { title: "Quantity", dataIndex: "quantity" },
-        { title: "Price", dataIndex: "discountedPrice" }]}
+        { title: 'title', dataIndex: 'productName' },
+        { title: "Quantity", dataIndex: "price" },
+        { title: "Price", dataIndex: "price" }]}
         loading={loading}
         dataSource={dataSource}>
     </Table>

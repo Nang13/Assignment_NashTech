@@ -24,21 +24,12 @@ function CategoryDetail() {
         console.log(category);
         setIsModalOpen(true);
         setCurrentCategory(category);
-        // if (category) {
-        //     form.setFieldsValue({
-        //         categoryName: category.name,
-        //         categoryDescription: category.description,
-        //     });
-        // } else {
-        //     form.resetFields();
-        // }
-        //   setIsModalVisible(true);
         deleteCategory(category.categoryId)
     };
 
-  
+
     const deleteCategory = (categoryId) => {
-        const url = `http://localhost:5046/api/v1/Category/${categoryId}`;
+        const url = `https://localhost:7187api/v1/Category/${categoryId}`;
 
         const requestOptions = {
             method: 'DELETE',
@@ -65,6 +56,9 @@ function CategoryDetail() {
     const handleCancel = () => {
         // setIsModalVisible(false);
         setCurrentCategory(null);
+        setIsModalAdding(false);
+        setIsModalUpdate(false);
+        setIsModalOpen(false);
     };
 
     const showModalAdding = (categoryId) => {
@@ -106,7 +100,7 @@ function CategoryDetail() {
                     body: JSON.stringify(payload),
                 };
 
-                fetch("http://localhost:5046/api/v1/Category", requestOptions)
+                fetch("https://localhost:7187/api/v1/Category", requestOptions)
                     .then(response => {
                         if (!response.ok) {
                             toast(response.message, {
@@ -163,7 +157,7 @@ function CategoryDetail() {
                     body: JSON.stringify(payload),
                 };
 
-                fetch(`http://localhost:5046/api/v1/Category/${currentCategory.id}`, requestOptions)
+                fetch(`https://localhost:7187/api/v1/Category/${currentCategory.id}`, requestOptions)
                     .then(response => {
                         debugger
                         console.log(response);

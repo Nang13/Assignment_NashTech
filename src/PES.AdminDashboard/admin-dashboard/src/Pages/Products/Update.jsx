@@ -56,7 +56,7 @@ const UpdateProduct = () => {
     }, [id]);
 
     useEffect(() => {
-        fetch("http://localhost:5046/api/v1/Category")
+        fetch("https://localhost:7187/api/v1/Category")
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -197,7 +197,7 @@ const UpdateProduct = () => {
         debugger
         console.log(payload);
 
-        fetch(`http://localhost:5046/api/v1/Product/${updatedProduct.id}`, {
+        fetch(`https://localhost:7187/api/v1/Product/${updatedProduct.id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -217,7 +217,7 @@ const UpdateProduct = () => {
         const formData = new FormData();
         formData.append("imageFile", file);
 
-        const response = await fetch(`http://localhost:5046/api/v1/Product/upload?}`, {
+        const response = await fetch(`https://localhost:7187/api/v1/Product/upload?}`, {
             method: 'POST',
             body: formData
         });
@@ -248,7 +248,7 @@ const UpdateProduct = () => {
     };
 
     const fetchSubcategories = (categoryId) => {
-        fetch(`http://localhost:5046/api/v1/Category/${categoryId}`)
+        fetch(`https://localhost:7187/api/v1/Category/${categoryId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

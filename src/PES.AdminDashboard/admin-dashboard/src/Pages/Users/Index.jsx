@@ -21,9 +21,9 @@ function User() {
     console.log(type)
     setLoading(true);
     try {
-      var response = await fetch(`http://localhost:5046/api/v1/User?pageNumber=0&pageSize=10`);
+      var response = await fetch(`https://localhost:7187/api/v1/User?pageNumber=0&pageSize=50`);
       if (query != '') {
-        response = await fetch(`http://localhost:5046/api/v1/User?${type}=${query}&pageNumber=0&pageSize=10`);
+        response = await fetch(`https://localhost:7187/api/v1/User?${type}=${query}&pageNumber=0&pageSize=50`);
       }
       const data = await response.json();
 console.log(data)
@@ -41,7 +41,7 @@ console.log(data)
 
       if (isInactive) {
         // Call enable API endpoint for activating the user
-        await fetch(`http://localhost:5046/api/v1/User/${userId}/enable`, {
+        await fetch(`https://localhost:7187/api/v1/User/${userId}/enable`, {
           method: 'POST',
           headers: {
             'accept': '*/*',
@@ -50,7 +50,7 @@ console.log(data)
         });
       } else {
         // Call disable API endpoint for deactivating the user (assuming you have one)
-        await fetch(`http://localhost:5046/api/v1/User/${userId}`, {
+        await fetch(`https://localhost:7187/api/v1/User/${userId}`, {
           method: 'DELETE',
           headers: {
             'accept': '*/*',

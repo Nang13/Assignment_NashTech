@@ -18,6 +18,7 @@ namespace PES.UI.Pages
         static HttpClient httpClient = new HttpClient();
         public List<CategoryResponse> Categories { get; set; }
         public List<ProductsResponse> Products { get; set; }
+        public List<ProductsResponse> ProductsMostView { get; set; }
 
     
         public async Task<IActionResult> OnGet(string? searchQuery = null, string? category = null)
@@ -25,6 +26,7 @@ namespace PES.UI.Pages
             await GetCategoryData();
 
             await GetProductDefault(searchQuery, category);
+            await MostViewProduct(); 
 
             return Page();
 
@@ -56,7 +58,7 @@ namespace PES.UI.Pages
         }
         public async ValueTask GetCategoryData()
         {
-            string urlCategory = "http://localhost:5046/api/v1/Category";
+            string urlCategory = "https://localhost:7187/api/v1/Category";
             HttpResponseMessage responseMessage = await httpClient.GetAsync(urlCategory);
             HttpContent content = responseMessage.Content;
             string message = await content.ReadAsStringAsync();
@@ -66,6 +68,15 @@ namespace PES.UI.Pages
 
         }
     
+        public async Task MostViewProduct()
+        {
+            HttpResponseMessage responseMessage = await httpClient.GetAsync("https://localhost:7187/api/v1/Product?PopularProduct=June&pageNumber=0&pageSize=10");
+            HttpContent content = responseMessage.Content;
+            string message = await content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<dynamic>(message);
+            JArray items = responseObject["items"];
+            ProductsMostView = items.Select(item => item.ToObject<ProductsResponse>()).ToList();
+        }
         
         public async Task<IActionResult> OnPostAddToCart(string id)
         {
@@ -79,7 +90,7 @@ namespace PES.UI.Pages
             var json = JsonConvert.SerializeObject(payload);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5046/api/v1/Cart");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7187/api/v1/Cart");
             request.Content = content;
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
 

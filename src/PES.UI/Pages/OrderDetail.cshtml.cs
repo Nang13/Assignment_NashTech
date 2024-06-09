@@ -14,7 +14,7 @@ namespace PES.UI.Pages
         public decimal? Total {  get; set; }
         public async Task<IActionResult> OnGet(string id)
         {
-            string testCase = $"http://localhost:5046/api/v1/Order/{id}";
+            string testCase = $"https://localhost:7187/api/v1/Order/{id}";
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             try
             {

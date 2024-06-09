@@ -3,6 +3,7 @@ using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -73,11 +74,24 @@ namespace PES.Application.Service
                     Console.WriteLine("Could not acquire lock to process order . Try again later.");
                 }
             }
-
             return null;
+        }
 
-
-
+        public static string IncrementString(string input)
+        {
+            // Use regex to find the numeric part of the string
+            Match match = Regex.Match(input, @"(\D+)(\d+)");
+            if (match.Success)
+            {
+                string prefix = match.Groups[1].Value;
+                int number = int.Parse(match.Groups[2].Value);
+                number++;  // Increment the number
+                return $"{prefix}{number:D3}";  // Format the number back to a 3-digit string
+            }
+            else
+            {
+                throw new ArgumentException("Input string is not in the expected format");
+            }
         }
         private async Task AddOrderDetail(List<OrderDetailRequest> request, Guid OrderId, string UserID)
         {

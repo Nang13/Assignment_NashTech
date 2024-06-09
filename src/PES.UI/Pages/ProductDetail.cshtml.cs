@@ -8,6 +8,7 @@ using System.Net.Http;
 using PES.Domain.DTOs.CategoryDTO;
 using System.Text;
 using PES.UI.Pages.Shared;
+using System.Net.Http.Headers;
 
 namespace PES.UI.Pages
 {
@@ -22,6 +23,10 @@ namespace PES.UI.Pages
 
         public decimal? Price { get; set; }
 
+        [BindProperty]
+        public string Quantity { get; set; }
+        [BindProperty]
+        public string Description { get; set; }
         public Guid? ProductId { get; set; }
         [BindProperty]
         public NutrionInfo NutrionInfo { get; set; }
@@ -40,7 +45,7 @@ namespace PES.UI.Pages
         static HttpClient httpClient = new HttpClient();
         public async Task<IActionResult> OnGet(string id)
         {
-            string url = $"http://localhost:5046/api/v1/Product/{id}";
+            string url = $"https://localhost:7187/api/v1/Product/{id}";
 
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             try
@@ -55,7 +60,9 @@ namespace PES.UI.Pages
                 JToken categoryObject = responseObject["productCategory"];
                 JArray productIma = responseObject["productImages"];
                 JArray ratingsData = responseObject["ratings"];
+                Description = responseObject["productDescription"].ToString();
                 ProductName = responseObject["productName"].ToString();
+                Quantity = responseObject["quantity"].ToString();
                 id = responseObject["id"];
                 ProductId = Guid.Parse(id);
                 Price = responseObject["price"];
@@ -64,7 +71,7 @@ namespace PES.UI.Pages
                 importantInfo = imporatantObject.ToObject<ImportantInfo>();
                 productImages = productIma.Select(item => item.ToObject<ProductImageResponse>()).ToList();
                 ratings = ratingsData.Select(item => item.ToObject<RatingResponse>()).ToList();
-
+                
                 RedirectToPage();
             }
             catch (HttpRequestException exception)
@@ -76,7 +83,7 @@ namespace PES.UI.Pages
 
         public async Task<IActionResult> OnPostRating(string description, int rating, Guid productId)
         {
-            var apiUrl = $"http://localhost:5046/api/v1/Product/{productId}/rate"; // Replace with your API endpoint
+            var apiUrl = $"https://localhost:7187/api/v1/Product/{productId}/rate"; // Replace with your API endpoint
             var token = UserData.AccessToken; // Replace with your authorization token
 
             // Create the request payload
@@ -114,6 +121,37 @@ namespace PES.UI.Pages
                 return Page(); // Stay on the same page
             }
 
+        }
+        public async Task<IActionResult> OnPostAddToCart(string id)
+        {
+            var payload = new
+            {
+                productId = id,
+                quantity = 1,
+                cartActionType = 0
+            };
+
+            var json = JsonConvert.SerializeObject(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7187/api/v1/Cart");
+            request.Content = content;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+
+            var response = await httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Handle error
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Error: {0}", errorMessage);
+                return RedirectToPage("/Shop"); // or handle the error appropriately
+            }
+
+            string message = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("The output from thirdparty is: {0}", message);
+
+            return RedirectToPage("/Shop");
 
         }
     }

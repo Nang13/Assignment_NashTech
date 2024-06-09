@@ -12,9 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 var conn = builder.Configuration.GetConnectionString("DefaultConnection");
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-//builder.Services.AddDbContextPool<PlantManagementContext>(options =>
-//    options.UseNpgsql(conn));
 builder.Services.AddApplicationService();
 builder.Services.AddInfrastructureServices(conn);
 builder.Services.AddEndpointsApiExplorer();

@@ -20,7 +20,7 @@ namespace PES.UI.Pages
         public async Task<IActionResult> OnGet()
         {
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5046/api/v1/Order?pageNumber=0&pageSize=10");
+            var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7187/api/v1/Order?pageNumber=0&pageSize=10");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
             try

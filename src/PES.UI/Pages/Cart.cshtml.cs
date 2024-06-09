@@ -22,11 +22,11 @@ namespace PES.UI.Pages
         public async Task OnGetAsync()
         {
 
-            string testCase = "http://localhost:5046/api/v1/Cart";
+            
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5046/api/v1/Cart");
+                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7187/api/v1/Cart");
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken); // Use the actual access token directly
 
@@ -75,7 +75,7 @@ namespace PES.UI.Pages
             var json = JsonConvert.SerializeObject(payload);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5046/api/v1/Cart");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7187/api/v1/Cart");
             request.Content = content;
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
 
@@ -107,7 +107,7 @@ namespace PES.UI.Pages
             var json = JsonConvert.SerializeObject(payload);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5046/api/v1/Cart");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7187/api/v1/Cart");
             request.Content = content;
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
 
@@ -139,7 +139,7 @@ namespace PES.UI.Pages
             var json = JsonConvert.SerializeObject(payload);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5046/api/v1/Cart");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7187/api/v1/Cart");
             request.Content = content;
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
 

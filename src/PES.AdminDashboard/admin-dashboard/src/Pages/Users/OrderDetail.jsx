@@ -9,7 +9,7 @@ const OrderDetail = () => {
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const response = await fetch(`http://localhost:5046/api/v1/Order/${orderId}`, {
+                const response = await fetch(`https://localhost:7187/api/v1/Order/${orderId}`, {
                     headers: {
                         'accept': '*/*'
                     }

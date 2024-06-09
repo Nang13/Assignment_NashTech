@@ -67,6 +67,8 @@ namespace PES.Domain.DTOs.ProductDTO
         public string? Description { get; set; } = null!;
         public int? Quantity { get; set; } = null!;
         public Guid? CategoryId { get; set; } = null!;
+
+        
         public NutrionInforrmationRequest? nutrionInfo { get; set; } = null!;
 
         public ImportantImformationRequest? importantInfo { get; set; } = null!;
