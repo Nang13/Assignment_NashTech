@@ -17,6 +17,7 @@ namespace PES.UI.Pages
     public class CheckoutModel : PageModel
     {
         static HttpClient httpClient = new HttpClient();
+        static SignInModel _signInModel = new SignInModel();
         [BindProperty]
         public List<CartItem> Items { get; set; }
         public async Task<IActionResult> OnGet()
@@ -35,7 +36,7 @@ namespace PES.UI.Pages
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7187/api/v1/Cart");
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"Bearer {Request.Cookies["AccessToken"]}");
 
                 HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
                 HttpContent contentHihi = responseMessage.Content;
@@ -51,9 +52,9 @@ namespace PES.UI.Pages
                 };
                 var json = JsonConvert.SerializeObject(payload);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-
+               var token =   $"Bearer {Request.Cookies["AccessToken"]}";
                 // Add Bearer token to the request
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",token);
 
                 var response = await httpClient.PostAsync("https://localhost:7187/api/v1/Order", content);
 

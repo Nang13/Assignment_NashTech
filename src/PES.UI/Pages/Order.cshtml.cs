@@ -13,6 +13,7 @@ namespace PES.UI.Pages
     public class OrderModel : PageModel
     {
         static HttpClient httpClient = new HttpClient();
+        static SignInModel _signInModel = new SignInModel();
         public List<OrderResponse> orders { get; set; }
         public decimal Total { get; set; }
 
@@ -22,7 +23,7 @@ namespace PES.UI.Pages
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7187/api/v1/Order?pageNumber=0&pageSize=10");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"Bearer {Request.Cookies["AccessToken"]}");
             try
             {
                 var response = await httpClient.SendAsync(request);

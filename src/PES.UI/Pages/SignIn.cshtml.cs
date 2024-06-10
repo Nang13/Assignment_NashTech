@@ -1,3 +1,4 @@
+using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -11,31 +12,33 @@ namespace PES.UI.Pages
     public class SignInModel : PageModel
     {
         static HttpClient httpClient = new HttpClient();
+
+
         public void OnGet()
         {
         }
 
         public async Task<IActionResult> OnPostLogin(string email, string password)
         {
-          
-            string data =  await Login(email, password);
-            var json = JObject.Parse(data);
-            UserData.AccessToken = json["token"]["accessToken"].ToString();
 
+            string data = await Login(email, password);
+            var json = JObject.Parse(data);
+
+            await SetAccessToken(json["token"]["accessToken"].ToString());
             UserData.UserName = json["name"].ToString();
-            Console.WriteLine(UserData.AccessToken);
+         //   Console.WriteLine(await _signInModel.GetAccesToken());
             return RedirectToPage("/Shop");
         }
 
         public async Task<IActionResult> OnPostRegister(string email, string password, string name, string confirmPassword)
         {
-           
+
             string data = await Register(email, password, name, confirmPassword);
             var json = JObject.Parse(data);
-            UserData.AccessToken = json["token"]["accessToken"].ToString();
-
+            // await _signInModel.GetAccesToken() = json["token"]["accessToken"].ToString();
+            //Response.Cookies.Append("AccessToken", json["token"]["accessToken"].ToString());
             UserData.UserName = json["name"].ToString();
-            Console.WriteLine(UserData.AccessToken);
+           // Console.WriteLine(await _signInModel.GetAccesToken());
             return RedirectToPage("/Shop");
         }
 
@@ -76,5 +79,29 @@ namespace PES.UI.Pages
             return message;
 
         }
+
+        public async ValueTask SetAccessToken(string accessToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(30),
+                SameSite = SameSiteMode.Strict,
+                HttpOnly = true,
+            };
+
+            Console.Write(accessToken);
+            HttpContext.Response.Cookies.Append("AccessToken", accessToken, cookieOptions);
+            // Response.Cookies.Append("MyCookie", "value1");
+        }
+
+
+        public async ValueTask<string> GetAccesToken()
+        {
+            var cookieValue = Request.Cookies["AccessToken"];
+            //Request.Cookies.TryGetValue("AccessToken", out var token);
+            return cookieValue;
+        }
+
+
     }
 }

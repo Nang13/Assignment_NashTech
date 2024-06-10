@@ -10,25 +10,30 @@ using PES.Domain.Enum;
 using System.Text;
 using PES.UI.Pages.Shared;
 using System.Net.Http.Headers;
+using System.Net;
 
 namespace PES.UI.Pages
 {
     public class CartModel : PageModel
     {
         static HttpClient _httpClient = new HttpClient();
+        static readonly SignInModel _signIn = new SignInModel();
         [BindProperty]
         public List<CartItem> CartItems { get; set; }
         public decimal Total { get; set; }
         public async Task OnGetAsync()
         {
 
-            
+
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7187/api/v1/Cart");
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken); // Use the actual access token directly
+                Request.Cookies.TryGetValue("AccessToken", out string token1);
+
+
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"Bearer {Request.Cookies["AccessToken"]}"); // Use the actual access token directly
 
                 var response = await _httpClient.SendAsync(request);
 
@@ -43,7 +48,7 @@ namespace PES.UI.Pages
                 }
                 else
                 {
-                   Console.WriteLine($"Error fetching cart data: {response.StatusCode}");
+                    Console.WriteLine($"Error fetching cart data: {response.StatusCode}");
                 }
 
                 Page();
@@ -59,7 +64,7 @@ namespace PES.UI.Pages
         {
             //Dictionary<string, string> dictCars = new Dictionary<string, string> { { "passedObject",  } };
             //    return RedirectToPage("Checkout", dictCars);
-            
+
             return Redirect("Checkout");
 
         }
@@ -77,7 +82,7 @@ namespace PES.UI.Pages
 
             var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7187/api/v1/Cart");
             request.Content = content;
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"Bearer {Request.Cookies["AccessToken"]}");
 
             var response = await _httpClient.SendAsync(request);
 
@@ -109,7 +114,7 @@ namespace PES.UI.Pages
 
             var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7187/api/v1/Cart");
             request.Content = content;
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"Bearer {Request.Cookies["AccessToken"]}");
 
             var response = await _httpClient.SendAsync(request);
 
@@ -141,7 +146,7 @@ namespace PES.UI.Pages
 
             var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7187/api/v1/Cart");
             request.Content = content;
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"Bearer {Request.Cookies["AccessToken"]}");
 
             var response = await _httpClient.SendAsync(request);
 

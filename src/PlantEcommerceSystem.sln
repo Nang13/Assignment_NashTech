@@ -19,13 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PES.Domain", "PES.Domain\PE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PES.UI", "PES.UI\PES.UI.csproj", "{CBA7B1A3-EEA2-4BD2-ADEC-1D471B12BC4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PES.Domain.Tests", "PES.Domain.Tests\PES.Domain.Tests.csproj", "{B458EDF6-8AB3-47C7-BAFC-16E43114698A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PES.Domain.Tests", "PES.Domain.Tests\PES.Domain.Tests.csproj", "{B458EDF6-8AB3-47C7-BAFC-16E43114698A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PES.Infrastructure.Tests", "PES.Infrastructure.Tests\PES.Infrastructure.Tests.csproj", "{ED46B2A9-8011-41BB-868B-32378D0F44A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PES.Infrastructure.Tests", "PES.Infrastructure.Tests\PES.Infrastructure.Tests.csproj", "{ED46B2A9-8011-41BB-868B-32378D0F44A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PES.Application.Tests", "PES.Application.Tests\PES.Application.Tests.csproj", "{4FCCC6D5-BED3-4B20-94D1-7926B42AC6A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PES.Application.Tests", "PES.Application.Tests\PES.Application.Tests.csproj", "{4FCCC6D5-BED3-4B20-94D1-7926B42AC6A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PES.Presentation.Tests", "PES.WebAPI.Tests\PES.Presentation.Tests.csproj", "{DA568D24-9EAA-4EE2-AC87-F40C227B19C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PES.Presentation.Tests", "PES.WebAPI.Tests\PES.Presentation.Tests.csproj", "{DA568D24-9EAA-4EE2-AC87-F40C227B19C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

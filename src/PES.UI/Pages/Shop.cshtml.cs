@@ -16,6 +16,7 @@ namespace PES.UI.Pages
     public class ShopModel : PageModel
     {
         static HttpClient httpClient = new HttpClient();
+        static SignInModel _signInModel = new SignInModel();
         public List<CategoryResponse> Categories { get; set; }
         public List<ProductsResponse> Products { get; set; }
         public List<ProductsResponse> ProductsMostView { get; set; }
@@ -92,7 +93,7 @@ namespace PES.UI.Pages
 
             var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7187/api/v1/Cart");
             request.Content = content;
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $" {Request.Cookies["AccessToken"]}");
 
             var response = await httpClient.SendAsync(request);
 

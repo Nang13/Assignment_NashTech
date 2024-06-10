@@ -15,6 +15,7 @@ namespace PES.UI.Pages
     public class ProductDetailModel : PageModel
     {
         private readonly IHttpClientFactory _clientFactory;
+        static SignInModel _signInModel = new SignInModel();
         public ProductDetailModel(IHttpClientFactory clientFactory)
         {
             _clientFactory = clientFactory;
@@ -84,8 +85,9 @@ namespace PES.UI.Pages
         public async Task<IActionResult> OnPostRating(string description, int rating, Guid productId)
         {
             var apiUrl = $"https://localhost:7187/api/v1/Product/{productId}/rate"; // Replace with your API endpoint
-            var token = UserData.AccessToken; // Replace with your authorization token
+            var token =  await _signInModel.GetAccesToken(); // Replace with your authorization token
 
+           
             // Create the request payload
             var requestData = new
             {
@@ -101,7 +103,7 @@ namespace PES.UI.Pages
             var client = _clientFactory.CreateClient();
 
             // Add authorization header
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Request.Cookies["AccessToken"]}");
 
             // Send POST request to API
             var response = await client.PostAsync(apiUrl, content);
@@ -136,7 +138,7 @@ namespace PES.UI.Pages
 
             var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7187/api/v1/Cart");
             request.Content = content;
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", UserData.AccessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"Bearer {Request.Cookies["AccessToken"]}");
 
             var response = await httpClient.SendAsync(request);
 
