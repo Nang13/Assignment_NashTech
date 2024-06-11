@@ -68,7 +68,8 @@ namespace PES.Domain.DTOs.ProductDTO
         public int? Quantity { get; set; } = null!;
         public Guid? CategoryId { get; set; } = null!;
 
-        
+        [JsonIgnore]
+        public DateTime LastModified { get; set; } = DateTime.UtcNow;
         public NutrionInforrmationRequest? nutrionInfo { get; set; } = null!;
 
         public ImportantImformationRequest? importantInfo { get; set; } = null!;
@@ -85,7 +86,8 @@ namespace PES.Domain.DTOs.ProductDTO
     { nameof(Price), Price },
     { nameof(Description), Description },
     { nameof(Quantity), Quantity },
-    { nameof(CategoryId), CategoryId }
+    { nameof(CategoryId), CategoryId },
+    {nameof(LastModified), LastModified },
 };
 
             foreach (var property in propertiesToUpdate)

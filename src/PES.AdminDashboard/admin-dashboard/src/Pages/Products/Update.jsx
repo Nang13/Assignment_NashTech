@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, Card, Carousel, Input, Button, Typography, Form, Checkbox, Select, message } from 'antd';
 import { getProductDetail } from '../../API';
 import { CloseOutlined } from '@ant-design/icons'
-import { useParams } from 'react-router';
+import {  useParams } from 'react-router';
+import { useNavigate} from 'react-router-dom';
 
 const UpdateProduct = () => {
+    const navigate = useNavigate();
     const { id } = useParams();
     const { Option } = Select;
     const { Title } = Typography;
@@ -194,7 +196,6 @@ const UpdateProduct = () => {
             });
             payload.productImages = transformedArray;
         }
-        debugger
         console.log(payload);
 
         fetch(`https://localhost:7187/api/v1/Product/${updatedProduct.id}`, {
@@ -205,9 +206,11 @@ const UpdateProduct = () => {
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
+                navigate('/product');
             })
             .catch(error => {
                 console.error('Error:', error);
+                navigate('/product');
             });
 
     };

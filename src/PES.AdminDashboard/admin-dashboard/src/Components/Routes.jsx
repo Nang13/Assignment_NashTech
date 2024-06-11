@@ -19,6 +19,7 @@ import MainLayout from "./MainLayout";
 import Orders from "../Pages/Users/Orders";
 import OrderDetail from "../Pages/Users/OrderDetail";
 import Order from "../Pages/Order/Index";
+import SignOut from "../Pages/Auth/SignOut";
 function AppRoutes() {
     return (
         <Routes>
@@ -36,6 +37,7 @@ function AppRoutes() {
               <Route path="add_product" element={<AddNewProduct />} />
               <Route path="/orders/:userId" element={<Orders />} />
               <Route path="/order/:orderId" element={<OrderDetail />} />
+              <Route path="/signout" element={<SignOut />} />
               <Route path="/order" element={<Order />} />
             </Route>
           </Route>

@@ -46,7 +46,7 @@ namespace PES.Infrastructure.Repository
 
         public async Task ExcuteUpdate(Guid id, Dictionary<string, object?> updateObject)
         {
-         //   _context.Products.Where(x => x.Id == id).ExecuteUpdate(x => x.SetProperty(x => x.LastModified, DateTime.UtcNow.AddHours(7)));
+        
             _context.Products.Where(x => x.Id == id).ExecuteUpdate(updateObject);
         }
 

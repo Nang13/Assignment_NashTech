@@ -1,6 +1,6 @@
 import { Menu } from 'antd/es'
 import React from 'react'
-import { AppstoreOutlined, UserOutlined, ShoppingOutlined, ApartmentOutlined , ShoppingCartOutlined } from "@ant-design/icons";
+import { AppstoreOutlined, UserOutlined, ShoppingOutlined, ApartmentOutlined, ShoppingCartOutlined  ,LogoutOutlined} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
 
@@ -33,6 +33,10 @@ function SideMenu() {
           label: 'Order',
           icon: <ShoppingCartOutlined />,
           key: '/order'
+        }, {
+          label: 'Sign Out',
+          icon: <LogoutOutlined />,
+          key: '/signout'
         }]}>,
 
       </Menu></div>

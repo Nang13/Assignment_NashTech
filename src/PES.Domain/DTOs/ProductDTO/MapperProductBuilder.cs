@@ -50,6 +50,7 @@ namespace PES.Domain.DTOs.ProductDTO
                     LegalDisclaimer = request.LegalDisclaimer,
                     Directions = request.Directions,
                     ProductId = ProductId
+                    ,LastModified = DateTime.UtcNow
                     
                 };
             }
@@ -97,7 +98,7 @@ namespace PES.Domain.DTOs.ProductDTO
                     Sodium = request.Sodium,
                     Sugars = request.Sugars,
                     ProductId = ProductId,
-                    Created = DateTime.UtcNow.AddHours(7),
+                    Created = DateTime.UtcNow,
 
                 };
             }
@@ -109,6 +110,15 @@ namespace PES.Domain.DTOs.ProductDTO
             return productRating == null
       ? throw new ArgumentNullException(nameof(productRating)) :
       new RatingResponse(UserId: productRating.UserId, UserComment: productRating.Comment, UserRating: productRating.Rating, UserName: productRating.User.UserName, commentDate: productRating.Created);
+        }
+
+
+
+        public static ProductResponseDetail MapDTO(this Product product, NutrionInfo nutrionInfo,ProductCategory productCategory,ImportantInfo importantInfo,List<ProductImageResponse> productImages,IReadOnlyCollection<RatingResponse> ratingResponses) 
+        {
+            return product == null ? throw new ArgumentNullException(nameof(product)) :
+         new ProductResponseDetail(product.Id, product.ProductName, product.Quantity, product.Price, product.Status, product.IsDeleted, product.Description, nutrionInfo, productCategory, importantInfo, productImages, ratingResponses, product.Created, product.LastModified);
+
         }
 
 

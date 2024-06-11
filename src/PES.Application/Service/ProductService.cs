@@ -159,7 +159,7 @@ namespace PES.Application.Service
             var productImage = product.ProductImages?.Select(x => new ProductImageResponse(x.ImageUrl, x.IsMain)).ToList();
             var ratingProduct = _unitOfWork.ProductRatingRepository.WhereAsync(x => x.ProductId == productId, x => x.User).Result.Select(x => x.MapDTO()).ToList();
 
-            return new ProductResponseDetail(productId, product.ProductName, product.Quantity, product.Price, product.Status, product.IsDeleted, product.Description, nutritionInfo, product.MapperCategoryDTO(), importantInfo, productImage, ratingProduct);
+            return product.MapDTO(nutritionInfo, product.MapperCategoryDTO(), importantInfo, productImage, ratingProduct);
         }
 
         public async ValueTask ViewProductHandlers(string UserId, Guid ProductId)

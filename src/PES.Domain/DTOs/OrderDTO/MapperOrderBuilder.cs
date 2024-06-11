@@ -17,7 +17,7 @@ namespace PES.Domain.DTOs.OrderDTO
                 Id = OrderID,
                 UserId = userID,
                 CreatedBy = userID,
-                Created = DateTime.UtcNow.AddHours(7),
+                Created = DateTime.UtcNow,
                 TotalPrice = request.Total
 
             };
@@ -30,7 +30,7 @@ namespace PES.Domain.DTOs.OrderDTO
                 ? throw new ArgumentNullException(nameof(request))
                 : new OrderDetail
                 {
-                    Created = DateTime.UtcNow.AddHours(7),
+                    Created = DateTime.UtcNow,
                     OrderId = OrderID,
                     Price = request.Price,
                     ProductId = request.ProductId,

@@ -4,7 +4,7 @@ import { getProductDetail } from '../../API';
 import { Card, Row, Col, Carousel, Button } from 'antd';
 
 function ProductDetail() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState(null);
@@ -95,37 +95,43 @@ function ProductDetail() {
               <p className="text-gray-600 text-lg">
                 {product.productCategory.categoryName} ({product.productCategory.categoryMain})
               </p>
+              <p className="text-gray-600 text-lg mb-4">
+                Created: {new Date(product.createdDate).toLocaleString()}
+              </p>
+              <p className="text-gray-600 text-lg mb-4">
+                Last Modified: {new Date(product.lastModifiedDate).toLocaleString()}
+              </p>
               <Button
                 onClick={() => toggleProductStatus(product.id, product.isDeleted)}
                 type="primary"
-                className={`${product.isDeleted ? 'bg-green-500' : 'bg-red-500' } text-white mt-4`}
+                className={`${product.isDeleted ? 'bg-green-500' : 'bg-red-500'} text-white mt-4`}
               >
-              {product.isDeleted ? 'Active': 'Deactivate' }
-            </Button>
-          </div>
-        </Card>
-      </Col>
-      <Col span={12}>
-        <Card>
-          <div className="p-4">
-            <h2 className="text-xl font-semibold mb-4">Nutritional Information</h2>
-            <ul className="text-gray-600 text-lg mb-6">
-              <li>Calories: {product.nutrionInfo ? `${product.nutrionInfo.calories} kcal` : 'N/A'}</li>
-              <li>Protein: {product.nutrionInfo ? `${product.nutrionInfo.protein} g` : 'N/A'}</li>
-              <li>Sodium: {product.nutrionInfo ? `${product.nutrionInfo.sodium} mg` : 'N/A'}</li>
-              <li>Fiber: {product.nutrionInfo ? `${product.nutrionInfo.fiber} g` : 'N/A'}</li>
-              <li>Sugars: {product.nutrionInfo ? `${product.nutrionInfo.sugars} g` : 'N/A'}</li>
-            </ul>
-            <h2 className="text-xl font-semibold mb-4">Ingredients</h2>
-            <p className="text-gray-600 text-lg mb-6">{product.importantInfo && product.importantInfo.ingredients ? product.importantInfo.ingredients : 'N/A'}</p>
-            <h2 className="text-xl font-semibold mb-4">Directions</h2>
-            <p className="text-gray-600 text-lg mb-6">{product.importantInfo && product.importantInfo.directions ? product.importantInfo.directions : 'N/A'}</p>
-            <h2 className="text-xl font-semibold mb-4">Legal Disclaimer</h2>
-            <p className="text-gray-600 text-lg">{product.importantInfo && product.importantInfo.legalDisclaimer ? product.importantInfo.legalDisclaimer : 'N/A'}</p>
-          </div>
-        </Card>
-      </Col>
-    </Row>
+                {product.isDeleted ? 'Active' : 'Deactivate'}
+              </Button>
+            </div>
+          </Card>
+        </Col>
+        <Col span={12}>
+          <Card>
+            <div className="p-4">
+              <h2 className="text-xl font-semibold mb-4">Nutritional Information</h2>
+              <ul className="text-gray-600 text-lg mb-6">
+                <li>Calories: {product.nutrionInfo ? `${product.nutrionInfo.calories} kcal` : 'N/A'}</li>
+                <li>Protein: {product.nutrionInfo ? `${product.nutrionInfo.protein} g` : 'N/A'}</li>
+                <li>Sodium: {product.nutrionInfo ? `${product.nutrionInfo.sodium} mg` : 'N/A'}</li>
+                <li>Fiber: {product.nutrionInfo ? `${product.nutrionInfo.fiber} g` : 'N/A'}</li>
+                <li>Sugars: {product.nutrionInfo ? `${product.nutrionInfo.sugars} g` : 'N/A'}</li>
+              </ul>
+              <h2 className="text-xl font-semibold mb-4">Ingredients</h2>
+              <p className="text-gray-600 text-lg mb-6">{product.importantInfo && product.importantInfo.ingredients ? product.importantInfo.ingredients : 'N/A'}</p>
+              <h2 className="text-xl font-semibold mb-4">Directions</h2>
+              <p className="text-gray-600 text-lg mb-6">{product.importantInfo && product.importantInfo.directions ? product.importantInfo.directions : 'N/A'}</p>
+              <h2 className="text-xl font-semibold mb-4">Legal Disclaimer</h2>
+              <p className="text-gray-600 text-lg">{product.importantInfo && product.importantInfo.legalDisclaimer ? product.importantInfo.legalDisclaimer : 'N/A'}</p>
+            </div>
+          </Card>
+        </Col>
+      </Row>
     </div >
   );
 }
