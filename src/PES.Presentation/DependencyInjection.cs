@@ -83,6 +83,8 @@ namespace PES.Presentation
                           builder.Configuration["JWTSecretKey:SecretKey"])
                   )
                 };
+
+
             });
 
             services.AddSwaggerGen(opt =>
@@ -116,8 +118,19 @@ namespace PES.Presentation
 
 
             //? 
-            services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
-
+            services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod()));
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.WithOrigins("https://localhost:7129") // Replace with your frontend URL
+                           .AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .AllowCredentials(); // Allow credentials for SignalR
+                });
+            });
 
             return services;
         }

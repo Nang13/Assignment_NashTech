@@ -10,4 +10,8 @@
     <ProjectReference Include="..\PES.Domain\PES.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.6" />
+  </ItemGroup>
+
 </Project>

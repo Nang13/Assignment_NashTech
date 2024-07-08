@@ -11,12 +11,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 var conn = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddApplicationService();
 builder.Services.AddInfrastructureServices(conn);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureService(builder);
+builder.Services.Configure<MessagesStorageDatabaseSettings>(
+    builder.Configuration.GetSection("MessageStoreDatabase"));
 builder.Services.AddHttpClient("JsonPlaceholder", client =>
 {
     client.BaseAddress = new Uri("https://jsonplaceholder.typicode.com/");
@@ -45,8 +48,10 @@ app.Use((context, next) =>
 
 app.UseMinimalAPI();
 app.UseMiddleware<CustomExceptionMiddleware>();
-app.UseCors();
+app.UseCors("CorsPolicy");
 app.MapControllers();
+app.MapHub<ChatHub>("/chatHub");
+
 
 app.Run();
 

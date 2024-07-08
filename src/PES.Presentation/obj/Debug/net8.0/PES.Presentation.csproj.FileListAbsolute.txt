@@ -171,3 +171,17 @@ C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\refint\PES.Pre
 C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.pdb
 C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.genruntimeconfig.cache
 C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\ref\PES.Presentation.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\AWSSDK.Core.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\AWSSDK.SecurityToken.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\DnsClient.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\MongoDB.Bson.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\MongoDB.Driver.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\MongoDB.Driver.Core.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\MongoDB.Libmongocrypt.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\SharpCompress.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\Snappier.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\ZstdSharp.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\runtimes\linux\native\libmongocrypt.so
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\runtimes\osx\native\libmongocrypt.dylib
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\runtimes\win\native\mongocrypt.dll

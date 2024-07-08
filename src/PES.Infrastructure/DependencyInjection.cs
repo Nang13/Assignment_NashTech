@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PES.Domain.Entities.Model;
+using PES.Domain.Entities.Model.AggregateChat;
 using PES.Infrastructure.Data;
 using PES.Infrastructure.Data.Config;
 using PES.Infrastructure.IRepository;
@@ -43,6 +45,8 @@ namespace PES.Infrastructure
                     .AddApiEndpoints();
             services.AddSingleton(TimeProvider.System);
             services.AddDataProtection();
+            services.AddSignalR();
+            services.AddSingleton<ConcurrentDictionary<string, User>>();
             return services;
         }
     }
