@@ -1,0 +1,133 @@
+﻿@page
+@model PES.UI.Pages.User.UpdateProfileModel
+@{
+}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container-fluid.page-header {
+        background-color: #4caf50;
+        padding: 40px 0;
+        text-align: center;
+        color: white;
+    }
+
+    .breadcrumb {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        margin: 20px 0 0;
+    }
+
+    .breadcrumb-item {
+        margin: 0 10px;
+    }
+
+        .breadcrumb-item a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: #ccc;
+        }
+
+    .main-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f0f0f0;
+    }
+
+    .form-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+    }
+
+        .form-container h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+            color: #333;
+        }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+    .form-actions {
+        text-align: right;
+    }
+
+        .form-actions button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+            .form-actions button:hover {
+                background-color: #45a049;
+            }
+
+</style>
+<div class="container-fluid page-header">
+    <h1>Update Profile</h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a href="#">Pages</a></li>
+        <li class="breadcrumb-item active">Update Profile</li>
+    </ol>
+</div>
+
+<div class="main-content">
+    <div class="form-container">
+        <h1>Update Profile</h1>
+        <form method="post" asp-route-handler="UpdateProfile">
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <input id="address" type="text" asp-for="@Model.profile.Address" name="address">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input id="email" type="email" asp-for="@Model.profile.Email" name="email">
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number:</label>
+                <input id="phoneNumber" type="text" asp-for="@Model.profile.PhoneNumber" name="phone">
+            </div>
+            <div class="form-actions">
+                <button type="submit">Update Profile</button>
+            </div>
+        </form>
+    </div>
+</div>

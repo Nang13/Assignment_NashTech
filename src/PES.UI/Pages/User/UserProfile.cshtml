@@ -61,7 +61,7 @@
     </div>
     <div class="profile-info">
         <div class="profile-picture"></div>
-        <h1>John Doe</h1>
+        <h1>@Model.profile.FullName</h1>
         <p>Organic Enthusiast</p>
     </div>
 
@@ -69,8 +69,8 @@
         <h2>About Me</h2>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod felis ac ante auctor, nec placerat risus ullamcorper. Vestibulum rhoncus nunc vel leo sollicitudin, vitae malesuada est aliquet. Phasellus porta, ex vitae pellentesque fringilla, mauris dui lobortis ligula, at aliquet ligula leo vitae turpis. Suspendisse nec pharetra dolor. Ut pretium sed nisl id placerat.</p>
         <h2>Contact Information</h2>
-        <p><i class="fas fa-envelope"></i> john.doe@example.com</p>
-        <p><i class="fas fa-phone"></i> +123 456 7890</p>
+        <p><i class="fas fa-envelope"></i>@Model.profile.Email</p>
+        <p><i class="fas fa-phone"></i>@Model.profile.PhoneNumber</p>
         <h2>Interests</h2>
         <p>Organic farming, Sustainable living, Healthy lifestyle</p>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal">

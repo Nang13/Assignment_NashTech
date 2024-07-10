@@ -168,9 +168,11 @@ namespace PES.Application.Service
         {
             ApplicationUser user = new ApplicationUser
             {
-                UserName = request.UserName,
+                UserName = request.FirstName+request.LastName,
                 Email = request.Email,
-              
+                LastName = request.LastName,
+                FirstName = request.FirstName,
+                Address = request.Address,
             };
 
             var result = await _userManager.CreateAsync(user, request.Password);
@@ -224,17 +226,30 @@ namespace PES.Application.Service
 
         public async Task<bool> ChangePasswordRequest(ChangePasswordByUserRequest request)
         {
-            var user = await _userManager.Users.Where(x => x.Id == _claimService.GetCurrentUserId).FirstOrDefaultAsync();
-            if (user is null)
-            {
-                throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Not Found this User");
-            }
+            var user = await _userManager.Users.Where(x => x.Id == _claimService.GetCurrentUserId).FirstOrDefaultAsync() ?? throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Not Found this User");
             var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
             if (result.Errors.Any())
             {
                 throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, string.Join(", ", result.Errors.Select(x => "Code " + x.Code + " Description" + x.Description)));
             }
             return true;
+        }
+
+        public async Task<UserProfile> ViewProfile()
+        {
+            var user = await _userManager.Users.Where(x => x.Id == _claimService.GetCurrentUserId).FirstOrDefaultAsync() ?? throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Not Found this User");
+            return new UserProfile(user.FirstName + user.LastName, user.Email, user.PhoneNumber, user.Address);
+        }
+
+        public  async Task UpdateProfile(UpdateProfileRequest request)
+        {
+            var user = await _userManager.Users.Where(x => x.Id == _claimService.GetCurrentUserId).FirstOrDefaultAsync() ?? throw new HttpStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Not Found this User");
+            
+            user.Email = request.Email;
+            user.Address = request.Address;
+            user.PhoneNumber = request.Phone;
+            
+            await  _userManager.UpdateAsync(user);
         }
     }
 }

@@ -25,5 +25,9 @@ namespace PES.Application.IService
         public Task<ApplicationUser> DisableUser(string UserId);
         public Task<ApplicationUser> EnableUser(string UserId);
         public Task<bool> ChangePassword(ChangePasswordRequest request, string email);
+
+        public Task<UserProfile> ViewProfile();
+
+        public Task UpdateProfile(UpdateProfileRequest request);
     }
 }

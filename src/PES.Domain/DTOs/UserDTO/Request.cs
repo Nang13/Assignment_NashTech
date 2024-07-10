@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,10 +10,14 @@ namespace PES.Domain.DTOs.User
 
     public class RegisterRequest : IValidatableObject
     {
-        public string? UserName { get; set; }
         public string? Password { get; set; }
         public string? ConfirmPassword { get; set; }
-        public string? Email { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+
+        public string LastName { get; set; } = string.Empty;
+
+        public string Address { get; set; } = string.Empty;
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -22,6 +27,8 @@ namespace PES.Domain.DTOs.User
             }
         }
 
+
+        public sealed record UpdateProfileRequest(string Address, string Phone, string Email);
 
         public struct ChangePasswordRequest : IValidatableObject
         {

@@ -23,11 +23,21 @@ function Product() {
   const fetchProducts = async (query = '', type = 'ProductName') => {
     setLoading(true);
     try {
+      const token = localStorage.getItem('authToken');
       var response = "";
-      if (query == '') {
-        response = await fetch('https://localhost:7187/api/v1/Product?pageNumber=0&pageSize=50');
+      const headers = {
+        'Authorization': `Bearer ${token}`, // Add Authorization header
+        'Content-Type': 'application/json' // Optional: if your API expects JSON
+      };
+
+      if (query === '') {
+        response = await fetch('https://localhost:7187/api/v1/Product?pageNumber=0&pageSize=50', {
+          headers
+        });
       } else {
-        response = await fetch(`https://localhost:7187/api/v1/Product?${type}=${query}&pageNumber=0&pageSize=50`);
+        response = await fetch(`https://localhost:7187/api/v1/Product?${type}=${query}&pageNumber=0&pageSize=50`, {
+          headers
+        });
       }
 
       const data = await response.json();
@@ -53,7 +63,7 @@ function Product() {
   };
   return (
     <Space size={30} direction="vertical" className="w-full p-4">
-       <Typography.Title level={4}>Product</Typography.Title>
+      <Typography.Title level={4}>Product</Typography.Title>
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
         <div className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-4 mb-4 lg:mb-0">
           <Select defaultValue={searchType} onChange={handleSearchTypeChange} style={{ width: 150 }} className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none">

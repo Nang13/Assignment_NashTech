@@ -10,15 +10,11 @@ using static PES.Domain.DTOs.User.RegisterRequest;
 namespace PES.Presentation.Controllers.V1
 {
 
-    public class AuthController : DefaultController
+    public class AuthController(IUserService userService) : DefaultController
     {
 
-        private readonly IUserService _userService;
+        private readonly IUserService _userService = userService;
 
-        public AuthController(IUserService userService)
-        {
-            _userService = userService;
-        }
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
@@ -64,11 +60,30 @@ namespace PES.Presentation.Controllers.V1
             });
 
         }
+
         [HttpPost("{email}/cofirmemail")]
         public async Task<IActionResult> ConfirmEmail(string email)
         {
             var response = await _userService.ForgetPassword(email);
             return Ok(response);
+        }
+
+
+        [HttpGet("profile")]
+        public async Task<IActionResult> ViewProfile()
+        {
+            var response = await _userService.ViewProfile();
+            return Ok(response);
+        }
+
+        [HttpPost("update-profile")]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileRequest request)
+        {
+             await _userService.UpdateProfile(request);
+            return Ok(new
+            {
+                message = "Update Successfully"
+            });
         }
     }
 }

@@ -24,21 +24,17 @@ namespace PES.UI.Pages
             string data = await Login(email, password);
             var json = JObject.Parse(data);
 
-            await SetAccessToken(json["token"]["accessToken"].ToString());
+            await SetAccessToken(json["token"]["accessToken"].ToString(), json["userId"].ToString());
             UserData.UserName = json["name"].ToString();
-         //   Console.WriteLine(await _signInModel.GetAccesToken());
             return RedirectToPage("/Shop");
         }
 
-        public async Task<IActionResult> OnPostRegister(string email, string password, string name, string confirmPassword)
+        public async Task<IActionResult> OnPostRegister(string email, string password, string firstname, string lastname, string confirmPassword, string address)
         {
 
-            string data = await Register(email, password, name, confirmPassword);
+            string data = await Register(email, password,firstname, lastname, confirmPassword,address);
             var json = JObject.Parse(data);
-            // await _signInModel.GetAccesToken() = json["token"]["accessToken"].ToString();
-            //Response.Cookies.Append("AccessToken", json["token"]["accessToken"].ToString());
             UserData.UserName = json["name"].ToString();
-           // Console.WriteLine(await _signInModel.GetAccesToken());
             return RedirectToPage("/Shop");
         }
 
@@ -60,15 +56,18 @@ namespace PES.UI.Pages
 
         }
 
-        public async Task<string> Register(string email, string password, string name, string confirmPassword)
+        public async Task<string> Register(string email, string password, string firstname, string lastname, string confirmPassword, string address)
         {
             var requestData = new
             {
                 email = email,
                 password = password,
-                userName = name,
-                confirmPassword = confirmPassword
+                firstName = firstname,
+                confirmPassword = confirmPassword,
+                lastname = lastname,
+                address = address
             };
+
 
             var json = JsonConvert.SerializeObject(requestData);
             var requestBody = new StringContent(json, Encoding.UTF8, "application/json");
@@ -80,7 +79,7 @@ namespace PES.UI.Pages
 
         }
 
-        public async ValueTask SetAccessToken(string accessToken)
+        public async ValueTask SetAccessToken(string accessToken,string userId)
         {
             var cookieOptions = new CookieOptions
             {
@@ -91,8 +90,11 @@ namespace PES.UI.Pages
 
             Console.Write(accessToken);
             HttpContext.Response.Cookies.Append("AccessToken", accessToken, cookieOptions);
+            HttpContext.Response.Cookies.Append("UserId", userId, cookieOptions);
             // Response.Cookies.Append("MyCookie", "value1");
         }
+
+       
 
 
         public async ValueTask<string> GetAccesToken()
