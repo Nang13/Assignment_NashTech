@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -17,12 +18,17 @@ namespace PES.UI.Pages
     public class CheckoutModel : PageModel
     {
         static HttpClient httpClient = new HttpClient();
+        private const string BaseUrl = "https://localhost:7187/api/v1";
         static SignInModel _signInModel = new SignInModel();
+        private readonly IHttpContextAccessor httpContextAccessor = new HttpContextAccessor();
         [BindProperty]
         public List<CartItem> Items { get; set; }
+        public string Total { get; set; }
+
         public async Task<IActionResult> OnGet()
         {
             Items = TempDataHelper.Get<List<CartItem>>(TempData, "cart") as List<CartItem>;
+            Total = TempDataHelper.Get<string>(TempData, "totalCart");
             return Page();
 
         }
@@ -30,49 +36,80 @@ namespace PES.UI.Pages
         public async Task<IActionResult> OnGetProceedToCheckout()
         {
 
-            string testCase = "https://localhost:7187/api/v1/Cart";
-            HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7187/api/v1/Cart");
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"Bearer {Request.Cookies["AccessToken"]}");
-
-                HttpResponseMessage responseMessage = await httpClient.SendAsync(request);
-                HttpContent contentHihi = responseMessage.Content;
-                string message = await contentHihi.ReadAsStringAsync();
-                dynamic responseObject = JsonConvert.DeserializeObject(message);
-                JArray items = responseObject["items"];
-                Items = items.Select(item => item.ToObject<CartItem>()).ToList();
-                //?
-                List<OrderDetailRequest> data = Items.Select(x => new OrderDetailRequest { Price = x.Price, ProductId = x.Id, Quantity = x.Quantity }).ToList();
-                var payload = new
+                var accessToken = httpContextAccessor.HttpContext?.Request.Cookies["AccessToken"];
+                if (string.IsNullOrEmpty(accessToken))
                 {
-                    orderDetails = data
-                };
+                    return new UnauthorizedResult(); // Handle unauthorized case
+                }
+
+                // Set up the request headers
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                // Fetch cart data
+                var cartResponse = await httpClient.GetAsync($"{BaseUrl}/Cart");
+                if (!cartResponse.IsSuccessStatusCode)
+                {
+                    throw new HttpRequestException($"Error fetching cart: {cartResponse.ReasonPhrase}");
+                }
+
+                var cartContent = await cartResponse.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<dynamic>(cartContent);
+                JArray itemsArray = responseObject?["items"];
+
+
+                if (itemsArray == null)
+                {
+                    throw new InvalidOperationException("Cart data is missing or invalid.");
+                }
+
+                var items = itemsArray.Select(item => item.ToObject<CartItem>()).ToList();
+
+                // Prepare order details payload
+                var orderDetails = items.Select(x => new OrderDetailRequest
+                {
+                    Price = x.Price,
+                    ProductId = x.Id,
+                    Quantity = x.Quantity
+                }).ToList();
+
+                var payload = new { orderDetails };
                 var json = JsonConvert.SerializeObject(payload);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-               var token =   $"Bearer {Request.Cookies["AccessToken"]}";
-                // Add Bearer token to the request
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",token);
+                if (string.IsNullOrEmpty(accessToken))
+                {
+                    return new UnauthorizedResult(); // Handle unauthorized case
+                }
 
-                var response = await httpClient.PostAsync("https://localhost:7187/api/v1/Order", content);
+                // Create the HttpRequestMessage with Bearer token
+                using var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/Order")
+                {
+                    Content = content
+                };
 
-                HttpContent content1 = response.Content;
-                string messageKhoNoi = await content1.ReadAsStringAsync();
-                Console.WriteLine("The output from thirdparty is: {0}", messageKhoNoi);
+                // Add Authorization header with Bearer token
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                // Send order request
+                var orderResponse = await httpClient.PostAsync($"{BaseUrl}/Order", content);
+                orderResponse.EnsureSuccessStatusCode();
+
+                var orderResult = await orderResponse.Content.ReadAsStringAsync();
+                Console.WriteLine($"Order Response: {orderResult}");
+
                 return RedirectToPage("HomePage");
             }
-            catch (HttpRequestException exception)
+            catch (Exception ex)
             {
-                Console.WriteLine("An HTTP request exception occurred. {0}", exception.Message);
+                Console.WriteLine($"Error: {ex.Message}");
+                return new StatusCodeResult(500); // Internal Server Error
             }
-
-            return RedirectToPage("HomePage");
         }
-
-
-        }
-
-
     }
+
+
+}
+
+

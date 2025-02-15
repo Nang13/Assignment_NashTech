@@ -89,82 +89,82 @@ console.log(data)
   };
 
   return (
-    <Space size={30} direction="vertical" className="w-full p-4">
-      <Typography.Title level={4}>User</Typography.Title>
-      <div className="flex space-x-4 mb-6">
-        <Select
-          defaultValue="Name"
-          onChange={handleSearchTypeChange}
-          className="w-1/4"
-        >
-          <Option value="Name">Name</Option>
-          <Option value="Email">Email</Option>
-        </Select>
-        <Search
-          placeholder={`Search by ${searchType}`}
-          onSearch={handleSearch}
-          enterButton
-          className="w-64"
-        />
-      </div>
-      <Table
-        loading={loading}
-        columns={[
-          {
-            title: "Icon",
-            render: () => {
-              return <UserOutlined />;
-            },
-          },
-          {
-            title: "Name",
-            dataIndex: "name",
-          },
-          {
-            title: "Email",
-            dataIndex: "email",
-          },
-          {
-            title: 'Action',
-            render: (text, record) => {
-              const buttonClass = record.isInactive ? 'bg-green-500' : 'bg-red-500';
-              const buttonText = record.isInactive ? 'Activate' : 'Deactivate';
-      
-              return (
+    <Space size={30} direction="vertical" className="w-full p-6">
+    <Typography.Title level={3} className="text-gray-800">User Management</Typography.Title>
+  
+    {/* Search Bar */}
+    <div className="flex flex-wrap gap-4 items-center">
+      <Select
+        defaultValue="Name"
+        onChange={handleSearchTypeChange}
+        className="w-1/4 min-w-[150px]"
+      >
+        <Option value="Name">Name</Option>
+        <Option value="Email">Email</Option>
+      </Select>
+      <Search
+        placeholder={`Search by ${searchType}`}
+        onSearch={handleSearch}
+        enterButton
+        className="w-72 min-w-[200px]"
+      />
+    </div>
+  
+    {/* User Table */}
+    <Table
+      loading={loading}
+      columns={[
+        {
+          title: "Avatar",
+          render: () => <UserOutlined className="text-2xl text-gray-600" />,
+        },
+        {
+          title: "Name",
+          dataIndex: "name",
+          className: "text-gray-700 font-medium",
+        },
+        {
+          title: "Email",
+          dataIndex: "email",
+          className: "text-gray-600",
+        },
+        {
+          title: "Action",
+          render: (text, record) => {
+            const isActive = !record.isInactive;
+            return (
+              <div className="flex justify-center">
                 <Button
                   onClick={() => toggleUserStatus(record.userId, record.isInactive)}
                   type="primary"
-                  className={`${buttonClass} text-white`}
+                  className={`w-[100px] py-1 text-sm font-medium text-white rounded-md transition-all duration-200
+                    ${isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
                 >
-                  {buttonText}
+                  {isActive ? "Deactivate" : "Activate"}
                 </Button>
-              );
-            },
-            fixed: 'right', // Ensures this column maintains a fixed width
-            width: 150, // Set the width of this column
+              </div>
+            );
           },
-          {
-            title: "Order Detail",
-            render: (text, record) => {
-              return (
-                <Link
-                to={`/orders/${record.userId}?userName=${encodeURIComponent(record.name)}`}
-                className="text-green-500 hover:underline"
-              >
-                  View Detail
-                </Link>
-              );
-            },
-          },
-        ]}
-        dataSource={users}
-        pagination={{
-          pageSize: 5,
-        }}
-        className="ant-table-wrapper"
-      />
-    </Space>
-
+          fixed: "right",
+          width: 150,
+        },        
+        {
+          title: "Order Detail",
+          render: (text, record) => (
+            <Link
+              to={`/orders/${record.userId}?userName=${encodeURIComponent(record.name)}`}
+              className="text-blue-500 hover:text-blue-600 underline transition-all duration-200"
+            >
+              View Detail
+            </Link>
+          ),
+        },
+      ]}
+      dataSource={users}
+      pagination={{ pageSize: 5 }}
+      className="shadow-lg rounded-lg overflow-hidden border"
+    />
+  </Space>
   )
 }
 

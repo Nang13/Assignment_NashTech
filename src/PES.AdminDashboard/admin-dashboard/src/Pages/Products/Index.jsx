@@ -63,94 +63,106 @@ function Product() {
   };
   return (
     <Space size={30} direction="vertical" className="w-full p-4">
-      <Typography.Title level={4}>Product</Typography.Title>
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
-        <div className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-4 mb-4 lg:mb-0">
-          <Select defaultValue={searchType} onChange={handleSearchTypeChange} style={{ width: 150 }} className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none">
-            <Option value="ProductName">Product Name</Option>
-            <Option value="CategoryMain">Category Main</Option>
-            <Option value="CategoryName">Category Name</Option>
-          </Select>
-          <Search
-            placeholder={`Search by ${searchType}`}
-            onSearch={handleSearch}
-            enterButton
-            style={{ width: 250 }}
-            className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none"
-          />
-        </div>
-        <Link to="/add_product">
-          <Button type="primary" className="rounded-md">
-            <PlusOutlined /> Add New Product
-          </Button>
-        </Link>
-      </div>
-      <Table
-        loading={loading}
-        columns={[
-          {
-            title: "Thumbnail",
-            dataIndex: "imageMain",
-            render: (link) => {
-              return (
-                <Avatar
-                  src={`https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F${link}?alt=media&token=0830e8eb-6d0b-4953-8c5f-49d25819e879`}
-                />
-              );
-            },
-          },
-          {
-            title: "Title",
-            dataIndex: "productName",
-          },
-          {
-            title: "Price",
-            dataIndex: "price",
-            render: (value) => <span>${value}</span>,
-          },
-          {
-            title: "Rating",
-            dataIndex: "rating",
-            render: (rating) => {
-              return <Rate value={rating} allowHalf disabled />;
-            },
-          },
-          {
-            title: "Category Main",
-            dataIndex: "categoryMain",
-          },
-          {
-            title: "Category Name",
-            dataIndex: "categoryName",
-          },
-          {
-            title: "Action",
-            render: (text, record) => {
-              return (
-                <Link to={`/product_detail/${record.id}`} className="text-green-500 hover:underline">
-                  View Detail
-                </Link>
-              );
-            },
-          },
-          {
-            title: "Update",
-            render: (text, record) => {
-              return (
-                <Link to={`/product_update/${record.id}`} className="text-green-500 hover:underline">
-                  Update
-                </Link>
-              );
-            },
-          },
-        ]}
-        dataSource={dataSource}
-        pagination={{
-          pageSize: 5,
-        }}
-        className="w-full"
+  <Typography.Title level={4}>Product</Typography.Title>
+
+  {/* Search & Add Section */}
+  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-start gap-4 mb-4">
+    {/* Search Filters */}
+    <div className="flex flex-wrap items-center gap-3">
+      <Select
+        defaultValue={searchType}
+        onChange={handleSearchTypeChange}
+        className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none w-[160px] shadow-sm"
+      >
+        <Option value="ProductName">Product Name</Option>
+        <Option value="CategoryMain">Category Main</Option>
+        <Option value="CategoryName">Category Name</Option>
+      </Select>
+
+      <Search
+        placeholder={`Search by ${searchType}`}
+        onSearch={handleSearch}
+        enterButton
+        className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none w-[250px] shadow-sm"
       />
-    </Space>
+    </div>
+
+    {/* Add Product Button */}
+    <Link to="/add_product">
+      <Button
+        type="primary"
+        className="rounded-md px-4 py-2 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 transition-all shadow-md"
+      >
+        <PlusOutlined /> Add New Product
+      </Button>
+    </Link>
+  </div>
+
+  {/* Product Table */}
+  <Table
+    loading={loading}
+    columns={[
+      {
+        title: "Thumbnail",
+        dataIndex: "imageMain",
+        render: (link) => (
+          <Avatar
+            src={`https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F${link}?alt=media&token=0830e8eb-6d0b-4953-8c5f-49d25819e879`}
+            className="w-12 h-12"
+          />
+        ),
+      },
+      {
+        title: "Title",
+        dataIndex: "productName",
+        className: "text-gray-700 font-medium",
+      },
+      {
+        title: "Price",
+        dataIndex: "price",
+        render: (value) => <span className="font-medium">${value}</span>,
+      },
+      {
+        title: "Rating",
+        dataIndex: "rating",
+        render: (rating) => <Rate value={rating} allowHalf disabled />,
+      },
+      {
+        title: "Category Main",
+        dataIndex: "categoryMain",
+      },
+      {
+        title: "Category Name",
+        dataIndex: "categoryName",
+      },
+      {
+        title: "Action",
+        render: (text, record) => (
+          <Link
+            to={`/product_detail/${record.id}`}
+            className="text-green-500 hover:underline"
+          >
+            View Detail
+          </Link>
+        ),
+      },
+      {
+        title: "Update",
+        render: (text, record) => (
+          <Link
+            to={`/product_update/${record.id}`}
+            className="text-blue-500 hover:underline"
+          >
+            Update
+          </Link>
+        ),
+      },
+    ]}
+    dataSource={dataSource}
+    pagination={{ pageSize: 5 }}
+    className="w-full rounded-lg shadow"
+  />
+</Space>
   );
 }
 

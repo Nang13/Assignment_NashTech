@@ -11,6 +11,7 @@ using System.Text;
 using PES.UI.Pages.Shared;
 using System.Net.Http.Headers;
 using System.Net;
+using Azure.Core;
 
 namespace PES.UI.Pages
 {
@@ -18,9 +19,10 @@ namespace PES.UI.Pages
     {
         static HttpClient _httpClient = new HttpClient();
         static readonly SignInModel _signIn = new SignInModel();
+        private readonly IHttpContextAccessor httpContextAccessor = new HttpContextAccessor();
         [BindProperty]
         public List<CartItem> CartItems { get; set; }
-        public decimal Total { get; set; }
+        public decimal Total { get; set; } = 0;
         public async Task OnGetAsync()
         {
 
@@ -28,12 +30,13 @@ namespace PES.UI.Pages
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             try
             {
+                var accessToken = httpContextAccessor.HttpContext?.Request.Cookies["AccessToken"];
                 var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7187/api/v1/Cart");
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
                 Request.Cookies.TryGetValue("AccessToken", out string token1);
 
-
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"Bearer {Request.Cookies["AccessToken"]}"); // Use the actual access token directly
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"{Request.Cookies["AccessToken"]}"); // Use the actual access token directly
 
                 var response = await _httpClient.SendAsync(request);
 
@@ -44,6 +47,7 @@ namespace PES.UI.Pages
                     JArray items = responseObject.items;
                     CartItems = items.Select(item => item.ToObject<CartItem>()).ToList();
                     Total = responseObject.totalPrice;
+                    TempDataHelper.Put(TempData, "totalCart", Total.ToString());
                     TempDataHelper.Put(TempData, "cart", CartItems);
                 }
                 else

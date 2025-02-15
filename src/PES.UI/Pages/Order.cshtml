@@ -9,49 +9,53 @@
     </ol>
 </div>
 <!-- Single Page Header End -->
-<div class="container-fluid py-5">
+<div class="container-fluid py-5 bg-light">
     <div class="container py-5">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped">
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col">STT</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Total</th>
-                        <th scope="col">Handle</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (int i = 0; i < Model.orders.Count; i++)
-                    {
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white text-center py-3">
+                <h3 class="mb-0">Order List</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-dark text-white">
                         <tr>
-                            <th scope="row">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-bag-check-fill"></i>
-                                </div>
-                            </th>
-                            <td class="align-middle">
-                                <p class="mb-0">@i</p>
-                            </td>
-                            <td class="align-middle">
-                                <p class="mb-0">@Model.orders[i].ProductCount</p> 
-                            </td>
-                            <td class="align-middle">
-                                <p class="mb-0">@Model.orders[i].TotalPrice $</p>
-                            </td>
-                            <td class="align-middle">
-                                <a href="/OrderDetail?id=@Model.orders[i].OrderId" class="btn btn-link text-decoration-none">
-                                    View Details
-                                </a>
-                            </td>
+                            <th scope="col" class="text-center">#</th>
+                            <th scope="col" class="text-center">STT</th>
+                            <th scope="col" class="text-center">Quantity</th>
+                            <th scope="col" class="text-center">Total</th>
+                            <th scope="col" class="text-center">Action</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @for (int i = 1; i < Model.orders.Count+1; i++)
+                        {
+                            <tr class="border-bottom">
+                                <th scope="row" class="text-center">
+                                    <i class="bi bi-bag-check-fill text-success fs-4"></i>
+                                </th>
+                                <td class="text-center">
+                                    <span class="fw-bold">@i</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-info text-dark px-3 py-2 fs-6">@Model.orders[i-1].ProductCount</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-bold text-success fs-5">@Model.orders[i-1].TotalPrice$</span>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/OrderDetail?id=@Model.orders[i-1].OrderId" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
 <!-- Cart Page End -->
 <!-- Footer Start -->
 <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">

@@ -21,6 +21,17 @@ builder.Services.AddHttpClient("JsonPlaceholder", client =>
 {
     client.BaseAddress = new Uri("https://jsonplaceholder.typicode.com/");
 });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,7 +56,7 @@ app.Use((context, next) =>
 
 app.UseMinimalAPI();
 app.UseMiddleware<CustomExceptionMiddleware>();
-app.UseCors();
+app.UseCors("AllowAll");
 app.MapControllers();
 
 app.Run();

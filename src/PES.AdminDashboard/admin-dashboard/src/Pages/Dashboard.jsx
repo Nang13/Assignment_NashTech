@@ -27,48 +27,94 @@ ChartJS.register(
 
 function Dashboard() {
   return (
-    <div className='pl-2'>
-      <Typography.Title level={4}>Dashboard</Typography.Title>
-      <Space direction='horizontal'>
-        <CardFunction
-          icon={<ShoppingCartOutlined style={{
-            color: "green",
-            backgroundColor: "rgba(0,255,0,0.25)",
-            borderRadius: 20,
-            fontSize: 24,
-            padding: 8,
-          }} />} title={'Order'} value={1234} />
-        <CardFunction
-          icon={<ShoppingOutlined
+    <div className="p-4">
+    <Typography.Title level={3} className="text-gray-800 font-bold">
+      Dashboard
+    </Typography.Title>
+  
+    {/* Top Summary Cards */}
+    <div className="grid grid-cols-4 gap-4">
+      <CardFunction
+        icon={
+          <ShoppingCartOutlined
             style={{
-              color: "blue",
-              backgroundColor: "rgba(0,0,255,0.25)",
+              color: "green",
+              backgroundColor: "rgba(0, 255, 0, 0.25)",
               borderRadius: 20,
               fontSize: 24,
               padding: 8,
-            }} />} title={'Product'} value={1234} />
-        <CardFunction
-          icon={<UserOutlined style={{
-            color: "purple",
-            backgroundColor: "rgba(0,255,255,0.25)",
-            borderRadius: 20,
-            fontSize: 24,
-            padding: 8,
-          }} />} title={'User'} value={1234} />
-        <CardFunction
-          icon={<DollarCircleOutlined style={{
-            color: "red",
-            backgroundColor: "rgba(255,0,0,0.25)",
-            borderRadius: 20,
-            fontSize: 24,
-            padding: 8,
-          }} />} title={'Revenue'} value={1234} />
-      </Space>
-      <Space>
-        <RecentOrder />
-        <DashboardChart />
-      </Space>
+            }}
+          />
+        }
+        title="Order"
+        value={56}
+      />
+      <CardFunction
+        icon={
+          <ShoppingOutlined
+            style={{
+              color: "blue",
+              backgroundColor: "rgba(0, 0, 255, 0.25)",
+              borderRadius: 20,
+              fontSize: 24,
+              padding: 8,
+            }}
+          />
+        }
+        title="Product"
+        value={14}
+      />
+      <CardFunction
+        icon={
+          <UserOutlined
+            style={{
+              color: "purple",
+              backgroundColor: "rgba(0, 255, 255, 0.25)",
+              borderRadius: 20,
+              fontSize: 24,
+              padding: 8,
+            }}
+          />
+        }
+        title="User"
+        value={10}
+      />
+      <CardFunction
+        icon={
+          <DollarCircleOutlined
+            style={{
+              color: "red",
+              backgroundColor: "rgba(255, 0, 0, 0.25)",
+              borderRadius: 20,
+              fontSize: 24,
+              padding: 8,
+            }}
+          />
+        }
+        title="Revenue"
+        value={2000}
+      />
     </div>
+  
+    {/* Content Section */}
+    <div className="grid grid-cols-2 gap-6 mt-6">
+      {/* Recent Orders Table */}
+      <div className="bg-white shadow-lg rounded-lg p-4">
+        <Typography.Title level={5} className="text-gray-700">
+          Recent Orders
+        </Typography.Title>
+        <RecentOrder />
+      </div>
+  
+      {/* Revenue Chart */}
+      <div className="bg-white shadow-lg rounded-lg p-4">
+        <Typography.Title level={5} className="text-gray-700">
+          Order Revenue
+        </Typography.Title>
+        <DashboardChart />
+      </div>
+    </div>
+  </div>
   )
 }
 

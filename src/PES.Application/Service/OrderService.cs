@@ -48,33 +48,40 @@ namespace PES.Application.Service
         }
         public async Task<OrderResponse> AddOrder(OrderRequest request)
         {
-            using (var redislock = new LockHandler(_database, LockKey, LockExpiry))
+            using var redislock = new LockHandler(_database, LockKey, LockExpiry);
+            if (await redislock.AcquireLockAsync())
             {
-                if (await redislock.AcquireLockAsync())
+                try
                 {
-                    try
-                    {
-                        string userId = _claimsService.GetCurrentUserId;
-                        Guid orderId = Guid.NewGuid();
-                        Order order = request.MapperDTO(userId, orderId);
-                        var user = _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId).Result;
 
-                        await _unitOfWork.OrderRepository.AddAsync(order);
-                        await _unitOfWork.SaveChangeAsync();
-                        await AddOrderDetail(request.orderDetails, orderId, userId);
-                        return new OrderResponse(OrderId: orderId, TotalPrice: request.Total, ProductCount: 1, Status: order.Status, order.PaymentType, OrderCurrencyCode: order.CurrencyCode, UserID: userId, UserName: user.UserName);
-                    }
-                    finally
-                    {
-                        await redislock.ReleaseLockAsync();
-                    }
+                    int orderNumber = _unitOfWork.OrderRepository.WhereAsync(x => x.CurrencyCode.StartsWith("PES_")).Result.Select(x => int.Parse(x.CurrencyCode.Substring(4))).DefaultIfEmpty(0).Max();
+                    string userId = _claimsService.GetCurrentUserId;
+                    Guid orderId = Guid.NewGuid();
+                    Order order = request.MapperDTO(userId, orderId,orderNumber);
+                    var user = _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId).Result;
+
+                    await _unitOfWork.OrderRepository.AddAsync(order);
+                    await _unitOfWork.SaveChangeAsync();
+                    await AddOrderDetail(request.orderDetails, orderId, userId);
+                    await ClearCart(userId);
+                    return new OrderResponse(OrderId: orderId, TotalPrice: request.Total, ProductCount: 1, Status: order.Status, order.PaymentType, OrderCurrencyCode: $"PES_0{orderNumber + 1}", UserID: userId, UserName: user.UserName);
                 }
-                else
+                finally
                 {
-                    Console.WriteLine("Could not acquire lock to process order . Try again later.");
+                    await redislock.ReleaseLockAsync();
                 }
             }
+            else
+            {
+                Console.WriteLine("Could not acquire lock to process order . Try again later.");
+            }
             return null;
+        }
+
+        private async Task<bool> ClearCart(string userId)
+        {
+            bool isRemoved = await _database.KeyDeleteAsync(userId);
+            return isRemoved;
         }
 
         public static string IncrementString(string input)
@@ -166,7 +173,7 @@ namespace PES.Application.Service
 
         public async Task<FrozenSet<OrderResponse>> GetOrderByUser(string UserId)
         {
-            FrozenSet<OrderResponse> order = _unitOfWork.OrderRepository.WhereAsync(x => x.UserId == UserId, x => x.User).Result.Select(x => x.MapperDTO(x.User.Id, x.User.UserName)).ToFrozenSet();
+            FrozenSet<OrderResponse> order = _unitOfWork.OrderRepository.WhereAsync(x => x.UserId == UserId, x => x.User, x => x.OrderDetails).Result.Select(x => x.MapperDTO(x.User.Id, x.User.UserName)).ToFrozenSet();
             return order;
         }
 

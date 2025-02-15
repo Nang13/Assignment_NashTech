@@ -75,83 +75,76 @@ function Category() {
   }
   return (
 
-    <Space size={30} direction="vertical" className="w-full p-4">
+    <Space size={30} direction="vertical" className="w-full p-4 bg-gray-50 min-h-screen">
+    <div className="flex justify-between items-center">
       <Title level={4} className="text-gray-800">Category</Title>
-      <Link className="mb-4">
-        <button
-          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-md"
-          onClick={showModalAdding}
-        >
-          Add New Category
-        </button>
-      </Link>
-      <Table
-        className="bg-white rounded-lg shadow-md"
-        loading={loading}
-        columns={[
-          {
-            title: "",
-            render: () => (
-             <ClusterOutlined />
-            ),
-          },
-          {
-            title: "Title",
-            dataIndex: "categoryName",
-          },
-          {
-            title: "Action",
-            render: (text, record) => (
-              <Link to={`/category_detail/${record.categoryId}`} style={{ color: 'green' }}>
-                View Detail
-              </Link>
-            ),
-          },
-        ]}
-        dataSource={dataSource}
-        pagination={{
-          pageSize: 5,
-        }}
-      />
-      <Modal
-        title="Add Parent Category"
-        visible={isModalAdding}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        className="rounded-lg"
+      <button
+        className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300"
+        onClick={showModalAdding}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          name="add_category_form"
-          className="space-y-4"
+        Add New Category
+      </button>
+    </div>
+  
+    <Table
+      className="bg-white rounded-lg shadow-md border border-gray-200"
+      loading={loading}
+      columns={[
+        {
+          title: "",
+          render: () => <ClusterOutlined className="text-lg text-gray-500" />,
+        },
+        {
+          title: "Title",
+          dataIndex: "categoryName",
+          className: "text-gray-700",
+        },
+        {
+          title: "Action",
+          render: (_, record) => (
+            <Link to={`/category_detail/${record.categoryId}`} className="text-green-600 hover:text-green-800">
+              View Detail
+            </Link>
+          ),
+        },
+      ]}
+      dataSource={dataSource}
+      pagination={{ pageSize: 5 }}
+    />
+  
+    <Modal
+      title="Add Parent Category"
+      open={isModalAdding}
+      onOk={handleOk}
+      onCancel={handleCancel}
+      className="rounded-lg"
+    >
+      <Form form={form} layout="vertical" className="space-y-4">
+        <Form.Item
+          name="categoryName"
+          label="Category Name"
+          rules={[{ required: true, message: "Please input the category name!" }]}
         >
-          <Form.Item
-            name="categoryName"
-            label="Category Name"
-            rules={[{ required: true, message: 'Please input the category name!' }]}
-          >
-            <Input placeholder="Enter category name" className="p-2 border rounded-lg" />
-          </Form.Item>
-          <Form.Item
-            name="categoryDescription"
-            label="Category Description"
-            rules={[{ required: true, message: 'Please input the category description!' }]}
-          >
-            <Input.TextArea placeholder="Enter category description" className="p-2 border rounded-lg" />
-          </Form.Item>
-          <Form.Item
-            name="categoryMain"
-            label="Category Main Name"
-            rules={[{ required: true, message: 'Please input the category main!' }]}
-          >
-            <Input placeholder="Enter category main" className="p-2 border rounded-lg" />
-          </Form.Item>
-        </Form>
-      </Modal>
-
- 
-    </Space>
+          <Input placeholder="Enter category name" className="p-2 border border-gray-300 rounded-lg" />
+        </Form.Item>
+        <Form.Item
+          name="categoryDescription"
+          label="Category Description"
+          rules={[{ required: true, message: "Please input the category description!" }]}
+        >
+          <Input.TextArea placeholder="Enter category description" className="p-2 border border-gray-300 rounded-lg" />
+        </Form.Item>
+        <Form.Item
+          name="categoryMain"
+          label="Category Main Name"
+          rules={[{ required: true, message: "Please input the category main!" }]}
+        >
+          <Input placeholder="Enter category main" className="p-2 border border-gray-300 rounded-lg" />
+        </Form.Item>
+      </Form>
+    </Modal>
+  </Space>
+  
   )
 }
 

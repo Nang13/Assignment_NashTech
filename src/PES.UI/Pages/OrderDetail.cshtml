@@ -9,50 +9,54 @@
     </ol>
 </div>
 <!-- Single Page Header End -->
-<div class="container-fluid py-5">
+<div class="container-fluid py-5 bg-light">
     <div class="container py-5">
-        <div class="card-header bg-primary text-white">
-            Total Money : @Model.Total
-        </div>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Products</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var cart in Model.ordererDetailResponses)
-                    {
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white text-center py-4 fs-4 fw-bold">
+                🛒 Total Money: <span class="text-warning">@Model.Total $</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-dark text-white">
                         <tr>
-                            <th scope="row">
-                                <div class="d-flex align-items-center">
-                                    <img src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F@(cart.ProductImage)?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
-                                </div>
-                            </th>
-                            <td>
-                                <p class="mb-0 mt-4">@cart.ProductName</p>
-                            </td>
-                            <td>
-                                <p class="mb-0 mt-4">@cart.Price $</p>
-                            </td>
-                            <td>
-                                <p class="mb-0 mt-4">@cart.Quantity </p>
-                            </td>
-                            <td>
-                                <p class="mb-0 mt-4">@cart.TotalPrice $</p>
-                            </td>
+                            <th scope="col" class="text-center">Products</th>
+                            <th scope="col" class="text-center">Name</th>
+                            <th scope="col" class="text-center">Price</th>
+                            <th scope="col" class="text-center">Quantity</th>
+                            <th scope="col" class="text-center">Total</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var cart in Model.ordererDetailResponses)
+                        {
+                            <tr class="border-bottom">
+                                <td class="text-center">
+                                    <img src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F@(cart.ProductImage)?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074"
+                                         class="img-fluid rounded-circle shadow"
+                                         style="width: 80px; height: 80px;"
+                                         alt="Product Image">
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-bold">@cart.ProductName</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="text-success fw-bold fs-5">@cart.Price$</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-info text-dark px-3 py-2 fs-6">@cart.Quantity</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-bold text-danger fs-5">@cart.TotalPrice$</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
 <!-- Cart Page End -->
 <!-- Footer Start -->
 <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">

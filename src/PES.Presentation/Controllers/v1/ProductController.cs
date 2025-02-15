@@ -94,6 +94,7 @@ namespace PES.Presentation.Controllers.V1
         [HttpPost("upload")]
         public async Task<IActionResult> Upload(IFormFile imageFile)
         {
+           // await ImageHandlerExtension.UploadImageAsync(imageFile);
             await StorageHandler.UploadFileAsync(imageFile, "Product");
             return Ok(new
             {

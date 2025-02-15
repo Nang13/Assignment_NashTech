@@ -4,7 +4,34 @@
 }
 
 
+<style>
+    .product-image-wrapper {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa; /* Light background for better contrast */
+        border-radius: 10px; /* Smooth rounded edges */
+        overflow: hidden;
+    }
 
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Ensure full image fits without cropping */
+    }
+
+    h6 {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    h5 {
+        font-size: 16px;
+        color: #333;
+    }
+</style>
 <!-- Modal Search End -->
 <!-- Single Page Header start -->
 <div class="container-fluid page-header py-5">
@@ -80,25 +107,26 @@
                                 <h4 class="mb-3">Trending Products June 2024</h4>
                                 @foreach (var item in Model.ProductsMostView)
                                 {
-                                    <div class="d-flex align-items-center justify-content-start">
-                                        <div class="rounded me-4" style="width: 100px; height: 100px;">
-                                            <img src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F@(item.ImageMain)?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074" class="img-fluid rounded" alt="">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="product-image-wrapper me-3">
+                                            <img src="https://firebasestorage.googleapis.com/v0/b/ntassignment-518e1.appspot.com/o/Product%2F@(item.ImageMain)?alt=media&token=c49c50eb-df74-4ace-a5cf-6c52badf4074"
+                                                 class="product-image" alt="@item.ProductName">
                                         </div>
                                         <div>
-                                            <h6 class="mb-2">@item.ProductName</h6>
-                                            <div class="d-flex mb-2">
+                                            <h6 class="mb-1">@item.ProductName</h6>
+                                            <div class="d-flex align-items-center mb-1">
+                                                <i class="fa fa-star text-warning"></i>
+                                                <i class="fa fa-star text-warning"></i>
+                                                <i class="fa fa-star text-warning"></i>
+                                                <i class="fa fa-star text-warning"></i>
                                                 <i class="fa fa-star text-secondary"></i>
-                                                <i class="fa fa-star text-secondary"></i>
-                                                <i class="fa fa-star text-secondary"></i>
-                                                <i class="fa fa-star text-secondary"></i>
-                                                <i class="fa fa-star"></i>
                                             </div>
-                                            <div class="d-flex mb-2">
-                                                <h5 class="fw-bold me-2">@item.Price $</h5>
-                                            </div>
+                                            <h5 class="fw-bold">@item.Price $</h5>
                                         </div>
                                     </div>
                                 }
+
+
                                 <div class="d-flex justify-content-center my-4">
                                     <a href="#" class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100">Vew More</a>
                                 </div>

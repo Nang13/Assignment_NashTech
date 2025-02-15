@@ -9,17 +9,18 @@ namespace PES.Domain.DTOs.OrderDTO
 {
     public static class MapperOrderBuilder
     {
-        public static Order MapperDTO(this OrderRequest request, string userID, Guid OrderID)
+        public static Order MapperDTO(this OrderRequest request, string userID, Guid OrderID,int maxNumber)
         {
-            if (request == null) throw new ArgumentNullException(nameof(request));
-            return new Order
+            return request == null
+                ? throw new ArgumentNullException(nameof(request))
+                : new Order
             {
                 Id = OrderID,
                 UserId = userID,
                 CreatedBy = userID,
                 Created = DateTime.UtcNow,
-                TotalPrice = request.Total
-
+                TotalPrice = request.Total,
+                CurrencyCode = $"PES_{maxNumber + 1}"
             };
         }
 

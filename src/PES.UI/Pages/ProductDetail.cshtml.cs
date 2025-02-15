@@ -43,6 +43,8 @@ namespace PES.UI.Pages
         [BindProperty]
         public List<RatingResponse> ratings { get; set; }
 
+        public List<ProductsResponse> ProductsMostView { get; set; }
+
         static HttpClient httpClient = new HttpClient();
         public async Task<IActionResult> OnGet(string id)
         {
@@ -72,7 +74,7 @@ namespace PES.UI.Pages
                 importantInfo = imporatantObject.ToObject<ImportantInfo>();
                 productImages = productIma.Select(item => item.ToObject<ProductImageResponse>()).ToList();
                 ratings = ratingsData.Select(item => item.ToObject<RatingResponse>()).ToList();
-                
+                await MostViewProduct();
                 RedirectToPage();
             }
             catch (HttpRequestException exception)
@@ -82,6 +84,17 @@ namespace PES.UI.Pages
             return Page();
         }
 
+
+
+        public async Task MostViewProduct()
+        {
+            HttpResponseMessage responseMessage = await httpClient.GetAsync("https://localhost:7187/api/v1/Product?PopularProduct=June&pageNumber=0&pageSize=10");
+            HttpContent content = responseMessage.Content;
+            string message = await content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<dynamic>(message);
+            JArray items = responseObject["items"];
+            ProductsMostView = items.Select(item => item.ToObject<ProductsResponse>()).ToList();
+        }
         public async Task<IActionResult> OnPostRating(string description, int rating, Guid productId)
         {
             var apiUrl = $"https://localhost:7187/api/v1/Product/{productId}/rate"; // Replace with your API endpoint

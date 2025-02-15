@@ -10,7 +10,7 @@ namespace PES.Domain.Entities.Model
         public decimal TotalPrice { get; set; }
         public string? PaymentType { get; set; } = "COD";
         public string? CurrencyCode { get; set; } = "PES_001";
-        public string? Status { get; set; } = "Proccessing";
+        public string? Status { get; set; } = "Processing";
          public virtual ICollection<OrderDetail> OrderDetails{ get; set; } = new List<OrderDetail>();
 
         public ApplicationUser? User { get; set; } = null;

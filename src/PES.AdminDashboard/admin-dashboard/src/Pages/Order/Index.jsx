@@ -87,105 +87,115 @@ function Order() {
   };
   return (
     <Space size={30} direction="vertical" className="w-full p-4">
-      <Typography.Title level={4}>Order</Typography.Title>
-      <div className="flex space-x-4 mb-6">
-        <Select
-          defaultValue="OrderCurrencyCode"
-          onChange={handleSearchTypeChange}
-          className="w-1/4"
-        >
-          <Option value="OrderCurrencyCode">Currency Code</Option>
-          <Option value="UserName">User Name</Option>
-        </Select>
-        <Search
-          placeholder={`Search by ${searchType}`}
-          onSearch={handleSearch}
-          enterButton
-          className="w-64"
-        />
-        <Select
-          placeholder="Filter by Status"
-          onChange={handleStatusFilterChange}
-          className="w-1/4"
-          allowClear
-        >
-          <Option value="Finish">Finish</Option>
-          <Option value="Processing">Processing</Option>
-        </Select>
-        <Select
-          placeholder="Filter by Payment Type"
-          onChange={handlePaymentTypeFilterChange}
-          className="w-1/4"
-          allowClear
-        >
-          <Option value="COD">COD</Option>
-          <Option value="Credit Card">Credit Card</Option>
-        </Select>
-      </div>
-
-      <Table
-        loading={loading}
-        columns={[
-          {
-            title: "",
-            render: () => {
-              return <ShoppingCartOutlined />;
-            },
-          },
-          {
-            title: "Currency Code",
-            dataIndex: "orderCurrencyCode",
-          },
-          {
-            title: "User Name",
-            dataIndex: "userName",
-          },
-          {
-            title: "Quantity",
-            dataIndex: "productCount"
-          },
-          {
-            title: "Total Price",
-            dataIndex: "totalPrice"
-          },
-          {
-            title: 'Payment Type',
-            dataIndex: "paymentType",
-            // Set the width of this column
-          },
-          {
-            title: "Status",
-            dataIndex: "status"
-          }, {
-            title: "Action",
-            render: (text, record) => {
-              // Check if the status is "Processing"
-              if (record.status !== 'Proccessing') {
-                return null; // or return <></> for an empty fragment
-              }
-
-              const buttonClass = record.paymentType ? 'bg-green-500' : 'bg-red-500';
-              const buttonText = record.isInactive ? 'Activate' : 'Finish';
-
-              return (
-                <Button
-                  onClick={() => toggleUserStatus(record.orderId)}
-                  type="primary"
-                  className={`${buttonClass} text-white`}
-                >
-                  {buttonText}
-                </Button>
-              );
-            }
-          }
-        ]}
-        dataSource={dataSource}
-        pagination={{
-          pageSize: 5,
-        }}
-        className="ant-table-wrapper"
+    <Typography.Title level={4} className="text-gray-800">Order</Typography.Title>
+  
+    {/* Search & Filter Controls */}
+    <div className="flex flex-wrap gap-4 mb-6">
+      <Select
+        defaultValue="OrderCurrencyCode"
+        onChange={handleSearchTypeChange}
+        className="w-1/4 min-w-[200px]"
+      >
+        <Option value="OrderCurrencyCode">Currency Code</Option>
+        <Option value="UserName">User Name</Option>
+      </Select>
+  
+      <Search
+        placeholder={`Search by ${searchType}`}
+        onSearch={handleSearch}
+        enterButton
+        className="w-64"
       />
-    </Space>
+  
+      <Select
+        placeholder="Filter by Status"
+        onChange={handleStatusFilterChange}
+        className="w-1/4 min-w-[200px]"
+        allowClear
+      >
+        <Option value="Finish">Finish</Option>
+        <Option value="Processing">Processing</Option>
+      </Select>
+  
+      <Select
+        placeholder="Filter by Payment Type"
+        onChange={handlePaymentTypeFilterChange}
+        className="w-1/4 min-w-[200px]"
+        allowClear
+      >
+        <Option value="COD">COD</Option>
+        <Option value="Credit Card">Credit Card</Option>
+      </Select>
+    </div>
+  
+    {/* Orders Table */}
+    <Table
+      loading={loading}
+      columns={[
+        {
+          title: "",
+          render: () => <ShoppingCartOutlined className="text-lg text-gray-500" />,
+        },
+        {
+          title: "Currency Code",
+          dataIndex: "orderCurrencyCode",
+        },
+        {
+          title: "User Name",
+          dataIndex: "userName",
+        },
+        {
+          title: "Quantity",
+          dataIndex: "productCount",
+        },
+        {
+          title: "Total Price",
+          dataIndex: "totalPrice",
+          render: (price) => <span className="font-semibold">${price.toFixed(2)}</span>,
+        },
+        {
+          title: "Payment Type",
+          dataIndex: "paymentType",
+        },
+        {
+          title: "Status",
+          dataIndex: "status",
+          render: (status) => (
+            <span
+              className={`px-3 py-1 rounded-md text-white ${
+                status === "Processing" ? "bg-yellow-500" : "bg-green-500"
+              }`}
+            >
+              {status}
+            </span>
+          ),
+        },
+        {
+          title: "Action",
+          render: (text, record) => {
+            if (record.status !== "Processing") return null;
+  
+            const buttonClass = record.paymentType ? "bg-green-500" : "bg-red-500";
+            const buttonText = record.isInactive ? "Activate" : "Finish";
+  
+            return (
+              <Button
+                onClick={() => toggleUserStatus(record.orderId)}
+                type="primary"
+                className={`${buttonClass} text-white`}
+              >
+                {buttonText}
+              </Button>
+            );
+          },
+        },
+      ]}
+      dataSource={dataSource}
+      pagination={{ pageSize: 5 }}
+      className="bg-white rounded-lg shadow-md"
+    />
+  </Space>
+  
 
   )
 }

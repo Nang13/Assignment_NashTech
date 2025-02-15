@@ -171,3 +171,9 @@ C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\refint\PES.Pre
 C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.pdb
 C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\PES.Presentation.genruntimeconfig.cache
 C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\ref\PES.Presentation.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\PES.Presentation.staticwebassets.endpoints.json
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\CloudinaryDotNet.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\bin\Debug\net8.0\dotenv.net.dll
+C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\staticwebassets\msbuild.PES.Presentation.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+C:\Code\Assignment_NashTech\src\PES.Presentation\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

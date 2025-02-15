@@ -10,4 +10,9 @@
     <ProjectReference Include="..\PES.Domain\PES.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="CloudinaryDotNet" Version="1.27.4" />
+    <PackageReference Include="dotenv.net" Version="3.2.1" />
+  </ItemGroup>
+
 </Project>

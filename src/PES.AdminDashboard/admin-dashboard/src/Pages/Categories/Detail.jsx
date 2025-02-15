@@ -340,27 +340,33 @@ function CategoryDetail() {
     };
 
     return (
-        <div className="font-sans leading-relaxed text-gray-800 bg-gray-50">
-            <h2 className="my-8 text-3xl font-bold text-center">Category Tree</h2>
-            <p className="mb-8 text-center"></p>
-            {loading && <div>Loading...</div>}
-            {!loading && renderTopLevelCategories()}
-            <ToastContainer
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
+        <div className="font-sans leading-relaxed text-gray-800 bg-gray-50 min-h-screen p-6">
+  <h2 className="my-8 text-3xl font-bold text-center text-green-700">
+    Category Tree
+  </h2>
 
-            />
-            {/* Same as */}
-            <ToastContainer />
-        </div>
+  {loading ? (
+    <div className="flex justify-center items-center">
+      <span className="text-lg text-gray-600">Loading...</span>
+    </div>
+  ) : (
+    renderTopLevelCategories()
+  )}
+
+  <ToastContainer
+    position="top-right"
+    autoClose={5000}
+    hideProgressBar={false}
+    newestOnTop={false}
+    closeOnClick
+    rtl={false}
+    pauseOnFocusLoss
+    draggable
+    pauseOnHover
+    theme="light"
+  />
+</div>
+
     );
 }
 

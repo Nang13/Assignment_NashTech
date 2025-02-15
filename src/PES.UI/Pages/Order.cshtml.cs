@@ -7,6 +7,7 @@ using System.Net.Http;
 using PES.Domain.DTOs.OrderDTO;
 using PES.UI.Pages.Shared;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Http;
 
 namespace PES.UI.Pages
 {
@@ -14,16 +15,18 @@ namespace PES.UI.Pages
     {
         static HttpClient httpClient = new HttpClient();
         static SignInModel _signInModel = new SignInModel();
+        private readonly IHttpContextAccessor httpContextAccessor = new HttpContextAccessor();
         public List<OrderResponse> orders { get; set; }
         public decimal Total { get; set; }
 
         
         public async Task<IActionResult> OnGet()
         {
+            var accessToken = httpContextAccessor.HttpContext?.Request.Cookies["AccessToken"];
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
             var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7187/api/v1/Order?pageNumber=0&pageSize=10");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"Bearer {Request.Cookies["AccessToken"]}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             try
             {
                 var response = await httpClient.SendAsync(request);
